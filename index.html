@@ -3201,13 +3201,19 @@ async function pullFromCloud() {
       const json = await res.json();
       const fileData = json.files["state.json"];
       if (fileData && fileData.content) {
-        const remoteState = JSON.parse(fileData.content);
-        if (remoteState && typeof remoteState === 'object') {
-          S = remoteState;
-          save(true);
-          showToast('State updated from cloud! Reloading...');
-          updateSyncStatusMsg('Synced!');
-          setTimeout(() => window.location.reload(), 1000);
+        const remoteStr = fileData.content.trim();
+        const localStr = JSON.stringify(S).trim();
+        if (remoteStr !== localStr) {
+          const remoteState = JSON.parse(remoteStr);
+          if (remoteState && typeof remoteState === 'object') {
+            S = remoteState;
+            save(true);
+            showToast('State updated from cloud! Reloading...');
+            updateSyncStatusMsg('Synced!');
+            setTimeout(() => window.location.reload(), 1000);
+          }
+        } else {
+          updateSyncStatusMsg('Synced (Up to date)');
         }
       } else {
         showToast('No state.json found in Gist!');
