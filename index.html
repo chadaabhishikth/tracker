@@ -1534,6 +1534,9 @@ if (S.budget && S.budget.monthly) {
 }
 let pushTimeout = null;
 function save(skipPush){
+  if (!skipPush) {
+    S.lastUpdated = Date.now();
+  }
   localStorage.setItem('abhi_os',JSON.stringify(S));
   if (skipPush) return;
   const cfg = getSyncConfig();
@@ -3206,11 +3209,29 @@ async function pullFromCloud() {
         if (remoteStr !== localStr) {
           const remoteState = JSON.parse(remoteStr);
           if (remoteState && typeof remoteState === 'object') {
-            S = remoteState;
-            save(true);
-            showToast('State updated from cloud! Reloading...');
-            updateSyncStatusMsg('Synced!');
-            setTimeout(() => window.location.reload(), 1000);
+            const remoteTime = remoteState.lastUpdated || 0;
+            const localTime = S.lastUpdated || 0;
+            const hasLocalData = localStorage.getItem('abhi_os');
+            if (remoteTime > localTime || !hasLocalData) {
+              S = remoteState;
+              save(true);
+              showToast('State updated from cloud! Reloading...');
+              updateSyncStatusMsg('Synced!');
+              setTimeout(() => window.location.reload(), 1000);
+            } else if (remoteTime < localTime) {
+              updateSyncStatusMsg('Local state is newer. Syncing to cloud...');
+              pushToCloud();
+            } else {
+              if (!localTime) {
+                S = remoteState;
+                save(true);
+                showToast('State updated from cloud! Reloading...');
+                updateSyncStatusMsg('Synced!');
+                setTimeout(() => window.location.reload(), 1000);
+              } else {
+                updateSyncStatusMsg('Synced (Up to date)');
+              }
+            }
           }
         } else {
           updateSyncStatusMsg('Synced (Up to date)');
