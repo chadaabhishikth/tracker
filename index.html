@@ -1215,12 +1215,7 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
 
 /* ─── POMODORO PROGRESS BAR ──────────────────────────────── */
 .pomo-progress-wrap {
-  width: 100%; height: 4px; background: var(--line); border-radius: 2px;
-  margin-top: 14px; overflow: hidden; position: relative;
-}
-.pomo-progress-fill {
-  height: 100%; background: linear-gradient(90deg, var(--blue), var(--green));
-  width: 100%; transition: width 0.2s linear;
+  display: none; /* Hide progress bar because we are using progress ring */
 }
 
 /* ─── CALENDAR MOBILE READABILITY & TAP ──────────────────── */
@@ -1244,6 +1239,105 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
   .calendar-day-cell.has-event.holiday::after { background: var(--red) !important; }
   .calendar-day-cell.has-event.exam-day::after { background: var(--peach) !important; }
   .calendar-day-cell.has-event.special-day::after { background: var(--blue) !important; }
+}
+
+/* ─── HUD TERMINAL WIDGET ────────────────────────────────── */
+.hud-terminal-wrap {
+  margin-top: auto;
+  padding: 12px 14px;
+  border-top: 1px solid var(--line);
+  background: var(--bg);
+  font-family: var(--font-mono);
+}
+.layout.sidebar-collapsed .hud-terminal-wrap {
+  display: none;
+}
+.hud-term-header {
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+.hud-term-input-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg2);
+  border: 1px solid var(--line2);
+  border-radius: 4px;
+  padding: 3px 6px;
+}
+.hud-term-prompt {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 700;
+  user-select: none;
+}
+.hud-term-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-size: 10px;
+  font-family: var(--font-mono);
+  width: 100%;
+}
+
+/* ─── CIRCULAR POMODORO PROGRESS RING ────────────────────── */
+.pomo-ring-container {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pomo-ring-svg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 140px;
+  height: 140px;
+  transform: rotate(-90deg);
+}
+.pomo-ring-bg {
+  fill: none;
+  stroke: var(--line2);
+  stroke-width: 4px;
+}
+.pomo-ring-circle {
+  fill: none;
+  stroke: url(#pomo-grad);
+  stroke-width: 5px;
+  stroke-linecap: round;
+  stroke-dasharray: 414.69; /* 2 * PI * r (r=66) */
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.3s ease;
+}
+.pomo-time-hud {
+  font-family: var(--font-mono);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text);
+  text-shadow: 0 0 10px rgba(137,180,250,0.15);
+  z-index: 2;
+}
+
+/* ─── GLASSMORPHIC GLASS CLASSES ────────────────────────── */
+.glass-card {
+  backdrop-filter: blur(12px) !important;
+  background: rgba(24, 26, 36, 0.7) !important;
+  border: 1px solid rgba(42, 45, 69, 0.6) !important;
+  box-shadow: 0 8px 32px rgba(7, 8, 13, 0.45) !important;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.glass-card:hover {
+  border-color: rgba(137, 180, 250, 0.25) !important;
+  box-shadow: 0 8px 32px rgba(137, 180, 250, 0.08), 0 8px 32px rgba(7, 8, 13, 0.45) !important;
 }
 </style>
 </head>
@@ -1298,6 +1392,18 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
     <div class="nav-item" onclick="gotoPage('budget',this)"><span class="nav-icon">💳</span>Budget</div>
     <div class="nav-item" onclick="gotoPage('trips',this)"><span class="nav-icon">✈️</span>Trips</div>
   </nav>
+  <!-- HUD Terminal -->
+  <div class="hud-terminal-wrap">
+    <div class="hud-term-header">
+      <span>System Console</span>
+      <span style="color:var(--green)">Online</span>
+    </div>
+    <div class="hud-term-input-row">
+      <span class="hud-term-prompt">&gt;</span>
+      <input type="text" class="hud-term-input" id="hud-terminal-input" placeholder="Enter /help or command..." onkeydown="if(event.key==='Enter')executeTerminalCommand(this.value)">
+    </div>
+  </div>
+
   <div class="sid-bottom">
     <div class="streak-row">
       <span class="streak-fire">🔥</span>
@@ -1356,7 +1462,7 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
   <!-- TODAY -->
   <div id="page-today" class="content active">
     <!-- XP History Chart -->
-    <div class="xp-chart-card">
+    <div class="xp-chart-card glass-card">
       <div class="xp-chart-header">
         <div class="section-hdr" style="margin:0;">XP TREND — 30 DAYS</div>
         <span style="font-family:var(--font-mono);font-size:10px;color:var(--sub);" id="xp-chart-total"></span>
@@ -1365,23 +1471,23 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
         <canvas id="xp-chart-canvas"></canvas>
       </div>
     </div>
-    <div id="heatmap-card" class="heatmap-card"></div>
+    <div id="heatmap-card" class="heatmap-card glass-card"></div>
     <!-- Achievements -->
-    <div class="achievements-card">
+    <div class="achievements-card glass-card">
       <div class="section-hdr" style="margin-bottom:12px;">ACHIEVEMENTS</div>
       <div class="achievement-grid" id="achievements-grid"></div>
     </div>
     <div class="stat-row">
-      <div class="stat blue"><div class="stat-label">Tasks Done</div><div class="stat-val" id="stat-tasks">0/0</div><div class="stat-sub">today</div></div>
-      <div class="stat green"><div class="stat-label">Leetcode</div><div class="stat-val" id="stat-lc">0</div><div class="stat-sub">problems total</div></div>
-      <div class="stat yellow"><div class="stat-label">Streak</div><div class="stat-val" id="stat-streak">0</div><div class="stat-sub">days</div></div>
-      <div class="stat mauve"><div class="stat-label">XP Today</div><div class="stat-val" id="stat-xp">+0</div><div class="stat-sub">earned</div></div>
+      <div class="stat blue glass-card"><div class="stat-label">Tasks Done</div><div class="stat-val" id="stat-tasks">0/0</div><div class="stat-sub">today</div></div>
+      <div class="stat green glass-card"><div class="stat-label">Leetcode</div><div class="stat-val" id="stat-lc">0</div><div class="stat-sub">problems total</div></div>
+      <div class="stat yellow glass-card"><div class="stat-label">Streak</div><div class="stat-val" id="stat-streak">0</div><div class="stat-sub">days</div></div>
+      <div class="stat mauve glass-card"><div class="stat-label">XP Today</div><div class="stat-val" id="stat-xp">+0</div><div class="stat-sub">earned</div></div>
     </div>
 
     <div class="today-grid">
       <div>
         <div class="section-hdr" id="day-label">TODAY'S SCHEDULE</div>
-        <div class="schedule-card">
+        <div class="schedule-card glass-card">
           <div class="card-hdr">
             <div class="card-title"><span id="schedule-day-name">Monday</span> <button class="edit-btn" onclick="editSchedule()">⚙️</button></div>
             <div class="card-sub" id="schedule-date-sub"></div>
@@ -1391,8 +1497,20 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
       </div>
       <div class="right-col">
         <div class="section-hdr">STUDY TIMER <button class="edit-btn" onclick="editPomoDurations()" title="Configure Durations & Sound">⚙️</button></div>
-        <div class="pomo-card">
-          <div class="pomo-time" id="pomo-time">25:00</div>
+        <div class="pomo-card glass-card">
+          <div class="pomo-ring-container">
+            <svg class="pomo-ring-svg" viewBox="0 0 140 140">
+              <defs>
+                <linearGradient id="pomo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="var(--blue)" />
+                  <stop offset="100%" stop-color="var(--green)" />
+                </linearGradient>
+              </defs>
+              <circle class="pomo-ring-bg" cx="70" cy="70" r="66" />
+              <circle class="pomo-ring-circle" id="pomo-ring-circle" cx="70" cy="70" r="66" />
+            </svg>
+            <div class="pomo-time-hud" id="pomo-time">25:00</div>
+          </div>
           <div class="pomo-mode-row">
             <button class="pomo-mode-btn active" id="pomo-mode-work" onclick="setPomoMode('work')">Study</button>
             <button class="pomo-mode-btn" id="pomo-mode-break" onclick="setPomoMode('break')">Break</button>
@@ -1408,16 +1526,16 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
         <div class="section-hdr" style="margin-top:14px;">FOCUS ANALYTICS</div>
         <div class="pomo-analytics" id="pomo-analytics-card"></div>
         <!-- Daily Challenge -->
-        <div class="daily-challenge-card" id="daily-challenge-card"></div>
+        <div class="daily-challenge-card glass-card" id="daily-challenge-card"></div>
         <div class="section-hdr" style="margin-top:14px;">DAILY QUESTS</div>
-        <div class="quest-card">
+        <div class="quest-card glass-card">
           <div class="card-hdr"><div class="card-title">Non-Negotiables <button class="edit-btn" onclick="editQuests()">⚙️</button></div><div class="card-sub" id="quest-count">0/5 done</div></div>
           <div id="quest-list"></div>
         </div>
         <div class="section-hdr">PHASE PROGRESS</div>
         <div class="progress-section" id="phase-progress"></div>
         <div class="section-hdr">LEETCODE</div>
-        <div class="lc-card">
+        <div class="lc-card glass-card">
           <div class="lc-stats">
             <div class="lc-stat"><div class="lc-num" id="lc-easy" style="color:var(--green)">0</div><div class="lc-label">Easy</div></div>
             <div class="lc-stat"><div class="lc-num" id="lc-med" style="color:var(--yellow)">0</div><div class="lc-label">Medium</div></div>
@@ -2342,6 +2460,126 @@ function initiatePrestige() {
   S.xp.total = 0; S.xp.today = 0;
   save(); renderSidebar(); updateStats(); triggerConfetti(90);
   showToast(`✨ Prestige ${S.prestige} achieved! You legend.`);
+}
+
+// ─── HUD TERMINAL COMMAND EXECUTOR ──────────────────────
+function executeTerminalCommand(cmdText) {
+  cmdText = cmdText.trim();
+  if (!cmdText) return;
+  
+  playClickSound();
+  const inputEl = document.getElementById('hud-terminal-input');
+  if (inputEl) inputEl.value = '';
+  
+  if (cmdText === '/help') {
+    const helpHtml = `
+      <div style="font-family:var(--font-mono); font-size:11px; line-height:1.6; color:var(--text);">
+        <strong style="color:var(--blue)">HUD Terminal Commands:</strong><br><br>
+        <span style="color:var(--green)">/xp [num]</span> - Log custom XP points<br>
+        <span style="color:var(--green)">/lc [name] [easy|medium|hard]</span> - Log LeetCode problem<br>
+        <span style="color:var(--green)">/add [Food|Transport|Entertainment|Study|Misc] [amount] [desc]</span> - Log budget expense<br>
+        <span style="color:var(--green)">/pomo [start|pause|reset]</span> - Control study timer<br>
+        <span style="color:var(--green)">/theme</span> - Toggle light/dark theme<br>
+        <span style="color:var(--green)">/clear</span> - Factory reset local state (asks confirmation)
+      </div>
+    `;
+    openModal('Terminal Help', helpHtml, () => true);
+    setTimeout(() => {
+      const btn = document.getElementById('modal-save-btn');
+      if (btn) { btn.textContent = 'Acknowledge'; }
+    }, 20);
+    return;
+  }
+  
+  const tokens = cmdText.split(' ');
+  const cmd = tokens[0].toLowerCase();
+  
+  if (cmd === '/xp') {
+    const num = parseInt(tokens[1]);
+    if (isNaN(num)) { showToast('Invalid XP amount! Use: /xp 15'); return; }
+    const xp = getXPWithMultiplier(num);
+    S.xp.total = (S.xp.total || 0) + xp;
+    S.xp.today = (S.xp.today || 0) + xp;
+    updateHeatmap(xp);
+    save(); updateStats(); renderSidebar();
+    showToast(`Logged: +${xp} XP via Terminal! ⚡`);
+  } 
+  else if (cmd === '/lc') {
+    if (tokens.length < 3) { showToast('Use: /lc [name] [easy|medium|hard]'); return; }
+    const diffInput = tokens[tokens.length - 1].toLowerCase();
+    const validDiff = ['easy', 'medium', 'hard'].includes(diffInput) ? diffInput : 'medium';
+    const name = tokens.slice(1, tokens.length - (['easy', 'medium', 'hard'].includes(diffInput) ? 1 : 0)).join(' ');
+    
+    S.lc[validDiff] = (S.lc[validDiff] || 0) + 1;
+    const id = 'lc_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+    S.lc.log.unshift({ id, name, diff: validDiff, date: new Date().toLocaleDateString('en-IN'), topic: 'General' });
+    S.quests['q-lc'] = true;
+    updateHeatmap(10);
+    save(); updateStats(); renderDSALog(); renderDSAPie(); checkAchievements();
+    showToast(`Logged LC: ${name} ✓`);
+  } 
+  else if (cmd === '/add') {
+    if (tokens.length < 4) { showToast('Use: /add [Category] [Amount] [Description]'); return; }
+    const cat = tokens[1];
+    const amount = parseFloat(tokens[2]);
+    const desc = tokens.slice(3).join(' ');
+    
+    if (isNaN(amount) || amount <= 0) { showToast('Invalid amount!'); return; }
+    const validCats = ['Food', 'Transport', 'Entertainment', 'Study', 'Trips', 'Outings', 'Monthly', 'Misc'];
+    const finalCat = validCats.find(c => c.toLowerCase() === cat.toLowerCase()) || 'Misc';
+    
+    if (!S.budget) S.budget = { monthly: {}, log: [] };
+    S.budget.log.push({ description: desc, amount, category: finalCat, date: getLocalISODate() });
+    save();
+    showToast(`Logged expense: ₹${amount} for ${finalCat}! 💳`);
+  } 
+  else if (cmd === '/pomo') {
+    const action = tokens[1]?.toLowerCase();
+    if (action === 'start') {
+      if (!pomoInterval) togglePomo();
+      else showToast('Pomo already running');
+    } else if (action === 'pause') {
+      if (pomoInterval) togglePomo();
+      else showToast('Pomo not running');
+    } else if (action === 'reset') {
+      resetPomo();
+    } else {
+      showToast('Use: /pomo [start|pause|reset]');
+    }
+  } 
+  else if (cmd === '/theme') {
+    toggleTheme();
+    showToast('Theme toggled');
+  } 
+  else if (cmd === '/clear') {
+    if (confirm('Reset system defaults?')) {
+      resetData();
+    }
+  } 
+  else {
+    showToast(`Unknown command: ${cmd}. Type /help`);
+  }
+}
+
+// ─── TACTILE MECHANICAL SOUND FX ────────────────────────
+function playClickSound() {
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.type = 'sine';
+    
+    // Satisfying mechanical keyboard key press high-pitch transient sound
+    osc.frequency.setValueAtTime(1400, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.03);
+    gain.gain.setValueAtTime(0.008, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.03);
+    
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.03);
+  } catch(e) {}
 }
 
 // ─── WEEKLY REPORT CARD ──────────────────────────────────
@@ -4285,6 +4523,7 @@ document.addEventListener('keydown', e => {
 const pageTitles={today:'Today',roadmap:'AI Roadmap',semester:'Semester 3',calendar:'Academic Calendar',dsa:'DSA Track',projects:'Projects',targets:'Targets',gaming:'Gaming',notes:'Notes',tasks:'Mission Board',applications:'Applications',budget:'Expense Tracker',trips:'Trip Planner'};
 
 function gotoPage(id,el){
+  playClickSound();
   document.querySelectorAll('.content').forEach(c=>c.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
@@ -4315,11 +4554,13 @@ function syncMobileActiveTab(id) {
 }
 
 function toggleMobileDrawer() {
+  playClickSound();
   const overlay = document.getElementById('mobile-drawer-overlay');
   overlay.classList.toggle('show');
 }
 
 function gotoMobilePage(id, el) {
+  playClickSound();
   const desktopNavItem = Array.from(document.querySelectorAll('.sidebar .nav-item')).find(item => {
     const onclickAttr = item.getAttribute('onclick');
     return onclickAttr && onclickAttr.includes(`'${id}'`);
@@ -5529,6 +5770,7 @@ function showToast(msg){
 
 // ─── THEME TOGGLE ────────────────────────────────────────────────
 function toggleTheme() {
+  playClickSound();
   const isLight = document.documentElement.classList.toggle('light');
   localStorage.setItem('abhi_theme', isLight ? 'light' : 'dark');
   const icon = document.getElementById('theme-icon');
@@ -5539,6 +5781,7 @@ function toggleTheme() {
 
 // ─── SIDEBAR COLLAPSE ───────────────────────────────────────────
 function toggleSidebar() {
+  playClickSound();
   const layout = document.querySelector('.layout');
   const btn = document.getElementById('sidebar-toggle-btn');
   const collapsed = layout.classList.toggle('sidebar-collapsed');
