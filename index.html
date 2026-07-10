@@ -1212,6 +1212,39 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
 .srs-rating-btn.fuzzy:hover { background: rgba(249,226,175,0.25); }
 .srs-rating-btn.forgot { background: rgba(243,139,168,0.1); color: var(--red); border: 1px solid rgba(243,139,168,0.2); }
 .srs-rating-btn.forgot:hover { background: rgba(243,139,168,0.2); }
+
+/* ─── POMODORO PROGRESS BAR ──────────────────────────────── */
+.pomo-progress-wrap {
+  width: 100%; height: 4px; background: var(--line); border-radius: 2px;
+  margin-top: 14px; overflow: hidden; position: relative;
+}
+.pomo-progress-fill {
+  height: 100%; background: linear-gradient(90deg, var(--blue), var(--green));
+  width: 100%; transition: width 0.2s linear;
+}
+
+/* ─── CALENDAR MOBILE READABILITY & TAP ──────────────────── */
+.calendar-day-cell {
+  cursor: pointer !important;
+}
+.calendar-day-cell.has-event {
+  position: relative;
+}
+/* Event dot styling on mobile viewports */
+@media (max-width: 900px) {
+  .calendar-day-cell.has-event::after {
+    content: '';
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin: 4px auto 0;
+    flex-shrink: 0;
+  }
+  .calendar-day-cell.has-event.holiday::after { background: var(--red) !important; }
+  .calendar-day-cell.has-event.exam-day::after { background: var(--peach) !important; }
+  .calendar-day-cell.has-event.special-day::after { background: var(--blue) !important; }
+}
 </style>
 </head>
 <body>
@@ -1357,7 +1390,7 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
         </div>
       </div>
       <div class="right-col">
-        <div class="section-hdr">STUDY TIMER</div>
+        <div class="section-hdr">STUDY TIMER <button class="edit-btn" onclick="editPomoDurations()" title="Configure Durations & Sound">⚙️</button></div>
         <div class="pomo-card">
           <div class="pomo-time" id="pomo-time">25:00</div>
           <div class="pomo-mode-row">
@@ -1367,6 +1400,9 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
           <div class="pomo-controls">
             <button class="lc-btn" id="pomo-start-btn" onclick="togglePomo()" style="padding: 10px 24px; font-size: 13px;">Start</button>
             <button class="btn-secondary" onclick="resetPomo()" style="padding: 9px 18px; font-size: 13px; font-family: var(--font-body); border-radius: 5px;">Reset</button>
+          </div>
+          <div class="pomo-progress-wrap">
+            <div class="pomo-progress-fill" id="pomo-progress-fill" style="width: 100%;"></div>
           </div>
         </div>
         <div class="section-hdr" style="margin-top:14px;">FOCUS ANALYTICS</div>
@@ -1989,6 +2025,9 @@ if(!S.srs) S.srs = {};
 
 if(!S.applications) S.applications = [];
 if(!S.pomoLog) S.pomoLog = {};
+if(!S.pomoWorkMinutes) S.pomoWorkMinutes = 25;
+if(!S.pomoBreakMinutes) S.pomoBreakMinutes = 5;
+if(!S.pomoSound) S.pomoSound = 'sine';
 if(!S.trips) S.trips = [];
 if(!S.activeTripId) S.activeTripId = '';
 if(!S.budget) S.budget = { monthly: { Food: 4000, Transport: 1000, Entertainment: 1000, Study: 2000, Trips: 5000, Outings: 2000, Monthly: 10000, Misc: 1000 }, log: [] };
@@ -2111,6 +2150,129 @@ function completeDailyChallenge() {
   updateHeatmap(xp);
   save(); renderDailyChallenge(); updateStats(); renderSidebar(); checkAchievements();
   showToast(`Boss challenge done! +${xp} XP 🎯`);
+}
+
+function editPomoDurations() {
+  const html = `
+    <div class="modal-form-group">
+      <label class="modal-form-label">Study Session Duration (Minutes)</label>
+      <input type="number" class="modal-form-input" id="pomo-work-input" min="1" max="180" value="${S.pomoWorkMinutes || 25}">
+    </div>
+    <div class="modal-form-group">
+      <label class="modal-form-label">Break Duration (Minutes)</label>
+      <input type="number" class="modal-form-input" id="pomo-break-input" min="1" max="60" value="${S.pomoBreakMinutes || 5}">
+    </div>
+    <div class="modal-form-group">
+      <label class="modal-form-label">Alarm Sound Alert</label>
+      <select class="modal-form-select" id="pomo-sound-select">
+        <option value="sine" ${S.pomoSound === 'sine' ? 'selected' : ''}>Standard Chime</option>
+        <option value="triangle" ${S.pomoSound === 'triangle' ? 'selected' : ''}>Retro Beep</option>
+        <option value="square" ${S.pomoSound === 'square' ? 'selected' : ''}>Sharp Alarm</option>
+        <option value="none" ${S.pomoSound === 'none' ? 'selected' : ''}>None (Muted)</option>
+      </select>
+    </div>
+    <button class="btn-secondary" style="width:100%;font-size:12px;margin-top:4px;" onclick="testPomoAlarm()">Test Alarm Sound 🔊</button>
+  `;
+  openModal('Timer Configuration', html, () => {
+    const work = parseInt(document.getElementById('pomo-work-input').value);
+    const brk = parseInt(document.getElementById('pomo-break-input').value);
+    const sound = document.getElementById('pomo-sound-select').value;
+    if (isNaN(work) || work < 1 || isNaN(brk) || brk < 1) {
+      showToast('Please enter valid durations!');
+      return false;
+    }
+    S.pomoWorkMinutes = work;
+    S.pomoBreakMinutes = brk;
+    S.pomoSound = sound;
+    save();
+    setPomoMode(pomoMode);
+    showToast('Timer configurations saved!');
+    return true;
+  });
+}
+
+function testPomoAlarm() {
+  const type = document.getElementById('pomo-sound-select').value;
+  playPomoChime(type);
+}
+
+function playPomoChime(type) {
+  if (type === 'none') return;
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.type = type;
+    if (type === 'square') {
+      osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.005, audioCtx.currentTime + 0.6);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.6);
+    } else {
+      osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.5);
+    }
+  } catch (e) {
+    console.warn("Alarm play failed", e);
+  }
+}
+
+function showCalendarDayDetails(iso, dayNum, monthName) {
+  const event = ACADEMIC_CALENDAR_EVENTS.find(e => e.date === iso);
+  const cd = CD_MAP[iso];
+  
+  let contentHtml = `
+    <div style="text-align:center;margin-bottom:16px;">
+      <div style="font-size:32px;margin-bottom:8px;">📅</div>
+      <div style="font-family:var(--font-mono);font-size:14px;color:var(--blue);font-weight:600;">${dayNum} ${monthName}</div>
+      <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);">${iso}</div>
+    </div>
+  `;
+  
+  if (event) {
+    const typeLabel = event.type.toUpperCase();
+    let typeColor = 'var(--blue)';
+    if (event.type === 'holiday') typeColor = 'var(--red)';
+    else if (event.type === 'exam') typeColor = 'var(--peach)';
+    
+    contentHtml += `
+      <div style="border: 1px solid var(--line2); padding: 14px; border-radius: 8px; background: var(--bg2); margin-bottom: 12px;">
+        <span style="font-family:var(--font-mono); font-size:9px; background:${typeColor}20; color:${typeColor}; border: 1px solid ${typeColor}40; padding:2px 6px; border-radius:4px; text-transform:uppercase; font-weight:700;">${typeLabel}</span>
+        <div style="font-size:13px; color:var(--text); font-weight:500; margin-top:8px; line-height:1.5;">${event.details}</div>
+      </div>
+    `;
+  } else {
+    contentHtml += `
+      <div style="text-align:center; padding:20px; color:var(--sub); font-size:13px;">
+        No academic events or exams scheduled for this day.
+      </div>
+    `;
+  }
+  
+  if (cd) {
+    contentHtml += `
+      <div style="border: 1px solid rgba(137,180,250,0.2); padding: 10px 14px; border-radius: 8px; background: rgba(137,180,250,0.04); font-family: var(--font-mono); font-size: 11px; color: var(--blue);">
+        📅 Countdown Milestone: ${cd}
+      </div>
+    `;
+  }
+  
+  openModal('Day Details', contentHtml, () => true);
+  setTimeout(() => {
+    const btn = document.getElementById('modal-save-btn');
+    if (btn) {
+      btn.textContent = 'Close';
+      btn.style.background = 'var(--bg3)';
+      btn.style.color = 'var(--sub)';
+      btn.style.border = '1px solid var(--line2)';
+    }
+  }, 20);
 }
 
 // ─── XP MULTIPLIER STREAKS ───────────────────────────────
@@ -4510,6 +4672,7 @@ const DEFAULT_GAMING = ${gamingStr};
 
 // ─── POMODORO TIMER ──────────────────────────────────────
 let pomoSeconds = 1500;
+let pomoTotalDurationSeconds = 1500;
 let pomoMode = 'work';
 let pomoInterval = null;
 let pomoEndTime = null;
@@ -4524,7 +4687,9 @@ function setPomoMode(mode) {
   document.getElementById('pomo-mode-work').classList.toggle('active', mode === 'work');
   document.getElementById('pomo-mode-break').classList.toggle('active', mode === 'break');
   
-  pomoSeconds = mode === 'work' ? 25 * 60 : 5 * 60;
+  const mins = mode === 'work' ? (S.pomoWorkMinutes || 25) : (S.pomoBreakMinutes || 5);
+  pomoSeconds = mins * 60;
+  pomoTotalDurationSeconds = pomoSeconds;
   updatePomoDisplay();
 }
 
@@ -4537,6 +4702,9 @@ function togglePomo() {
     btn.textContent = 'Start';
     showToast('Timer paused');
   } else {
+    if (pomoSeconds === (pomoMode === 'work' ? (S.pomoWorkMinutes || 25) * 60 : (S.pomoBreakMinutes || 5) * 60)) {
+      pomoTotalDurationSeconds = pomoSeconds;
+    }
     pomoEndTime = Date.now() + pomoSeconds * 1000;
     pomoInterval = setInterval(pomoTick, 1000);
     btn.textContent = 'Pause';
@@ -4550,7 +4718,9 @@ function resetPomo() {
     pomoInterval = null;
   }
   document.getElementById('pomo-start-btn').textContent = 'Start';
-  pomoSeconds = pomoMode === 'work' ? 25 * 60 : 5 * 60;
+  const mins = pomoMode === 'work' ? (S.pomoWorkMinutes || 25) : (S.pomoBreakMinutes || 5);
+  pomoSeconds = mins * 60;
+  pomoTotalDurationSeconds = pomoSeconds;
   updatePomoDisplay();
   showToast('Timer reset');
 }
@@ -4559,6 +4729,13 @@ function updatePomoDisplay() {
   const m = Math.floor(pomoSeconds / 60).toString().padStart(2, '0');
   const s = (pomoSeconds % 60).toString().padStart(2, '0');
   document.getElementById('pomo-time').textContent = `${m}:${s}`;
+  
+  // Update progress bar width
+  const fill = document.getElementById('pomo-progress-fill');
+  if (fill) {
+    const pct = pomoTotalDurationSeconds > 0 ? (pomoSeconds / pomoTotalDurationSeconds) * 100 : 100;
+    fill.style.width = pct + '%';
+  }
 }
 
 function pomoTick() {
@@ -4573,38 +4750,27 @@ function pomoTick() {
     
     if (pomoMode === 'work') {
       const today = getLocalISODate();
+      const workMins = S.pomoWorkMinutes || 25;
+      const earnedXP = Math.round(workMins * 0.6);
       if(!S.pomoLog) S.pomoLog = {};
       if(!S.pomoLog[today]) S.pomoLog[today] = {studyMins:0, gamingMins:0};
-      S.pomoLog[today].studyMins = (S.pomoLog[today].studyMins || 0) + 25;
-      updateHeatmap(15);
-      S.xp.total += 15;
-      S.xp.today = (S.xp.today || 0) + 15;
+      S.pomoLog[today].studyMins = (S.pomoLog[today].studyMins || 0) + workMins;
+      updateHeatmap(earnedXP);
+      S.xp.total += earnedXP;
+      S.xp.today = (S.xp.today || 0) + earnedXP;
       save();
       updateStats();
       renderSidebar();
       renderHeatmap();
       renderPomoAnalytics();
-      showToast('Study session complete! +15 XP Earned! ⚔️');
+      showToast(`Study session complete! +${earnedXP} XP Earned! ⚔️`);
       
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.5);
-      } catch (e) {
-        console.warn("Chime failed", e);
-      }
+      playPomoChime(S.pomoSound || 'sine');
       
       promptPomoNote('break');
     } else {
       showToast('Break finished! Ready to lock in? 💪');
+      playPomoChime(S.pomoSound || 'sine');
       setPomoMode('work');
     }
   }
@@ -5619,6 +5785,7 @@ function renderCalendarGrid(year, month) {
     let cellCls = '';
     if (isToday) cellCls += ' today';
     if (event) {
+      cellCls += ' has-event';
       if (event.type === 'holiday') cellCls += ' holiday';
       else if (event.type === 'exam') cellCls += ' exam-day';
       else cellCls += ' special-day';
@@ -5633,7 +5800,7 @@ function renderCalendarGrid(year, month) {
     const cdBadge = cd ? `<span class="day-cd-badge">${cd}</span>` : '';
     
     html += `
-      <div class="calendar-day-cell${cellCls}" title="${d} ${MONTH_NAMES[month]}: ${displayEvent || (cd ? cd : '')}">
+      <div class="calendar-day-cell${cellCls}" title="${d} ${MONTH_NAMES[month]}: ${displayEvent || (cd ? cd : '')}" onclick="showCalendarDayDetails('${iso}', ${d}, '${MONTH_NAMES[month]}')">
         <div class="day-cell-top">
           <span class="day-num">${d}</span>
           ${cdBadge}
