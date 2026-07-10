@@ -835,6 +835,9 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
   font-size: 20px;
   margin-bottom: 4px;
 }
+.topbar-mobile-stats {
+  display: none;
+}
 
 @media(max-width:900px){
   .layout{grid-template-columns:1fr;}
@@ -856,6 +859,48 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
   .calendar-grid { min-width: auto; grid-template-columns: repeat(7, 1fr); }
   .calendar-day-cell { min-height: 50px; padding: 4px; }
   .day-cell-event { display: none; } /* Hide detailed text inside cells on mobile to preserve grid */
+  .topbar-mobile-stats {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg2);
+    border: 1px solid var(--line2);
+    border-radius: 12px;
+    padding: 4px 10px;
+    font-size: 10px;
+    font-family: var(--font-mono);
+  }
+  .mobile-rank {
+    color: var(--mauve);
+    font-weight: 700;
+  }
+  .mobile-xp-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-left: 1px solid var(--line2);
+    padding-left: 8px;
+  }
+  .mobile-xp-val {
+    color: var(--sub);
+  }
+  .mobile-xp-track {
+    width: 40px;
+    height: 4px;
+    background: var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .mobile-xp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--mauve), var(--blue));
+    width: 0%;
+    transition: width 0.5s ease;
+  }
+  .settings-fab {
+    bottom: 80px;
+    right: 16px;
+  }
 }
 </style>
 </head>
@@ -910,6 +955,13 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
     <div class="topbar-left">
       <div class="topbar-title" id="page-title">Today</div>
       <div class="topbar-date" id="topbar-date"></div>
+      <div class="topbar-mobile-stats">
+        <span class="mobile-rank" id="rank-display-mobile">E-RANK</span>
+        <div class="mobile-xp-wrap">
+          <span class="mobile-xp-val" id="xp-display-mobile">340 / 1000</span>
+          <div class="mobile-xp-track"><div class="mobile-xp-fill" id="xp-fill-mobile"></div></div>
+        </div>
+      </div>
     </div>
     <div class="topbar-right">
       <span class="phase-pill">Phase 1 · Classical AI</span>
@@ -1643,6 +1695,10 @@ function updateStats(){
   const xpPct=Math.min(100,Math.round((xpTotal%xpNext)/xpNext*100));
   document.getElementById('xp-fill').style.width=xpPct+'%';
   document.getElementById('xp-display').textContent=xpTotal+' / '+xpNext;
+  const mXpFill = document.getElementById('xp-fill-mobile');
+  if (mXpFill) mXpFill.style.width = xpPct+'%';
+  const mXpDisp = document.getElementById('xp-display-mobile');
+  if (mXpDisp) mXpDisp.textContent = xpTotal+' / '+xpNext;
 }
 
 function renderSidebar(){
@@ -1655,6 +1711,8 @@ function renderSidebar(){
   else if(xp>=2600) rank='C-RANK';
   else if(xp>=1100) rank='D-RANK';
   document.getElementById('rank-display').textContent = rank + ' · ' + profile.sem;
+  const mRankDisp = document.getElementById('rank-display-mobile');
+  if (mRankDisp) mRankDisp.textContent = rank;
   document.getElementById('sidebar-name').innerHTML = profile.name + ' <button class="edit-btn" onclick="editProfile()">✏️</button>';
   document.getElementById('sidebar-branch').textContent = profile.branch;
 }
