@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>System: Abhishikth — OS Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
 <style>
 /* ─── TOKENS ─────────────────────────────────────────── */
 :root {
@@ -901,10 +902,334 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
     bottom: 80px;
     right: 16px;
   }
+  .budget-quick-btn { display: none; }
+  .offline-dot span { display: none; }
+  .mission-due-badge span:last-child { font-size: 9px; }
+  .achievement-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 5px !important; }
+  .dsa-chart-grid { grid-template-columns: 1fr !important; }
+  .dsa-pie-canvas { margin: 0 auto; }
+  .budget-quick-popover { right: 16px; top: 56px; width: calc(100vw - 32px); }
+  .quick-add-sheet { padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
 }
+
+/* ─── CONFETTI & LEVEL-UP ────────────────────────────────── */
+.confetti-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 9999; overflow: hidden;
+}
+.confetti-piece {
+  position: absolute; top: -12px; opacity: 0;
+  animation: confettiFall linear forwards;
+}
+@keyframes confettiFall {
+  0%   { transform: translateY(0) rotate(0deg);   opacity: 1; }
+  100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+}
+.levelup-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(7,8,13,0.88); backdrop-filter: blur(14px);
+  z-index: 500; display: none; align-items: center; justify-content: center;
+  flex-direction: column; gap: 14px; padding: 24px;
+}
+.levelup-overlay.show { display: flex; animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.levelup-rank-text {
+  font-family: var(--font-mono); font-size: 56px; font-weight: 700;
+  color: var(--mauve); text-align: center;
+  text-shadow: 0 0 40px rgba(203,166,247,0.6);
+  animation: rankPulse 1.4s ease infinite;
+}
+@keyframes rankPulse {
+  0%, 100% { text-shadow: 0 0 20px rgba(203,166,247,0.5); }
+  50% { text-shadow: 0 0 60px rgba(203,166,247,0.9), 0 0 80px rgba(137,180,250,0.4); }
+}
+.levelup-sub { font-size: 17px; color: var(--text); opacity: 0.8; font-weight: 500; }
+.levelup-close-btn {
+  margin-top: 16px; background: var(--mauve); color: var(--bg);
+  border: none; border-radius: 10px; padding: 12px 32px;
+  font-size: 15px; cursor: pointer; font-family: var(--font-body); font-weight: 600;
+  transition: transform 0.15s;
+}
+.levelup-close-btn:hover { transform: scale(1.04); }
+
+/* ─── STREAK RISK BANNER ─────────────────────────────────── */
+.streak-risk-banner {
+  background: rgba(243,139,168,0.07); border-bottom: 1px solid rgba(243,139,168,0.22);
+  padding: 8px 28px; display: none; align-items: center; gap: 10px;
+  font-size: 12px; color: var(--red); font-family: var(--font-mono);
+}
+.streak-risk-banner.show { display: flex; }
+.srb-dismiss {
+  margin-left: auto; background: none; border: 1px solid rgba(243,139,168,0.4);
+  border-radius: 4px; color: var(--red); cursor: pointer; padding: 2px 10px;
+  font-size: 10px; font-family: var(--font-mono); transition: all 0.15s;
+}
+.srb-dismiss:hover { background: rgba(243,139,168,0.1); }
+
+/* ─── OFFLINE INDICATOR ──────────────────────────────────── */
+.offline-dot {
+  display: none; align-items: center; gap: 5px;
+  font-family: var(--font-mono); font-size: 10px; color: var(--red);
+}
+.offline-dot.show { display: flex; }
+.offline-dot-circle {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--red);
+  flex-shrink: 0; animation: blink 1.5s ease infinite;
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+
+/* ─── MISSION DUE BADGE ──────────────────────────────────── */
+.mission-due-badge {
+  display: none; align-items: center; gap: 5px; cursor: pointer;
+  font-family: var(--font-mono); font-size: 10px;
+  background: rgba(249,226,175,0.1); border: 1px solid rgba(249,226,175,0.28);
+  color: var(--yellow); border-radius: 5px; padding: 3px 9px;
+  transition: background 0.15s;
+}
+.mission-due-badge.show { display: flex; }
+.mission-due-badge:hover { background: rgba(249,226,175,0.18); }
+
+/* ─── BUDGET QUICK-ADD ───────────────────────────────────── */
+.budget-quick-btn {
+  background: rgba(166,227,161,0.1); border: 1px solid rgba(166,227,161,0.25);
+  color: var(--green); border-radius: 6px; padding: 5px 12px;
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.budget-quick-btn:hover { background: rgba(166,227,161,0.2); }
+.budget-quick-popover {
+  position: fixed; top: 56px; right: 24px;
+  background: var(--bg1); border: 1px solid var(--line2); border-radius: 12px;
+  padding: 16px; width: 272px; z-index: 150;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  display: none; flex-direction: column; gap: 10px;
+  animation: dropDown 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+.budget-quick-popover.show { display: flex; }
+@keyframes dropDown { from { transform: translateY(-12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* ─── XP MULTIPLIER BADGE ────────────────────────────────── */
+.xp-multiplier-badge {
+  display: none; font-family: var(--font-mono); font-size: 9px;
+  background: rgba(250,179,135,0.15); border: 1px solid rgba(250,179,135,0.3);
+  color: var(--peach); padding: 2px 7px; border-radius: 4px;
+  letter-spacing: 0.5px; animation: glowPeach 2s ease infinite;
+}
+@keyframes glowPeach {
+  0%, 100% { box-shadow: 0 0 0 rgba(250,179,135,0); }
+  50% { box-shadow: 0 0 8px rgba(250,179,135,0.3); }
+}
+
+/* ─── ACHIEVEMENTS ───────────────────────────────────────── */
+.achievements-card {
+  background: var(--bg1); border: 1px solid var(--line); border-radius: var(--r);
+  padding: 14px 16px; margin-bottom: 20px;
+}
+.achievement-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; }
+.achievement-badge {
+  background: var(--bg2); border: 1px solid var(--line); border-radius: 8px;
+  padding: 10px 6px; text-align: center; transition: all 0.2s; cursor: default;
+}
+.achievement-badge.unlocked {
+  border-color: rgba(249,226,175,0.45); background: rgba(249,226,175,0.05);
+  box-shadow: 0 0 10px rgba(249,226,175,0.08);
+}
+.achievement-badge.locked { opacity: 0.3; filter: grayscale(1); }
+.achievement-icon { font-size: 22px; margin-bottom: 4px; }
+.achievement-name {
+  font-size: 9px; font-family: var(--font-mono); color: var(--muted);
+  line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.achievement-badge.unlocked .achievement-name { color: var(--yellow); }
+
+/* ─── DAILY CHALLENGE CARD ───────────────────────────────── */
+.daily-challenge-card {
+  background: rgba(137,180,250,0.04); border: 1px solid rgba(137,180,250,0.2);
+  border-radius: var(--r); padding: 14px 16px; margin-bottom: 14px;
+}
+.dc-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.dc-label { font-family: var(--font-mono); font-size: 9px; letter-spacing: 2px; color: var(--blue); text-transform: uppercase; }
+.dc-xp { font-family: var(--font-mono); font-size: 10px; color: var(--mauve); font-weight: 600; }
+.dc-text { font-size: 13px; color: var(--text); line-height: 1.5; margin-bottom: 10px; }
+.dc-complete-btn {
+  background: rgba(137,180,250,0.12); border: 1px solid rgba(137,180,250,0.35);
+  color: var(--blue); border-radius: 5px; padding: 6px 16px;
+  font-size: 11px; font-family: var(--font-mono); cursor: pointer; transition: all 0.15s;
+}
+.dc-complete-btn:hover { background: var(--blue); color: var(--bg); }
+.dc-complete-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.dc-done-label { font-family: var(--font-mono); font-size: 11px; color: var(--green); }
+
+/* ─── XP HISTORY CHART ───────────────────────────────────── */
+.xp-chart-card {
+  background: var(--bg1); border: 1px solid var(--line); border-radius: var(--r);
+  padding: 14px 16px; margin-bottom: 20px;
+}
+.xp-chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.chart-canvas-wrap { width: 100%; height: 80px; position: relative; }
+#xp-chart-canvas { width: 100%; height: 100%; display: block; }
+
+/* ─── DSA PIE CHART ──────────────────────────────────────── */
+.dsa-chart-section {
+  background: var(--bg1); border: 1px solid var(--line); border-radius: var(--r);
+  padding: 14px 16px; margin-bottom: 20px;
+}
+.dsa-chart-grid { display: grid; grid-template-columns: 140px 1fr; gap: 20px; align-items: center; }
+#dsa-pie-canvas { width: 140px; height: 140px; display: block; }
+.dsa-legend { display: flex; flex-direction: column; gap: 8px; }
+.dsa-legend-item { display: flex; align-items: center; gap: 8px; font-size: 11px; }
+.dsa-legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.dsa-legend-pct { font-family: var(--font-mono); color: var(--text); margin-left: auto; font-size: 11px; }
+
+/* ─── SRS FLIP CARD ──────────────────────────────────────── */
+.srs-fullscreen {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: var(--bg); z-index: 300; display: none;
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 24px; padding: 24px;
+}
+.srs-fullscreen.show { display: flex; animation: fadeIn 0.3s ease; }
+.srs-close-fab {
+  position: absolute; top: 20px; right: 24px;
+  background: var(--bg2); border: 1px solid var(--line2);
+  color: var(--sub); border-radius: 8px; padding: 7px 14px;
+  cursor: pointer; font-size: 13px; font-family: var(--font-body); transition: all 0.15s;
+}
+.srs-close-fab:hover { border-color: var(--red); color: var(--red); }
+.srs-flip-container { perspective: 1000px; width: 100%; max-width: 500px; height: 240px; cursor: pointer; }
+.srs-flip-inner {
+  position: relative; width: 100%; height: 100%;
+  transform-style: preserve-3d; transition: transform 0.5s ease;
+}
+.srs-flip-container.flipped .srs-flip-inner { transform: rotateY(180deg); }
+.srs-flip-front, .srs-flip-back {
+  position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+  border: 1px solid var(--line2); border-radius: 16px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 24px; text-align: center;
+}
+.srs-flip-front { background: var(--bg1); }
+.srs-flip-back { background: var(--bg2); transform: rotateY(180deg); }
+.srs-flip-hint { font-size: 10px; color: var(--muted); font-family: var(--font-mono); margin-top: 10px; }
+.srs-rating-actions {
+  display: flex; gap: 10px; width: 100%; max-width: 500px; justify-content: center;
+}
+.srs-rating-actions .srs-rating-btn { flex: 1; }
+
+/* ─── PULL TO REFRESH ────────────────────────────────────── */
+.pull-indicator {
+  position: fixed; top: 0; left: 50%;
+  transform: translateX(-50%) translateY(-58px);
+  background: var(--bg2); border: 1px solid var(--line2);
+  border-radius: 0 0 20px 20px; padding: 8px 22px;
+  font-size: 11px; font-family: var(--font-mono); color: var(--sub);
+  z-index: 50; transition: transform 0.25s ease;
+  display: flex; align-items: center; gap: 8px; pointer-events: none;
+}
+.pull-indicator.visible { transform: translateX(-50%) translateY(0); }
+.pull-spinner {
+  width: 14px; height: 14px; border: 2px solid var(--line2);
+  border-top-color: var(--blue); border-radius: 50%;
+}
+.pull-spinner.spinning { animation: spin 0.6s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── BOTTOM SHEET QUICK ADD ─────────────────────────────── */
+.quick-add-sheet {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--bg1); border-top: 1px solid var(--line2);
+  border-radius: 16px 16px 0 0; padding: 20px 20px 24px;
+  z-index: 1001; transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 0 -8px 32px rgba(0,0,0,0.5);
+}
+.quick-add-sheet.show { transform: translateY(0); }
+.quick-add-handle {
+  width: 36px; height: 4px; background: var(--line2); border-radius: 2px;
+  margin: 0 auto 18px;
+}
+.quick-add-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.quick-add-item {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  background: var(--bg2); border: 1px solid var(--line2); border-radius: 12px;
+  padding: 16px 8px; cursor: pointer; transition: all 0.15s; text-align: center;
+}
+.quick-add-item:hover { background: var(--bg3); border-color: var(--blue); }
+.quick-add-item:active { transform: scale(0.95); }
+.qa-icon { font-size: 26px; }
+.qa-label { font-size: 10px; color: var(--sub); font-family: var(--font-mono); }
+.quick-add-sheet-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  z-index: 1000; display: none;
+}
+.quick-add-sheet-backdrop.show { display: block; }
+
+/* ─── SWIPE TO COMPLETE INDICATOR ────────────────────────── */
+.time-block { position: relative; overflow: hidden; }
+.swipe-feedback {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 0;
+  background: rgba(166,227,161,0.15); pointer-events: none;
+  display: flex; align-items: center; padding-left: 12px;
+  font-size: 18px; overflow: hidden;
+}
+
+/* ─── PRESTIGE ───────────────────────────────────────────── */
+.prestige-badge {
+  display: inline-block; font-family: var(--font-mono); font-size: 8px;
+  background: linear-gradient(135deg, var(--mauve), var(--peach));
+  color: var(--bg); padding: 1px 6px; border-radius: 4px;
+  margin-left: 5px; vertical-align: middle; letter-spacing: 1px; font-weight: 700;
+}
+.prestige-btn {
+  display: none; width: 100%; margin-top: 10px;
+  background: linear-gradient(135deg, rgba(203,166,247,0.08), rgba(250,179,135,0.08));
+  border: 1px solid rgba(203,166,247,0.28); color: var(--mauve);
+  border-radius: 6px; padding: 8px; font-size: 11px; font-family: var(--font-mono);
+  cursor: pointer; text-align: center; transition: all 0.2s; letter-spacing: 1px;
+}
+.prestige-btn:hover { background: rgba(203,166,247,0.18); }
+
+/* ─── WEEKLY REPORT CARD ─────────────────────────────────── */
+.report-stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px; }
+.report-stat-box { background: var(--bg2); border-radius: 10px; padding: 14px; text-align: center; }
+.report-stat-num { font-family: var(--font-mono); font-size: 30px; font-weight: 700; }
+.report-stat-lbl { font-size: 11px; color: var(--sub); margin-top: 4px; }
+
+/* ─── PINNABLE NOTES ─────────────────────────────────────── */
+.note-pin-btn {
+  margin-left: auto; background: none; border: none; cursor: pointer;
+  font-size: 12px; opacity: 0.3; transition: opacity 0.15s; padding: 0 2px;
+}
+.note-pin-btn:hover { opacity: 0.8; }
+.note-pin-btn.pinned { opacity: 1; }
+
+/* ─── SRS RATING ROW (ensure) ────────────────────────────── */
+.srs-rating-row { display: flex; gap: 10px; width: 100%; margin-top: 4px; }
+.srs-rating-btn { flex: 1; border-radius: 8px; border: none; padding: 12px 6px; cursor: pointer; font-size: 13px; transition: all 0.15s; font-family: var(--font-body); }
+.srs-rating-btn.got-it { background: rgba(166,227,161,0.15); color: var(--green); border: 1px solid rgba(166,227,161,0.3); }
+.srs-rating-btn.got-it:hover { background: rgba(166,227,161,0.3); }
+.srs-rating-btn.fuzzy { background: rgba(249,226,175,0.12); color: var(--yellow); border: 1px solid rgba(249,226,175,0.25); }
+.srs-rating-btn.fuzzy:hover { background: rgba(249,226,175,0.25); }
+.srs-rating-btn.forgot { background: rgba(243,139,168,0.1); color: var(--red); border: 1px solid rgba(243,139,168,0.2); }
+.srs-rating-btn.forgot:hover { background: rgba(243,139,168,0.2); }
 </style>
 </head>
 <body>
+
+<!-- Confetti + Level-up -->
+<div class="confetti-overlay" id="confetti-overlay"></div>
+<div class="levelup-overlay" id="levelup-overlay">
+  <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;">RANK UP!</div>
+  <div class="levelup-rank-text" id="levelup-rank">A-RANK</div>
+  <div class="levelup-sub">You have advanced to a new rank! Keep grinding ⚔️</div>
+  <button class="levelup-close-btn" onclick="document.getElementById('levelup-overlay').classList.remove('show')">Continue →</button>
+</div>
+
+<!-- Pull to Refresh Indicator -->
+<div class="pull-indicator" id="pull-indicator">
+  <div class="pull-spinner" id="pull-spinner"></div>
+  <span id="pull-text">Pull to refresh</span>
+</div>
 
 <div class="layout">
 
@@ -916,7 +1241,7 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
     <div class="sid-name" id="sidebar-name">Abhishikth <button class="edit-btn" onclick="editProfile()">✏️</button></div>
     <div class="sid-branch" id="sidebar-branch">AIE · Amrita Chennai</div>
     <div class="xp-bar-wrap">
-      <div class="xp-label"><span>XP</span><span id="xp-display">340 / 1000</span></div>
+      <div class="xp-label"><span>XP <span class="xp-multiplier-badge" id="xp-multiplier-badge"></span></span><span id="xp-display">340 / 1000</span></div>
       <div class="xp-track"><div class="xp-fill" id="xp-fill"></div></div>
     </div>
   </div>
@@ -946,6 +1271,7 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
       <span class="streak-val" id="streak-val">0</span>
       <div><div class="streak-label">day streak</div></div>
     </div>
+    <button class="prestige-btn" id="prestige-btn" onclick="initiatePrestige()">✨ PRESTIGE AVAILABLE</button>
   </div>
 </aside>
 
@@ -970,12 +1296,48 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
         <span id="theme-label">Dark</span>
       </button>
       <span class="clock" id="clock"></span>
+      <div class="offline-dot" id="offline-dot"><div class="offline-dot-circle"></div><span>Offline</span></div>
+      <div class="mission-due-badge" id="mission-due-badge" onclick="gotoPage('tasks',document.querySelector('.nav-item[onclick*=tasks]'))">⚠️ <span id="mission-due-text">1 mission due</span></div>
+      <button class="budget-quick-btn" onclick="toggleBudgetQuickAdd()">+₹</button>
     </div>
+  </div>
+
+  <!-- Budget Quick-Add Popover -->
+  <div class="budget-quick-popover" id="budget-quick-popover">
+    <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;">Quick Add Expense</div>
+    <input class="modal-form-input" id="quick-exp-name" placeholder="Description..." style="padding:7px 10px;font-size:12px;" onkeydown="if(event.key==='Enter')quickLogExpense()">
+    <input class="modal-form-input" id="quick-exp-amount" type="number" placeholder="Amount (₹)" style="padding:7px 10px;font-size:12px;" onkeydown="if(event.key==='Enter')quickLogExpense()">
+    <select class="modal-form-select" id="quick-exp-cat" style="padding:7px 10px;font-size:12px;">
+      <option>Food</option><option>Transport</option><option>Entertainment</option>
+      <option>Study</option><option>Trips</option><option>Outings</option><option>Monthly</option><option>Misc</option>
+    </select>
+    <button class="lc-btn" onclick="quickLogExpense()" style="width:100%;font-size:12px;">Log Expense ₹</button>
+  </div>
+
+  <!-- Streak Risk Banner -->
+  <div class="streak-risk-banner" id="streak-risk-banner">
+    🔥 Streak at risk! No XP logged today. Complete a task before midnight!
+    <button class="srb-dismiss" onclick="dismissStreakBanner()">Dismiss</button>
   </div>
 
   <!-- TODAY -->
   <div id="page-today" class="content active">
+    <!-- XP History Chart -->
+    <div class="xp-chart-card">
+      <div class="xp-chart-header">
+        <div class="section-hdr" style="margin:0;">XP TREND — 30 DAYS</div>
+        <span style="font-family:var(--font-mono);font-size:10px;color:var(--sub);" id="xp-chart-total"></span>
+      </div>
+      <div class="chart-canvas-wrap">
+        <canvas id="xp-chart-canvas"></canvas>
+      </div>
+    </div>
     <div id="heatmap-card" class="heatmap-card"></div>
+    <!-- Achievements -->
+    <div class="achievements-card">
+      <div class="section-hdr" style="margin-bottom:12px;">ACHIEVEMENTS</div>
+      <div class="achievement-grid" id="achievements-grid"></div>
+    </div>
     <div class="stat-row">
       <div class="stat blue"><div class="stat-label">Tasks Done</div><div class="stat-val" id="stat-tasks">0/0</div><div class="stat-sub">today</div></div>
       <div class="stat green"><div class="stat-label">Leetcode</div><div class="stat-val" id="stat-lc">0</div><div class="stat-sub">problems total</div></div>
@@ -1009,6 +1371,8 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
         </div>
         <div class="section-hdr" style="margin-top:14px;">FOCUS ANALYTICS</div>
         <div class="pomo-analytics" id="pomo-analytics-card"></div>
+        <!-- Daily Challenge -->
+        <div class="daily-challenge-card" id="daily-challenge-card"></div>
         <div class="section-hdr" style="margin-top:14px;">DAILY QUESTS</div>
         <div class="quest-card">
           <div class="card-hdr"><div class="card-title">Non-Negotiables <button class="edit-btn" onclick="editQuests()">⚙️</button></div><div class="card-sub" id="quest-count">0/5 done</div></div>
@@ -1059,6 +1423,14 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
 
   <!-- DSA -->
   <div id="page-dsa" class="content">
+    <!-- DSA Analytics Charts -->
+    <div class="dsa-chart-section">
+      <div class="section-hdr" style="margin-bottom:12px;">DSA BREAKDOWN</div>
+      <div class="dsa-chart-grid">
+        <canvas id="dsa-pie-canvas"></canvas>
+        <div class="dsa-legend" id="dsa-pie-legend"><div style="color:var(--muted);font-size:11px;">Log problems to see breakdown</div></div>
+      </div>
+    </div>
     <div id="srs-queue-section"></div>
     <div class="dsa-tracker">
       <div>
@@ -1297,6 +1669,48 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
   </div>
 
 </div>
+</div>
+
+<!-- SRS Full-Screen Flip Card -->
+<div class="srs-fullscreen" id="srs-fullscreen">
+  <button class="srs-close-fab" onclick="closeSRSFlip()">✕ Close</button>
+  <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;">Spaced Repetition Review</div>
+  <div class="srs-flip-container" id="srs-flip-container" onclick="flipSRSCard()">
+    <div class="srs-flip-inner">
+      <div class="srs-flip-front">
+        <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px;" id="srs-flip-name"></div>
+        <div style="font-size:12px;color:var(--sub);" id="srs-flip-meta"></div>
+        <div class="srs-flip-hint">Tap to reveal answer</div>
+      </div>
+      <div class="srs-flip-back">
+        <div style="font-size:13px;color:var(--text);font-weight:500;margin-bottom:8px;">Can you explain the optimal approach?</div>
+        <div style="font-size:12px;color:var(--sub);font-style:italic;" id="srs-flip-notes"></div>
+        <div class="srs-flip-hint">Rate your recall below</div>
+      </div>
+    </div>
+  </div>
+  <div class="srs-rating-actions" id="srs-flip-buttons"></div>
+</div>
+
+<!-- Mobile Quick-Add Bottom Sheet -->
+<div class="quick-add-sheet-backdrop" id="qa-backdrop" onclick="closeQuickAddSheet()"></div>
+<div class="quick-add-sheet" id="quick-add-sheet">
+  <div class="quick-add-handle"></div>
+  <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:2px;color:var(--muted);text-align:center;margin-bottom:16px;text-transform:uppercase;">Quick Add</div>
+  <div class="quick-add-grid">
+    <div class="quick-add-item" onclick="quickSheet_LC()">
+      <span class="qa-icon">🧩</span>
+      <span class="qa-label">Log LC</span>
+    </div>
+    <div class="quick-add-item" onclick="quickSheet_Expense()">
+      <span class="qa-icon">💳</span>
+      <span class="qa-label">Log Expense</span>
+    </div>
+    <div class="quick-add-item" onclick="quickSheet_Gaming()">
+      <span class="qa-icon">🎮</span>
+      <span class="qa-label">Log Gaming</span>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -1607,6 +2021,574 @@ function getLocalISODate(date = new Date()) {
 }
 const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
+// ─── ACHIEVEMENTS ────────────────────────────────────────
+const ACHIEVEMENT_DEFS = [
+  { id:'first_lc', icon:'🎯', name:'First Blood', desc:'Log your first LC problem', check:()=>(S.lc.easy+S.lc.medium+S.lc.hard)>=1 },
+  { id:'lc_10', icon:'🧩', name:'Grinder', desc:'Log 10 LC problems', check:()=>(S.lc.easy+S.lc.medium+S.lc.hard)>=10 },
+  { id:'lc_50', icon:'⚔️', name:'Half Century', desc:'Log 50 LC problems', check:()=>(S.lc.easy+S.lc.medium+S.lc.hard)>=50 },
+  { id:'lc_100', icon:'💯', name:'Century', desc:'100 LC problems', check:()=>(S.lc.easy+S.lc.medium+S.lc.hard)>=100 },
+  { id:'streak_7', icon:'🔥', name:'Week Warrior', desc:'7-day streak', check:()=>S.streak.count>=7 },
+  { id:'streak_30', icon:'🌟', name:'Month Master', desc:'30-day streak', check:()=>S.streak.count>=30 },
+  { id:'first_app', icon:'💼', name:'Job Seeker', desc:'First application added', check:()=>(S.applications||[]).length>=1 },
+  { id:'xp_1000', icon:'⬆️', name:'Level Up', desc:'Earn 1000 total XP', check:()=>S.xp.total>=1000 },
+];
+
+function checkAchievements() {
+  if (!S.achievements) S.achievements = {};
+  let newUnlock = false;
+  ACHIEVEMENT_DEFS.forEach(a => {
+    if (!S.achievements[a.id] && a.check()) {
+      S.achievements[a.id] = Date.now();
+      newUnlock = true;
+      setTimeout(() => showToast(`🏆 Achievement: ${a.name}!`), 400);
+    }
+  });
+  if (newUnlock) { save(); renderAchievements(); }
+}
+
+function renderAchievements() {
+  const el = document.getElementById('achievements-grid');
+  if (!el) return;
+  if (!S.achievements) S.achievements = {};
+  el.innerHTML = ACHIEVEMENT_DEFS.map(a => {
+    const unlocked = !!S.achievements[a.id];
+    return `<div class="achievement-badge ${unlocked?'unlocked':'locked'}" title="${a.desc}">
+      <div class="achievement-icon">${a.icon}</div>
+      <div class="achievement-name">${a.name}</div>
+    </div>`;
+  }).join('');
+}
+
+// ─── DAILY CHALLENGE ─────────────────────────────────────
+const CHALLENGE_POOL = [
+  { text: 'Solve 2 LeetCode problems today', xp: 50 },
+  { text: 'Complete all daily quests', xp: 40 },
+  { text: 'Do a full 25-min Pomodoro study session', xp: 30 },
+  { text: 'Review 3 problems from your SRS queue', xp: 35 },
+  { text: 'Log at least 1 Hard LC problem', xp: 60 },
+  { text: 'Complete all schedule tasks today', xp: 45 },
+  { text: 'Write notes for one subject today', xp: 25 },
+  { text: 'Log an expense in your budget tracker', xp: 15 },
+  { text: 'Log your study session before 9am', xp: 40 },
+  { text: 'Read at least one resource from the roadmap', xp: 30 },
+];
+
+function initDailyChallenge() {
+  const today = getLocalISODate();
+  if (!S.dailyChallenge || S.dailyChallenge.date !== today) {
+    const seed = parseInt(today.replace(/-/g,'')) % CHALLENGE_POOL.length;
+    S.dailyChallenge = { date: today, idx: seed, done: false };
+    save();
+  }
+  renderDailyChallenge();
+}
+
+function renderDailyChallenge() {
+  const el = document.getElementById('daily-challenge-card');
+  if (!el) return;
+  if (!S.dailyChallenge) { initDailyChallenge(); return; }
+  const challenge = CHALLENGE_POOL[S.dailyChallenge.idx];
+  const done = S.dailyChallenge.done;
+  el.innerHTML = `
+    <div class="dc-header">
+      <span class="dc-label">⚡ Daily Challenge</span>
+      <span class="dc-xp">+${challenge.xp} XP</span>
+    </div>
+    <div class="dc-text">${challenge.text}</div>
+    ${done
+      ? '<span class="dc-done-label">✓ Completed! Well done.</span>'
+      : `<button class="dc-complete-btn" onclick="completeDailyChallenge()">Mark Complete</button>`
+    }`;
+}
+
+function completeDailyChallenge() {
+  if (!S.dailyChallenge || S.dailyChallenge.done) return;
+  const challenge = CHALLENGE_POOL[S.dailyChallenge.idx];
+  S.dailyChallenge.done = true;
+  const xp = getXPWithMultiplier(challenge.xp);
+  S.xp.today = (S.xp.today||0) + xp;
+  S.xp.total = (S.xp.total||340) + xp;
+  updateHeatmap(xp);
+  save(); renderDailyChallenge(); updateStats(); renderSidebar(); checkAchievements();
+  showToast(`Boss challenge done! +${xp} XP 🎯`);
+}
+
+// ─── XP MULTIPLIER STREAKS ───────────────────────────────
+function getXPMultiplier() {
+  if ((S.streak.count||0) >= 7) return 2.0;
+  if ((S.streak.count||0) >= 3) return 1.5;
+  return 1.0;
+}
+function getXPWithMultiplier(base) { return Math.round(base * getXPMultiplier()); }
+function renderMultiplierBadge() {
+  const el = document.getElementById('xp-multiplier-badge');
+  if (!el) return;
+  const m = getXPMultiplier();
+  if (m > 1) { el.textContent = `🔥×${m}`; el.style.display = 'inline-block'; }
+  else { el.style.display = 'none'; }
+}
+
+// ─── CONFETTI + LEVEL-UP ─────────────────────────────────
+const RANK_ORDER = ['E-RANK','D-RANK','C-RANK','B-RANK','A-RANK','S-RANK'];
+function getRankForXP(xp) {
+  if(xp>=10000) return 'S-RANK';
+  if(xp>=7600)  return 'A-RANK';
+  if(xp>=5100)  return 'B-RANK';
+  if(xp>=2600)  return 'C-RANK';
+  if(xp>=1100)  return 'D-RANK';
+  return 'E-RANK';
+}
+
+function triggerConfetti(count=70) {
+  const cont = document.getElementById('confetti-overlay');
+  if (!cont) return;
+  cont.innerHTML = '';
+  const cols = ['#cba6f7','#89b4fa','#a6e3a1','#f9e2af','#f38ba8','#fab387','#94e2d5'];
+  for (let i = 0; i < count; i++) {
+    const d = document.createElement('div');
+    d.className = 'confetti-piece';
+    const c = cols[Math.floor(Math.random()*cols.length)];
+    d.style.cssText = `left:${Math.random()*100}%;background:${c};border-radius:${Math.random()>0.5?'50%':'2px'};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;animation-duration:${2+Math.random()*2.5}s;animation-delay:${Math.random()*0.6}s;`;
+    cont.appendChild(d);
+  }
+  setTimeout(() => { if (cont) cont.innerHTML=''; }, 4000);
+}
+
+let _prevRank = null;
+function checkRankUp(newXP) {
+  const newRank = getRankForXP(newXP);
+  if (_prevRank !== null && _prevRank !== newRank && RANK_ORDER.indexOf(newRank) > RANK_ORDER.indexOf(_prevRank)) {
+    triggerConfetti();
+    const overlay = document.getElementById('levelup-overlay');
+    const el = document.getElementById('levelup-rank');
+    if (overlay && el) { el.textContent = newRank; overlay.classList.add('show'); }
+  }
+  _prevRank = newRank;
+}
+
+// ─── RANK PRESTIGE SYSTEM ────────────────────────────────
+function checkPrestigeAvailable() {
+  const btn = document.getElementById('prestige-btn');
+  if (!btn) return;
+  btn.style.display = (S.xp.total||0) >= 10000 ? 'block' : 'none';
+}
+
+function initiatePrestige() {
+  if ((S.xp.total||0) < 10000) { showToast('Reach S-RANK (10,000 XP) to prestige!'); return; }
+  if (!confirm('⚠️ Prestige resets your XP to 0 but grants a permanent prestige badge. History, logs & progress are preserved. Continue?')) return;
+  S.prestige = (S.prestige||0) + 1;
+  S.xp.total = 0; S.xp.today = 0;
+  save(); renderSidebar(); updateStats(); triggerConfetti(90);
+  showToast(`✨ Prestige ${S.prestige} achieved! You legend.`);
+}
+
+// ─── WEEKLY REPORT CARD ──────────────────────────────────
+function checkWeeklyReport() {
+  if (new Date().getDay() !== 0) return;
+  const todayStr = getLocalISODate();
+  if (S.lastWeeklyReport === todayStr) return;
+  S.lastWeeklyReport = todayStr; save();
+  setTimeout(showWeeklyReport, 2500);
+}
+
+function showWeeklyReport() {
+  const today = new Date();
+  const dow = today.getDay();
+  const weekStart = new Date(today);
+  weekStart.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1));
+  weekStart.setHours(0,0,0,0);
+  const heatmap = S.heatmap || {};
+  let weekXP = 0, weekStudyMins = 0, weekGamingMins = 0;
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(weekStart); d.setDate(weekStart.getDate()+i);
+    const iso = getLocalISODate(d);
+    weekXP += heatmap[iso]||0;
+    weekStudyMins += ((S.pomoLog||{})[iso]||{}).studyMins||0;
+    weekGamingMins += ((S.pomoLog||{})[iso]||{}).gamingMins||0;
+  }
+  const lcThisWeek = (S.lc.log||[]).filter(p => {
+    try { const d = new Date(p.date.split('/').reverse().join('-')); return d>=weekStart && d<=today; } catch(e) { return false; }
+  }).length;
+  const verdict = weekXP>=200?'🔥 Excellent week! You crushed it.':weekXP>=80?'📚 Solid week. Keep pushing.':'💪 Light week — step it up next one!';
+  const html = `
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="font-size:40px;margin-bottom:10px;">📊</div>
+      <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;">Week of ${weekStart.toLocaleDateString('en-IN',{month:'short',day:'numeric'})}</div>
+    </div>
+    <div class="report-stat-grid">
+      <div class="report-stat-box"><div class="report-stat-num" style="color:var(--mauve)">${weekXP}</div><div class="report-stat-lbl">XP Earned</div></div>
+      <div class="report-stat-box"><div class="report-stat-num" style="color:var(--green)">${lcThisWeek}</div><div class="report-stat-lbl">LC Problems</div></div>
+      <div class="report-stat-box"><div class="report-stat-num" style="color:var(--blue)">${(weekStudyMins/60).toFixed(1)}h</div><div class="report-stat-lbl">Focus Time</div></div>
+      <div class="report-stat-box"><div class="report-stat-num" style="color:${weekGamingMins>240?'var(--red)':'var(--yellow)'}">${(weekGamingMins/60).toFixed(1)}h</div><div class="report-stat-lbl">Gaming${weekGamingMins>240?' ⚠️':''}</div></div>
+    </div>
+    <div style="text-align:center;padding:14px;background:var(--bg2);border-radius:10px;font-size:13px;color:var(--sub);">${verdict}</div>`;
+  openModal('📊 Weekly Report Card', html, ()=>true);
+  setTimeout(()=>{ const b=document.getElementById('modal-save-btn'); if(b){b.textContent='Let\'s Go 🚀';} }, 30);
+}
+
+// ─── XP HISTORY CHART (Canvas) ───────────────────────────
+function renderXPChart() {
+  const canvas = document.getElementById('xp-chart-canvas');
+  if (!canvas) return;
+  const heatmap = S.heatmap||{};
+  const today = new Date();
+  const data = [];
+  for (let i=29;i>=0;i--) {
+    const d=new Date(today); d.setDate(today.getDate()-i);
+    data.push(heatmap[getLocalISODate(d)]||0);
+  }
+  const totalWeek = data.slice(-7).reduce((a,b)=>a+b,0);
+  const el = document.getElementById('xp-chart-total');
+  if (el) el.textContent = `${totalWeek} XP this week`;
+  const dpr = window.devicePixelRatio||1;
+  const W = canvas.offsetWidth||400, H = canvas.offsetHeight||80;
+  canvas.width = W*dpr; canvas.height = H*dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,W,H);
+  const max = Math.max(...data,1);
+  const pad = {t:8,b:18,l:4,r:4};
+  const cW=W-pad.l-pad.r, cH=H-pad.t-pad.b;
+  const step=cW/(data.length-1);
+  // Grid lines
+  ctx.strokeStyle='rgba(50,53,84,0.4)'; ctx.lineWidth=1;
+  [0.33,0.66,1].forEach(f=>{
+    const y=pad.t+cH*(1-f);
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(W-pad.r,y); ctx.stroke();
+  });
+  // Area fill
+  const grad=ctx.createLinearGradient(0,pad.t,0,H);
+  grad.addColorStop(0,'rgba(203,166,247,0.28)');
+  grad.addColorStop(1,'rgba(203,166,247,0.0)');
+  ctx.beginPath();
+  ctx.moveTo(pad.l, pad.t+cH);
+  data.forEach((v,i)=>{ const x=pad.l+i*step; const y=pad.t+cH*(1-v/max); if(i===0)ctx.lineTo(x,y); else ctx.lineTo(x,y); });
+  ctx.lineTo(pad.l+(data.length-1)*step, pad.t+cH);
+  ctx.closePath(); ctx.fillStyle=grad; ctx.fill();
+  // Line
+  ctx.beginPath(); ctx.strokeStyle='#cba6f7'; ctx.lineWidth=2; ctx.lineJoin='round';
+  data.forEach((v,i)=>{ const x=pad.l+i*step; const y=pad.t+cH*(1-v/max); if(i===0)ctx.moveTo(x,y); else ctx.lineTo(x,y); });
+  ctx.stroke();
+  // Today dot
+  const lx=pad.l+(data.length-1)*step, ly=pad.t+cH*(1-data[data.length-1]/max);
+  ctx.beginPath(); ctx.arc(lx,ly,4,0,Math.PI*2);
+  ctx.fillStyle='#cba6f7'; ctx.strokeStyle='var(--bg1)'; ctx.lineWidth=2;
+  ctx.fill(); ctx.stroke();
+  // Labels
+  ctx.fillStyle='rgba(147,153,184,0.75)';
+  ctx.font=`${8}px JetBrains Mono, monospace`; ctx.textAlign='center';
+  ['30d','15d','Today'].forEach((l,i)=>{ ctx.fillText(l, pad.l+(i*(data.length-1)/2)*step, H-4); });
+}
+
+// ─── DSA PIE CHART (Canvas) ──────────────────────────────
+function renderDSAPie() {
+  const canvas = document.getElementById('dsa-pie-canvas');
+  const legendEl = document.getElementById('dsa-pie-legend');
+  if (!canvas||!legendEl) return;
+  const diffs = { easy:S.lc.easy||0, medium:S.lc.medium||0, hard:S.lc.hard||0 };
+  const total = diffs.easy+diffs.medium+diffs.hard;
+  if (total===0) { legendEl.innerHTML='<div style="color:var(--muted);font-size:11px;">Log problems to see breakdown</div>'; return; }
+  const slices = [
+    {l:'Easy',v:diffs.easy,c:'#a6e3a1'},{l:'Medium',v:diffs.medium,c:'#f9e2af'},{l:'Hard',v:diffs.hard,c:'#f38ba8'}
+  ].filter(s=>s.v>0);
+  const size=140; canvas.width=size; canvas.height=size;
+  const ctx=canvas.getContext('2d');
+  const cx=size/2,cy=size/2,r=58,innerR=30;
+  let ang=-Math.PI/2;
+  slices.forEach(s=>{ const a=(s.v/total)*Math.PI*2; ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,ang,ang+a); ctx.closePath(); ctx.fillStyle=s.c; ctx.fill(); ang+=a; });
+  // Donut hole
+  const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--bg1').trim()||'#181a24';
+  ctx.beginPath(); ctx.arc(cx,cy,innerR,0,Math.PI*2); ctx.fillStyle=bgColor; ctx.fill();
+  ctx.fillStyle='#dce0f5'; ctx.textAlign='center';
+  ctx.font='bold 14px JetBrains Mono,monospace'; ctx.fillText(total,cx,cy-3);
+  ctx.font='9px JetBrains Mono,monospace'; ctx.fillStyle='#9399b8'; ctx.fillText('total',cx,cy+10);
+  legendEl.innerHTML = slices.map(s=>`
+    <div class="dsa-legend-item">
+      <div class="dsa-legend-dot" style="background:${s.c}"></div>
+      <span style="color:var(--sub)">${s.l}</span>
+      <span class="dsa-legend-pct">${s.v} (${Math.round(s.v/total*100)}%)</span>
+    </div>`).join('');
+}
+
+// ─── PINNABLE NOTES ──────────────────────────────────────
+function togglePinNote(key, btn) {
+  S.pinnedNote = (S.pinnedNote===key) ? null : key;
+  save(); renderNotesSidebar();
+}
+
+// ─── BUDGET QUICK-ADD ────────────────────────────────────
+function toggleBudgetQuickAdd() {
+  const pop = document.getElementById('budget-quick-popover');
+  if (!pop) return;
+  pop.classList.toggle('show');
+  if (pop.classList.contains('show')) {
+    document.getElementById('quick-exp-name').focus();
+    setTimeout(()=>{ document.addEventListener('click', _closeBudgetOnOutside, {once:true,capture:true}); }, 0);
+  }
+}
+function _closeBudgetOnOutside(e) {
+  const pop = document.getElementById('budget-quick-popover');
+  const btn = document.querySelector('.budget-quick-btn');
+  if (pop && !pop.contains(e.target) && btn && !btn.contains(e.target)) pop.classList.remove('show');
+}
+function quickLogExpense() {
+  const name = document.getElementById('quick-exp-name').value.trim();
+  const amount = parseFloat(document.getElementById('quick-exp-amount').value);
+  const cat = document.getElementById('quick-exp-cat').value;
+  if (!name||!amount||amount<=0) { showToast('Fill description and amount!'); return; }
+  if (!S.budget) S.budget={monthly:{},log:[]};
+  S.budget.log.push({description:name,amount,category:cat,date:getLocalISODate()});
+  save();
+  document.getElementById('quick-exp-name').value='';
+  document.getElementById('quick-exp-amount').value='';
+  document.getElementById('budget-quick-popover').classList.remove('show');
+  showToast(`₹${amount} logged for ${cat}! 💳`);
+}
+
+// ─── POMODORO SESSION NOTES ──────────────────────────────
+function promptPomoNote(nextMode) {
+  const html = `
+    <div style="text-align:center;margin-bottom:16px;">
+      <div style="font-size:36px;margin-bottom:8px;">⏱️</div>
+      <div style="font-family:var(--font-mono);font-size:11px;color:var(--green);">SESSION COMPLETE! +15 XP 🎉</div>
+    </div>
+    <div class="modal-form-group">
+      <label class="modal-form-label">What did you accomplish this session?</label>
+      <input type="text" class="modal-form-input" id="pomo-note-input" placeholder="e.g. Finished OS scheduling chapter..." autofocus>
+    </div>`;
+  openModal('Session Complete', html, ()=>{
+    const note = (document.getElementById('pomo-note-input')||{}).value?.trim();
+    if (note) {
+      if (!S.pomoNotes) S.pomoNotes=[];
+      S.pomoNotes.push({note,date:getLocalISODate(),time:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})});
+      save();
+    }
+    setPomoMode(nextMode);
+    return true;
+  });
+  setTimeout(()=>{ const b=document.getElementById('modal-save-btn'); if(b) b.textContent='Continue →'; },30);
+}
+
+// ─── SRS FLIP CARD MODE ──────────────────────────────────
+function openSRSFlip(id) {
+  const p = (S.lc.log||[]).find(x=>x.id===id);
+  if (!p) { openSRSModal(id); return; }
+  const data=(S.srs||{})[p.name]||{interval:3,easeFactor:2.5};
+  const pI=data.interval||3; const ef=data.easeFactor||2.5;
+  const efGot=Math.min(5.0,ef+0.15), niGot=Math.max(4,Math.round(pI*efGot));
+  const efFuzzy=Math.max(1.3,ef-0.15), niFuzzy=Math.max(3,Math.round(pI*1.2));
+  const efForgot=Math.max(1.3,ef-0.5), niForgot=3;
+  document.getElementById('srs-flip-name').textContent=p.name;
+  document.getElementById('srs-flip-meta').textContent=`${p.topic||'General'} · ${p.diff} · ${p.date}`;
+  document.getElementById('srs-flip-notes').textContent=p.notes?`💡 ${p.notes}`:'No notes saved.';
+  document.getElementById('srs-flip-buttons').innerHTML=`
+    <button class="srs-rating-btn got-it" onclick="submitSRSRating('${id}',2,${niGot},${efGot});closeSRSFlip();">👍 Got it!<br><span style="font-size:9px;opacity:0.7;">In ${niGot}d</span></button>
+    <button class="srs-rating-btn fuzzy" onclick="submitSRSRating('${id}',1,${niFuzzy},${efFuzzy});closeSRSFlip();">🤔 Fuzzy<br><span style="font-size:9px;opacity:0.7;">In ${niFuzzy}d</span></button>
+    <button class="srs-rating-btn forgot" onclick="submitSRSRating('${id}',0,${niForgot},${efForgot});closeSRSFlip();">😬 Forgot<br><span style="font-size:9px;opacity:0.7;">In ${niForgot}d</span></button>`;
+  const cont=document.getElementById('srs-flip-container'); if(cont) cont.classList.remove('flipped');
+  document.getElementById('srs-fullscreen').classList.add('show');
+}
+function flipSRSCard() { const c=document.getElementById('srs-flip-container'); if(c) c.classList.toggle('flipped'); }
+function closeSRSFlip() { document.getElementById('srs-fullscreen').classList.remove('show'); }
+
+// ─── OFFLINE INDICATOR ───────────────────────────────────
+function initOfflineIndicator() {
+  const dot = document.getElementById('offline-dot');
+  if (!dot) return;
+  const update = () => dot.classList.toggle('show',!navigator.onLine);
+  window.addEventListener('online',update); window.addEventListener('offline',update); update();
+}
+
+// ─── SYNC TIMESTAMP ──────────────────────────────────────
+function getSyncTimestampText() {
+  if (!S.lastUpdated) return 'Never synced';
+  const diff = Date.now()-S.lastUpdated;
+  const mins = Math.floor(diff/60000);
+  if (mins<1) return 'Last saved: just now';
+  if (mins<60) return `Last saved: ${mins}m ago`;
+  return `Last saved: ${Math.floor(mins/60)}h ago`;
+}
+
+// ─── STREAK RISK ALERT ────────────────────────────────────
+function checkStreakRisk() {
+  const banner=document.getElementById('streak-risk-banner');
+  if (!banner) return;
+  const hour=new Date().getHours();
+  const dismissed=localStorage.getItem('srDismissed')===new Date().toDateString();
+  if (hour>=20 && (S.xp.today||0)===0 && !dismissed) banner.classList.add('show');
+  else if ((S.xp.today||0)>0||dismissed) banner.classList.remove('show');
+}
+function dismissStreakBanner() {
+  localStorage.setItem('srDismissed',new Date().toDateString());
+  const b=document.getElementById('streak-risk-banner'); if(b) b.classList.remove('show');
+}
+
+// ─── MISSION DUE-DATE ALERTS ─────────────────────────────
+function checkMissionDueDates() {
+  const badge=document.getElementById('mission-due-badge');
+  const textEl=document.getElementById('mission-due-text');
+  if (!badge||!textEl) return;
+  const missions=(S.missions||{}).longTerm||[];
+  const today=new Date(); today.setHours(0,0,0,0);
+  let count=0;
+  missions.forEach(m=>{
+    if (m.done||!m.deadline) return;
+    const d=new Date(m.deadline);
+    if (!isNaN(d)) { const diff=(d-today)/86400000; if(diff>=0&&diff<=7) count++; }
+  });
+  if (count>0) { textEl.textContent=`${count} mission${count>1?'s':''} due soon`; badge.classList.add('show'); }
+  else badge.classList.remove('show');
+}
+
+// ─── DAILY XP NOTIFICATION ───────────────────────────────
+function initNotifications() {
+  if (!('Notification' in window)) return;
+  if (Notification.permission==='default') {
+    setTimeout(()=>Notification.requestPermission(), 6000);
+  }
+  scheduleXPNotification();
+}
+function scheduleXPNotification() {
+  const now=new Date();
+  const target=new Date(); target.setHours(21,0,0,0);
+  if (target<=now) target.setDate(target.getDate()+1);
+  setTimeout(()=>{
+    if ((S.xp.today||0)===0 && Notification.permission==='granted') {
+      new Notification('⚡ System: Abhishikth', {body:"No XP logged today! Don't break your streak — grind time! 🔥"});
+    }
+    scheduleXPNotification();
+  }, target-now);
+}
+
+// ─── TASK CARRY-OVER WARNING ─────────────────────────────
+function showCarryOverWarning() {
+  const yesterday=new Date(); yesterday.setDate(yesterday.getDate()-1);
+  const yday=DAYS[yesterday.getDay()];
+  const sched=S.schedule[yday]||[];
+  const undone=sched.filter(b=>b.xp>=15&&!S.tasks[b.id]);
+  if (undone.length>0) {
+    const names=undone.slice(0,2).map(b=>b.n).join(', ');
+    const extra=undone.length>2?` +${undone.length-2} more`:'';
+    setTimeout(()=>showToast(`⚠️ Yesterday: ${names}${extra} incomplete`), 1200);
+  }
+}
+
+// ─── PULL TO REFRESH ─────────────────────────────────────
+function initPullToRefresh() {
+  let startY=0, pulling=false;
+  const ind=document.getElementById('pull-indicator');
+  const sp=document.getElementById('pull-spinner');
+  document.addEventListener('touchstart',e=>{ if(window.scrollY===0) startY=e.touches[0].clientY; },{passive:true});
+  document.addEventListener('touchmove',e=>{
+    if (!startY||!ind) return;
+    const dy=e.touches[0].clientY-startY;
+    if (dy>20&&window.scrollY===0) { pulling=true; if(dy>65) { ind.classList.add('visible'); document.getElementById('pull-text').textContent='Release to refresh'; } }
+  },{passive:true});
+  document.addEventListener('touchend',()=>{
+    if (pulling&&ind&&ind.classList.contains('visible')) {
+      if(sp) sp.classList.add('spinning');
+      document.getElementById('pull-text').textContent='Refreshing...';
+      setTimeout(()=>{ renderToday();updateStats();renderHeatmap();renderXPChart();renderDSAPie();
+        ind.classList.remove('visible'); if(sp) sp.classList.remove('spinning');
+        document.getElementById('pull-text').textContent='Pull to refresh';
+        startY=0;pulling=false; showToast('Refreshed! 🔄'); },800);
+    } else { startY=0; pulling=false; }
+  },{passive:true});
+}
+
+// ─── SWIPE NAVIGATION ────────────────────────────────────
+function initSwipeNavigation() {
+  let tx=0,ty=0;
+  document.addEventListener('touchstart',e=>{ tx=e.touches[0].clientX; ty=e.touches[0].clientY; },{passive:true});
+  document.addEventListener('touchend',e=>{
+    if (window.innerWidth>900) return;
+    const dx=e.changedTouches[0].clientX-tx;
+    const dy=e.changedTouches[0].clientY-ty;
+    if (Math.abs(dx)<80||Math.abs(dy)>Math.abs(dx)) return;
+    const tabs=Array.from(document.querySelectorAll('.mobile-tab-item'));
+    const navTabs=tabs.slice(0,4);
+    const active=navTabs.find(t=>t.classList.contains('active'));
+    const idx=navTabs.indexOf(active);
+    if (idx===-1) return;
+    const next=dx<0?Math.min(idx+1,navTabs.length-1):Math.max(idx-1,0);
+    if (next!==idx) navTabs[next].click();
+  },{passive:true});
+}
+
+// ─── SCHEDULE SWIPE TO COMPLETE ──────────────────────────
+function initScheduleSwipe() {
+  let sw=null;
+  document.addEventListener('touchstart',e=>{
+    const b=e.target.closest('.time-block');
+    if(b&&document.getElementById('page-today')?.contains(b)) { sw={x:e.touches[0].clientX,b}; }
+  },{passive:true});
+  document.addEventListener('touchmove',e=>{
+    if (!sw) return;
+    const dx=sw.x-e.touches[0].clientX;
+    if (dx>10) {
+      const pct=Math.min(dx/80,1);
+      const fb=sw.b.querySelector('.swipe-feedback');
+      if(fb){ fb.style.width=(pct*60)+'px'; fb.textContent=pct>=1?'✓':''; }
+    }
+  },{passive:true});
+  document.addEventListener('touchend',e=>{
+    if (!sw) return;
+    const dx=sw.x-e.changedTouches[0].clientX;
+    const fb=sw.b.querySelector('.swipe-feedback');
+    if(fb) fb.style.width='0';
+    if (dx>80) { const chk=sw.b.querySelector('.check-btn'); if(chk) chk.click(); }
+    sw=null;
+  },{passive:true});
+}
+
+// ─── BOTTOM SHEET QUICK ADD ──────────────────────────────
+let _qaLongPress=null;
+function initBottomSheetLongPress() {
+  const moreTab=Array.from(document.querySelectorAll('.mobile-tab-item')).find(el=>el.querySelector('span:last-child')?.textContent?.trim()==='More');
+  if (!moreTab) return;
+  moreTab.addEventListener('touchstart',()=>{ _qaLongPress=setTimeout(openQuickAddSheet,500); },{passive:true});
+  moreTab.addEventListener('touchend',()=>{ clearTimeout(_qaLongPress); _qaLongPress=null; });
+  moreTab.addEventListener('touchmove',()=>{ clearTimeout(_qaLongPress); _qaLongPress=null; });
+}
+function openQuickAddSheet() {
+  document.getElementById('quick-add-sheet')?.classList.add('show');
+  document.getElementById('qa-backdrop')?.classList.add('show');
+}
+function closeQuickAddSheet() {
+  document.getElementById('quick-add-sheet')?.classList.remove('show');
+  document.getElementById('qa-backdrop')?.classList.remove('show');
+}
+function quickSheet_LC() {
+  closeQuickAddSheet();
+  setTimeout(()=>{
+    const name=prompt('Problem name:'); if(!name) return;
+    const diff=prompt('Difficulty (easy/medium/hard):','medium')||'medium';
+    const validDiff=['easy','medium','hard'].includes(diff.toLowerCase())?diff.toLowerCase():'medium';
+    S.lc[validDiff]=(S.lc[validDiff]||0)+1;
+    const id='lc_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
+    S.lc.log.unshift({id,name,diff:validDiff,date:new Date().toLocaleDateString('en-IN'),topic:'General'});
+    S.quests['q-lc']=true; updateHeatmap(10);
+    save(); updateStats(); renderDSALog(); renderDSAPie(); checkAchievements();
+    showToast(`Logged: ${name} ✓`);
+  },300);
+}
+function quickSheet_Expense() {
+  closeQuickAddSheet();
+  const pop=document.getElementById('budget-quick-popover');
+  if(pop){ pop.classList.add('show'); setTimeout(()=>document.getElementById('quick-exp-name')?.focus(),100); }
+}
+function quickSheet_Gaming() {
+  closeQuickAddSheet();
+  setTimeout(()=>{
+    const mins=parseInt(prompt('How many minutes did you game?'));
+    if (!mins||mins<=0) return;
+    const iso=getLocalISODate(); if(!S.pomoLog) S.pomoLog={};
+    if(!S.pomoLog[iso]) S.pomoLog[iso]={studyMins:0,gamingMins:0};
+    S.pomoLog[iso].gamingMins=(S.pomoLog[iso].gamingMins||0)+mins;
+    save(); showToast(`🎮 ${mins}min gaming logged!`);
+  },300);
+}
+
 // ─── INIT ────────────────────────────────────────────────
 function init(){
   precomputeCDs();
@@ -1627,7 +2609,27 @@ function init(){
   renderNotesSidebar();
   renderKanban();
   updateAppBadge();
-  
+  // ─── New feature initializations ───
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js')
+      .then(() => console.log('Service Worker Registered'))
+      .catch(err => console.error('Service Worker registration failed:', err));
+  }
+  _prevRank = getRankForXP(S.xp.total||340);
+  initDailyChallenge();
+  renderAchievements();
+  renderXPChart();
+  renderDSAPie();
+  initNotifications();
+  initOfflineIndicator();
+  initPullToRefresh();
+  initSwipeNavigation();
+  initScheduleSwipe();
+  initBottomSheetLongPress();
+  checkMissionDueDates();
+  checkStreakRisk();
+  checkWeeklyReport();
+
   const cfg = getSyncConfig();
   if (cfg.auto && cfg.token && cfg.gistId) {
     pullFromCloud();
@@ -1644,7 +2646,9 @@ function updateClock(){
     updateDate();
     renderToday();
     updateStats();
+    initDailyChallenge();
   }
+  checkStreakRisk();
 }
 
 function updateDate(){
@@ -1670,6 +2674,7 @@ function checkStreak(){
 function checkDailyReset(){
   const today = new Date().toDateString();
   if(S.streak.last && S.streak.last !== today){
+    showCarryOverWarning();
     S.tasks = {};
     S.quests = {};
     S.xp.today = 0;
@@ -1699,6 +2704,8 @@ function updateStats(){
   if (mXpFill) mXpFill.style.width = xpPct+'%';
   const mXpDisp = document.getElementById('xp-display-mobile');
   if (mXpDisp) mXpDisp.textContent = xpTotal+' / '+xpNext;
+  checkStreakRisk();
+  checkMissionDueDates();
 }
 
 function renderSidebar(){
@@ -1710,11 +2717,16 @@ function renderSidebar(){
   else if(xp>=5100) rank='B-RANK';
   else if(xp>=2600) rank='C-RANK';
   else if(xp>=1100) rank='D-RANK';
-  document.getElementById('rank-display').textContent = rank + ' · ' + profile.sem;
+  checkRankUp(xp);
+  const prestigeStr = S.prestige ? ` <span class="prestige-badge">P${S.prestige}</span>` : '';
+  document.getElementById('rank-display').innerHTML = rank + ' · ' + profile.sem + prestigeStr;
   const mRankDisp = document.getElementById('rank-display-mobile');
-  if (mRankDisp) mRankDisp.textContent = rank;
+  if (mRankDisp) mRankDisp.textContent = rank + (S.prestige ? ` P${S.prestige}` : '');
   document.getElementById('sidebar-name').innerHTML = profile.name + ' <button class="edit-btn" onclick="editProfile()">✏️</button>';
   document.getElementById('sidebar-branch').textContent = profile.branch;
+  renderMultiplierBadge();
+  checkPrestigeAvailable();
+  checkAchievements();
 }
 
 function editProfile() {
@@ -2955,16 +3967,18 @@ function renderNotesSidebar() {
   }
   
   if (!tabs.find(t => t.key === currentNote)) {
-    currentNote = tabs[0].key;
+    // Respect pinned note
+    currentNote = (S.pinnedNote && tabs.find(t => t.key === S.pinnedNote)) ? S.pinnedNote : tabs[0].key;
   }
-  
   sidebarList.innerHTML = tabs.map(t => {
     const isActive = t.key === currentNote;
     const dotColor = `var(--${t.color || 'blue'})`;
+    const isPinned = S.pinnedNote === t.key;
     return `
       <div class="note-tab ${isActive ? 'active' : ''}" onclick="swNote('${t.key}', this)">
         <div class="note-dot" style="background:${dotColor};"></div>
         ${t.title}
+        <button class="note-pin-btn ${isPinned?'pinned':''}" onclick="event.stopPropagation();togglePinNote('${t.key}',this)" title="Pin notebook">${isPinned?'📌':'📌'}</button>
       </div>
     `;
   }).join('');
@@ -3338,6 +4352,7 @@ function openSettings() {
           </label>
         </div>
         <div id="sync-status-msg" style="font-family:var(--font-mono); font-size:10px; color:var(--muted); margin-bottom:8px;">Status: Idle</div>
+        <div id="sync-timestamp-display" style="font-family:var(--font-mono); font-size:10px; color:var(--sub); margin-bottom:8px;">${getSyncTimestampText()}</div>
         <div style="display:flex; gap:8px;">
           <button class="btn-secondary" onclick="pushToCloud()" style="flex:1; font-size:11px; padding:6px; background:var(--mauve); border-color:var(--mauve); color:var(--bg);">Push to Cloud</button>
           <button class="btn-secondary" onclick="pullFromCloud()" style="flex:1; font-size:11px; padding:6px; background:var(--blue); border-color:var(--blue); color:var(--bg);">Pull from Cloud</button>
@@ -3587,7 +4602,7 @@ function pomoTick() {
         console.warn("Chime failed", e);
       }
       
-      setPomoMode('break');
+      promptPomoNote('break');
     } else {
       showToast('Break finished! Ready to lock in? 💪');
       setPomoMode('work');
