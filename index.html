@@ -1387,6 +1387,76 @@ html.light .glass-card:hover {
   border-color: rgba(137, 180, 250, 0.4) !important;
   box-shadow: 0 8px 32px rgba(137, 180, 250, 0.12), 0 8px 32px rgba(188, 192, 204, 0.25) !important;
 }
+
+/* ─── FLOATING SCRATCHPAD DRAWER ────────────────────────── */
+.floating-scratchpad-btn {
+  position: fixed; bottom: 80px; left: 16px; width: 44px; height: 44px;
+  background: var(--bg2); border: 1px solid var(--line2); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  z-index: 990; font-size: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  transition: all 0.2s ease;
+}
+.floating-scratchpad-btn:hover { border-color: var(--blue); transform: scale(1.08); }
+.scratchpad-drawer {
+  position: fixed; top: 80px; left: -360px; width: 340px; bottom: 80px;
+  background: var(--bg1); border: 1px solid var(--line); border-radius: 0 16px 16px 0;
+  box-shadow: 8px 0 32px rgba(0,0,0,0.5); z-index: 989;
+  display: flex; flex-direction: column; padding: 18px;
+  transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.scratchpad-drawer.show { left: 0; }
+.scratchpad-hdr {
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: var(--font-mono); font-size: 10px; color: var(--muted);
+  text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px;
+}
+.scratchpad-textarea {
+  flex: 1; background: var(--bg2); border: 1px solid var(--line2);
+  border-radius: 8px; color: var(--text); padding: 12px; font-family: var(--font-mono);
+  font-size: 11px; resize: none; outline: none; line-height: 1.5;
+}
+.scratchpad-textarea:focus { border-color: var(--blue); }
+
+/* ─── BOTTOM TICKER BAR ─────────────────────────────────── */
+.ticker-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; height: 26px;
+  background: var(--bg1); border-top: 1px solid var(--line);
+  display: flex; align-items: center; padding: 0 20px; z-index: 995;
+  font-family: var(--font-mono); font-size: 9px; color: var(--sub);
+  overflow: hidden;
+}
+@media (max-width: 900px) {
+  .ticker-bar { display: none; }
+  .floating-scratchpad-btn { bottom: calc(85px + env(safe-area-inset-bottom)); left: 16px; }
+  .scratchpad-drawer { bottom: calc(85px + env(safe-area-inset-bottom)); }
+}
+.ticker-wrapper { display: flex; width: 100%; align-items: center; justify-content: space-between; }
+.ticker-title { color: var(--blue); font-weight: 700; margin-right: 12px; flex-shrink: 0; }
+.ticker-content {
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  animation: tickerFade 12s linear infinite;
+}
+@keyframes tickerFade {
+  0%, 100% { opacity: 0; transform: translateY(4px); }
+  5%, 95% { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── FOCUS SOUND CONTROLLER ────────────────────────────── */
+.focus-sound-row {
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(137,180,250,0.03); border: 1px solid var(--line2);
+  border-radius: 8px; padding: 6px 12px; margin-top: 10px; gap: 8px;
+}
+.fs-label { font-family: var(--font-mono); font-size: 9px; color: var(--muted); text-transform: uppercase; }
+.fs-btn {
+  background: none; border: 1px solid var(--line2); border-radius: 4px;
+  color: var(--sub); font-size: 10px; cursor: pointer; padding: 3px 8px;
+  font-family: var(--font-mono); transition: all 0.15s;
+}
+.fs-btn.active { background: rgba(137,180,250,0.12); border-color: var(--blue); color: var(--blue); }
+.fs-volume {
+  width: 50px; height: 3px; accent-color: var(--blue); outline: none; cursor: pointer;
+}
 </style>
 </head>
 <body>
@@ -1569,6 +1639,14 @@ html.light .glass-card:hover {
           </div>
           <div class="pomo-progress-wrap">
             <div class="pomo-progress-fill" id="pomo-progress-fill" style="width: 100%;"></div>
+          </div>
+          <div class="focus-sound-row">
+            <span class="fs-label">focus sound</span>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <button class="fs-btn" id="fs-sound-rain" onclick="toggleFocusSound('rain')">🌧️ Rain</button>
+              <button class="fs-btn" id="fs-sound-brown" onclick="toggleFocusSound('brown')">🟫 Noise</button>
+              <input type="range" class="fs-volume" id="fs-volume-slider" min="0" max="1" step="0.1" value="0.5" oninput="changeFocusSoundVolume(this.value)" title="Volume">
+            </div>
           </div>
         </div>
         <div class="section-hdr" style="margin-top:14px;">FOCUS ANALYTICS</div>
@@ -1978,6 +2056,27 @@ html.light .glass-card:hover {
 <!-- Floating Settings Button -->
 <button class="settings-fab" onclick="openSettings()" title="Settings & Portability">⚙️</button>
 
+<!-- Floating Scratchpad -->
+<button class="floating-scratchpad-btn" onclick="toggleScratchpad()" title="Quick Scratchpad (Ctrl+Shift+N)">📝</button>
+<div class="scratchpad-drawer" id="scratchpad-drawer">
+  <div class="scratchpad-hdr">
+    <span>Quick Scratchpad</span>
+    <button class="edit-btn" onclick="toggleScratchpad()">✕</button>
+  </div>
+  <textarea class="scratchpad-textarea" id="scratchpad-text" placeholder="Paste snippets, links, code, or ideas here... auto-saves." oninput="saveScratchpad(this.value)"></textarea>
+</div>
+
+<!-- Bottom News Ticker -->
+<div class="ticker-bar">
+  <div class="ticker-wrapper">
+    <div style="display:flex;align-items:center;">
+      <span class="ticker-title">HUD News & Quotes</span>
+      <span class="ticker-content" id="ticker-text">Loading latest hacker news...</span>
+    </div>
+    <span style="font-size:8px;color:var(--muted)">v2.5 // SECURE</span>
+  </div>
+</div>
+
 <script>
 // ─── STATE & DEFAULTS ─────────────────────────────────────
 // START_DEFAULTS
@@ -2194,6 +2293,10 @@ if(!S.pomoLog) S.pomoLog = {};
 if(!S.pomoWorkMinutes) S.pomoWorkMinutes = 25;
 if(!S.pomoBreakMinutes) S.pomoBreakMinutes = 5;
 if(!S.pomoSound) S.pomoSound = 'sine';
+if(!S.githubUsername) S.githubUsername = '';
+if(!S.githubCommits) S.githubCommits = {};
+if(!S.lastGithubSync) S.lastGithubSync = 0;
+if(S.scratchpadText === undefined) S.scratchpadText = '';
 if(!S.trips) S.trips = [];
 if(!S.activeTripId) S.activeTripId = '';
 if(!S.budget) S.budget = { monthly: { Food: 4000, Transport: 1000, Entertainment: 1000, Study: 2000, Trips: 5000, Outings: 2000, Monthly: 10000, Misc: 1000 }, log: [] };
@@ -2628,6 +2731,241 @@ function playClickSound() {
     osc.start();
     osc.stop(audioCtx.currentTime + 0.03);
   } catch(e) {}
+}
+
+// ─── GITHUB CONTRIBUTIONS SYNC ───────────────────────────
+async function syncGithubContributions() {
+  if (!S.githubUsername) return;
+  console.log("Syncing GitHub contributions for:", S.githubUsername);
+  
+  const cfg = getSyncConfig();
+  const headers = {};
+  if (cfg.token) {
+    headers['Authorization'] = `token ${cfg.token}`;
+  }
+  
+  try {
+    const res = await fetch(`https://api.github.com/users/${S.githubUsername}/events`, { headers });
+    if (res.ok) {
+      const events = await res.json();
+      const pushes = events.filter(e => e.type === 'PushEvent');
+      
+      const newCommitsByDate = {};
+      const todayIso = getLocalISODate();
+      let newCommitsToday = 0;
+      
+      pushes.forEach(event => {
+        if (!event.created_at) return;
+        const date = getLocalISODate(new Date(event.created_at));
+        const commitCount = event.payload?.commits?.length || 0;
+        if (commitCount > 0) {
+          newCommitsByDate[date] = (newCommitsByDate[date] || 0) + commitCount;
+        }
+      });
+      
+      // Check for new commits today and award XP
+      if (newCommitsByDate[todayIso]) {
+        const currentStored = S.githubCommits[todayIso] || 0;
+        const fetchedCount = newCommitsByDate[todayIso];
+        if (fetchedCount > currentStored) {
+          const delta = fetchedCount - currentStored;
+          // Capped at 25 XP per day (5 commits max rewarded)
+          const currentRewarded = Math.min(25, currentStored * 5);
+          const maxPossibleNewReward = Math.max(0, 25 - currentRewarded);
+          const earnedXP = Math.min(maxPossibleNewReward, delta * 5);
+          
+          if (earnedXP > 0) {
+            S.xp.total = (S.xp.total || 0) + earnedXP;
+            S.xp.today = (S.xp.today || 0) + earnedXP;
+            updateHeatmap(earnedXP);
+            showToast(`🐙 Pushed ${delta} commit(s)! +${earnedXP} XP!`);
+          }
+        }
+      }
+      
+      // Update local storage commits counts
+      Object.keys(newCommitsByDate).forEach(date => {
+        S.githubCommits[date] = newCommitsByDate[date];
+        // Add visual weight points to heatmap for visual representation
+        const count = newCommitsByDate[date];
+        if(!S.heatmap[date]) S.heatmap[date] = 0;
+        // 5 weight points per commit (adds to color intensity)
+        S.heatmap[date] = Math.max(S.heatmap[date], count * 5);
+      });
+      
+      S.lastGithubSync = Date.now();
+      save();
+      updateStats();
+      renderSidebar();
+      renderHeatmap();
+    }
+  } catch (e) {
+    console.warn("GitHub events fetch failed", e);
+  }
+}
+
+// ─── FLOATING SCRATCHPAD DRAWER ──────────────────────────
+function toggleScratchpad() {
+  playClickSound();
+  const drawer = document.getElementById('scratchpad-drawer');
+  if (drawer) {
+    const isShowing = drawer.classList.toggle('show');
+    if (isShowing) {
+      const textarea = document.getElementById('scratchpad-text');
+      textarea.value = S.scratchpadText || '';
+      textarea.focus();
+    }
+  }
+}
+function saveScratchpad(val) {
+  S.scratchpadText = val;
+  save(true); // Save locally only
+}
+
+// Register shortcut Ctrl+Shift+N for scratchpad
+document.addEventListener('keydown', (e) => {
+  if (e.ctrlKey && e.shiftKey && e.code === 'KeyN') {
+    e.preventDefault();
+    toggleScratchpad();
+  }
+});
+
+// ─── PROCEDURAL AMBIENT FOCUS SOUNDS ─────────────────────
+let focusAudioCtx = null;
+let focusNoiseNode = null;
+let focusGainNode = null;
+let focusSoundType = null; // 'rain' or 'brown'
+let focusVolume = 0.5;
+
+function toggleFocusSound(type) {
+  playClickSound();
+  
+  if (focusSoundType === type) {
+    stopFocusSound();
+    return;
+  }
+  
+  if (focusSoundType) {
+    stopFocusSound();
+  }
+  
+  startFocusSound(type);
+}
+
+function startFocusSound(type) {
+  try {
+    focusAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    focusGainNode = focusAudioCtx.createGain();
+    focusGainNode.gain.setValueAtTime(focusVolume, focusAudioCtx.currentTime);
+    
+    const bufferSize = 2 * focusAudioCtx.sampleRate;
+    const noiseBuffer = focusAudioCtx.createBuffer(1, bufferSize, focusAudioCtx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    
+    let lastOut = 0.0;
+    for (let i = 0; i < bufferSize; i++) {
+      const white = Math.random() * 2 - 1;
+      // Brown noise synthesis formula
+      output[i] = (lastOut + (0.02 * white)) / 1.02;
+      lastOut = output[i];
+      output[i] *= 3.5; // Amplify to audibility
+    }
+    
+    focusNoiseNode = focusAudioCtx.createBufferSource();
+    focusNoiseNode.buffer = noiseBuffer;
+    focusNoiseNode.loop = true;
+    
+    if (type === 'rain') {
+      // Rainfall filter simulation (Bandpass + lowpass)
+      const lowpass = focusAudioCtx.createBiquadFilter();
+      lowpass.type = 'lowpass';
+      lowpass.frequency.value = 550; // Rain rumble frequency
+      
+      const bandpass = focusAudioCtx.createBiquadFilter();
+      bandpass.type = 'bandpass';
+      bandpass.frequency.value = 800;
+      bandpass.Q.value = 0.5;
+      
+      focusNoiseNode.connect(lowpass);
+      lowpass.connect(bandpass);
+      bandpass.connect(focusGainNode);
+    } else {
+      // Pure Brown noise (deep static hum)
+      const lowpass = focusAudioCtx.createBiquadFilter();
+      lowpass.type = 'lowpass';
+      lowpass.frequency.value = 350;
+      focusNoiseNode.connect(lowpass);
+      lowpass.connect(focusGainNode);
+    }
+    
+    focusGainNode.connect(focusAudioCtx.destination);
+    focusNoiseNode.start(0);
+    
+    focusSoundType = type;
+    document.getElementById(`fs-sound-${type}`).classList.add('active');
+    showToast(`Focus ambient started: ${type} 🌧️`);
+  } catch (e) {
+    console.warn("Could not start focus audio context", e);
+  }
+}
+
+function stopFocusSound() {
+  if (focusNoiseNode) {
+    try { focusNoiseNode.stop(); } catch(e){}
+    focusNoiseNode = null;
+  }
+  if (focusAudioCtx) {
+    try { focusAudioCtx.close(); } catch(e){}
+    focusAudioCtx = null;
+  }
+  if (focusSoundType) {
+    document.getElementById(`fs-sound-${focusSoundType}`).classList.remove('active');
+    focusSoundType = null;
+  }
+}
+
+function changeFocusSoundVolume(vol) {
+  focusVolume = parseFloat(vol);
+  if (focusGainNode && focusAudioCtx) {
+    focusGainNode.gain.setValueAtTime(focusVolume, focusAudioCtx.currentTime);
+  }
+}
+
+// ─── TICKER HACKERNEWS / QUOTES LOADER ───────────────────
+async function syncHackerNews() {
+  const tickerText = document.getElementById('ticker-text');
+  if (!tickerText) return;
+  
+  const quotes = [
+    "“Talk is cheap. Show me the code.” — Linus Torvalds",
+    "“Programs must be written for people to read, and only incidentally for machines to execute.” — Abelson & Sussman",
+    "“Before software can be reusable it first has to be usable.” — Ralph Johnson",
+    "“Simplicity is prerequisite for reliability.” — Edsger W. Dijkstra",
+    "“The best error message is the one that never shows up.” — Thomas Fuchs",
+    "“Make it work, make it right, make it fast.” — Kent Beck",
+    "“Work hard. Grind Leetcode. Achieve S-RANK. Keep learning. ⚡”",
+    "“Operating Systems: The core layer that connects logic to physical silicon.”"
+  ];
+  
+  try {
+    // Attempt to fetch top stories from public HackerNews API
+    const res = await fetch('https://hacker-news.firebaseio.com/v0/topstories.json');
+    if (res.ok) {
+      const storyIds = await res.json();
+      // Fetch 1 random story from the top 50
+      const randomId = storyIds[Math.floor(Math.random() * 50)];
+      const storyRes = await fetch(`https://hacker-news.firebaseio.com/v0/item/${randomId}.json`);
+      if (storyRes.ok) {
+        const story = await storyRes.json();
+        tickerText.textContent = `⚡ Top Story: "${story.title}" // ${story.score} points by ${story.by}`;
+        return;
+      }
+    }
+  } catch(e) {}
+  
+  // Fallback to offline developer quotes if fetch fails or user is offline
+  const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+  tickerText.textContent = randomQuote;
 }
 
 // ─── WEEKLY REPORT CARD ──────────────────────────────────
@@ -3077,6 +3415,13 @@ function init(){
   checkMissionDueDates();
   checkStreakRisk();
   checkWeeklyReport();
+  
+  // GitHub contributions, HackerNews ticker, and scratchpad init
+  syncGithubContributions();
+  syncHackerNews();
+  setInterval(syncHackerNews, 15000);
+  const spText = document.getElementById('scratchpad-text');
+  if (spText) spText.value = S.scratchpadText || '';
 
   const cfg = getSyncConfig();
   if (cfg.auto && cfg.token && cfg.gistId) {
@@ -4826,6 +5171,10 @@ function openSettings() {
           <label class="modal-form-label" style="font-size:10px;">Gist ID (Leave empty to auto-create)</label>
           <input type="text" class="modal-form-input" id="sync-gist" value="${cfg.gistId}" placeholder="Created automatically on first push" style="padding:6px 8px; font-size:12px;">
         </div>
+        <div class="modal-form-group" style="margin-bottom:8px;">
+          <label class="modal-form-label" style="font-size:10px;">GitHub Username (For Heatmap Contributions)</label>
+          <input type="text" class="modal-form-input" id="sync-github-username" value="${S.githubUsername || ''}" placeholder="e.g. chadaabhishikth" style="padding:6px 8px; font-size:12px;">
+        </div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
           <label style="font-size: 11px; display: flex; align-items: center; gap: 4px; color: var(--sub);">
             <input type="checkbox" id="sync-auto" ${cfg.auto ? 'checked' : ''}> Enable Auto Sync
@@ -4867,8 +5216,12 @@ function openSettings() {
     const token = document.getElementById('sync-token').value.trim();
     const gistId = document.getElementById('sync-gist').value.trim();
     const auto = document.getElementById('sync-auto').checked;
+    const ghUser = document.getElementById('sync-github-username').value.trim();
     
     saveSyncConfig({ token, gistId, auto });
+    S.githubUsername = ghUser;
+    save();
+    syncGithubContributions();
     showToast('Sync settings saved!');
     return true; 
   });
