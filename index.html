@@ -1457,6 +1457,89 @@ html.light .glass-card:hover {
 .fs-volume {
   width: 50px; height: 3px; accent-color: var(--blue); outline: none; cursor: pointer;
 }
+
+/* ─── VISUAL GITHUB HUD CARD ────────────────────────────── */
+.github-card {
+  padding: 16px;
+  border-radius: var(--r);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.gh-card-profile-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.gh-card-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--bg2);
+}
+.gh-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.gh-card-name {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+.gh-card-login {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--sub);
+}
+.gh-card-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 4px;
+}
+.gh-card-stat {
+  background: rgba(137,180,250,0.03);
+  border: 1px solid var(--line2);
+  border-radius: 6px;
+  padding: 8px 6px;
+  text-align: center;
+}
+.gh-card-stat-val {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--blue);
+}
+.gh-card-stat-label {
+  font-family: var(--font-body);
+  font-size: 9px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.gh-card-link-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  background: var(--bg2);
+  border: 1px solid var(--line2);
+  border-radius: 6px;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.gh-card-link-btn:hover {
+  border-color: var(--blue);
+  color: var(--blue);
+}
 </style>
 </head>
 <body>
@@ -1590,6 +1673,7 @@ html.light .glass-card:hover {
       </div>
     </div>
     <div id="heatmap-card" class="heatmap-card glass-card"></div>
+    <div id="github-card" class="github-card glass-card" style="display:none; margin-top:14px;"></div>
     <!-- Achievements -->
     <div class="achievements-card glass-card">
       <div class="section-hdr" style="margin-bottom:12px;">ACHIEVEMENTS</div>
@@ -2296,6 +2380,7 @@ if(!S.pomoSound) S.pomoSound = 'sine';
 if(!S.githubUsername) S.githubUsername = '';
 if(!S.githubCommits) S.githubCommits = {};
 if(!S.lastGithubSync) S.lastGithubSync = 0;
+if(!S.githubProfile) S.githubProfile = null;
 if(S.scratchpadText === undefined) S.scratchpadText = '';
 if(!S.trips) S.trips = [];
 if(!S.activeTripId) S.activeTripId = '';
@@ -2812,6 +2897,82 @@ async function syncGithubContributions() {
   } catch (e) {
     console.error("GitHub events sync failed:", e);
   }
+}
+
+// ─── VISUAL GITHUB PROFILE CARD ──────────────────────────
+async function syncGithubProfile() {
+  if (!S.githubUsername) return;
+  
+  const cfg = getSyncConfig();
+  const headers = {};
+  if (cfg.token) {
+    headers['Authorization'] = `token ${cfg.token}`;
+  }
+  
+  try {
+    let res = await fetch(`https://api.github.com/users/${S.githubUsername}`, { headers });
+    
+    if (res.status === 401 || res.status === 403) {
+      res = await fetch(`https://api.github.com/users/${S.githubUsername}`);
+    }
+    
+    if (res.ok) {
+      const data = await res.json();
+      S.githubProfile = {
+        name: data.name,
+        avatar_url: data.avatar_url,
+        public_repos: data.public_repos,
+        followers: data.followers,
+        html_url: data.html_url
+      };
+      save();
+      renderGithubCard();
+    }
+  } catch(e) {
+    console.warn("Could not sync GitHub profile", e);
+  }
+}
+
+function renderGithubCard() {
+  const card = document.getElementById('github-card');
+  if (!card) return;
+  
+  if (!S.githubUsername || !S.githubProfile) {
+    card.style.display = 'none';
+    return;
+  }
+  
+  card.style.display = 'flex';
+  const profile = S.githubProfile;
+  const today = getLocalISODate();
+  const commitsToday = S.githubCommits[today] || 0;
+  
+  card.innerHTML = `
+    <div class="gh-card-profile-row">
+      <img class="gh-card-avatar" src="${profile.avatar_url || 'https://github.com/identicons/git.png'}" alt="Avatar">
+      <div class="gh-card-info">
+        <div class="gh-card-name">${profile.name || S.githubUsername}</div>
+        <div class="gh-card-login">@${S.githubUsername}</div>
+      </div>
+    </div>
+    <div class="gh-card-stats-row">
+      <div class="gh-card-stat">
+        <div class="gh-card-stat-val">${profile.public_repos || 0}</div>
+        <div class="gh-card-stat-label">Repositories</div>
+      </div>
+      <div class="gh-card-stat">
+        <div class="gh-card-stat-val">${profile.followers || 0}</div>
+        <div class="gh-card-stat-label">Followers</div>
+      </div>
+      <div class="gh-card-stat">
+        <div class="gh-card-stat-val">${commitsToday}</div>
+        <div class="gh-card-stat-label">Commits Today</div>
+      </div>
+    </div>
+    <button class="gh-card-link-btn" onclick="playClickSound(); window.open('${profile.html_url || 'https://github.com/' + S.githubUsername}', '_blank')">
+      🐙 Open GitHub Profile
+    </button>
+  `;
 }
 
 // ─── FLOATING SCRATCHPAD DRAWER ──────────────────────────
@@ -3428,6 +3589,8 @@ function init(){
   
   // GitHub contributions, HackerNews ticker, and scratchpad init
   syncGithubContributions();
+  syncGithubProfile();
+  renderGithubCard();
   syncHackerNews();
   setInterval(syncHackerNews, 15000);
   const spText = document.getElementById('scratchpad-text');
@@ -5226,12 +5389,20 @@ function openSettings() {
     const token = document.getElementById('sync-token').value.trim();
     const gistId = document.getElementById('sync-gist').value.trim();
     const auto = document.getElementById('sync-auto').checked;
-    const ghUser = document.getElementById('sync-github-username').value.trim();
+    let ghInput = document.getElementById('sync-github-username').value.trim();
+    
+    if (ghInput.toLowerCase().includes('github.com/')) {
+      const parts = ghInput.split(/github\.com\//i)[1];
+      if (parts) {
+        ghInput = parts.split('/')[0].split('?')[0].split('#')[0].split(' ')[0];
+      }
+    }
     
     saveSyncConfig({ token, gistId, auto });
-    S.githubUsername = ghUser;
+    S.githubUsername = ghInput;
     save();
     syncGithubContributions();
+    syncGithubProfile();
     showToast('Sync settings saved!');
     return true; 
   });
