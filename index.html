@@ -1753,6 +1753,345 @@ html.light .glass-card:hover {
 .palette-item.active .palette-item-details {
   color: var(--sub);
 }
+
+/* ─── RESUME HQ STYLES ───────────────────────────────── */
+.resume-builder-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 24px;
+  align-items: start;
+  margin-top: 16px;
+}
+@media (max-width: 1024px) {
+  .resume-builder-layout {
+    grid-template-columns: 1fr;
+  }
+}
+.resume-editor-panel {
+  background: var(--bg1);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 20px;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+}
+.resume-section-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--mauve);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+.resume-preview-panel {
+  background: var(--bg1);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 24px;
+  position: sticky;
+  top: 80px;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+}
+#resume-preview-document {
+  background: #ffffff;
+  color: #1a1a1a;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  border-radius: 4px;
+  padding: 40px;
+  min-height: 842px; /* standard A4 ratio approx */
+  font-family: 'Inter', sans-serif;
+  line-height: 1.5;
+  font-size: 13px;
+  transition: all 0.3s;
+}
+
+/* Repeating Item Entry Styles */
+.resume-entry-card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--line2);
+  border-radius: 6px;
+  padding: 12px;
+  position: relative;
+}
+.resume-entry-card .remove-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: var(--red);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* TEMPLATE 1: MINIMALIST */
+.template-minimalist {
+  font-family: 'JetBrains Mono', monospace;
+}
+.template-minimalist .res-hdr {
+  border-bottom: 2px solid #1a1a1a;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+.template-minimalist .res-name {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  text-transform: uppercase;
+}
+.template-minimalist .res-subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-top: 4px;
+}
+.template-minimalist .res-contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 11px;
+  color: #555;
+  margin-top: 8px;
+}
+.template-minimalist .res-sec {
+  margin-bottom: 20px;
+}
+.template-minimalist .res-sec-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 4px;
+  margin-bottom: 10px;
+  color: #1a1a1a;
+}
+.template-minimalist .res-item {
+  margin-bottom: 12px;
+}
+.template-minimalist .res-item-hdr {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+}
+.template-minimalist .res-item-sub {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #666;
+  margin-top: 2px;
+}
+.template-minimalist .res-item-desc {
+  font-size: 11px;
+  color: #333;
+  margin-top: 6px;
+  white-space: pre-line;
+}
+
+/* TEMPLATE 2: TECH */
+.template-tech {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 24px;
+  font-family: 'Inter', sans-serif;
+}
+.template-tech .res-left-col {
+  border-right: 1px solid #eaeaea;
+  padding-right: 20px;
+}
+.template-tech .res-right-col {
+  padding-left: 4px;
+}
+.template-tech .res-name {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1e66f5; /* blue accent */
+  line-height: 1.2;
+}
+.template-tech .res-subtitle {
+  font-size: 13px;
+  color: #4c4f69;
+  font-weight: 500;
+  margin-top: 4px;
+}
+.template-tech .res-contact-vertical {
+  margin-top: 20px;
+  font-size: 11px;
+  color: #6c6f85;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.template-tech .res-sec {
+  margin-bottom: 20px;
+}
+.template-tech .res-sec-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #1e66f5;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  border-bottom: 2px solid #1e66f5;
+  padding-bottom: 2px;
+}
+.template-tech .res-item {
+  margin-bottom: 14px;
+}
+.template-tech .res-item-title {
+  font-weight: 700;
+  font-size: 13px;
+  color: #1a1a1a;
+}
+.template-tech .res-item-org {
+  font-weight: 500;
+  font-size: 12px;
+  color: #4c4f69;
+}
+.template-tech .res-item-date {
+  font-size: 10px;
+  color: #8c8fa1;
+  margin-bottom: 4px;
+}
+.template-tech .res-item-desc {
+  font-size: 11.5px;
+  color: #4c4f69;
+  white-space: pre-line;
+}
+.template-tech .skill-tag-pill {
+  display: inline-block;
+  background: #eff1f5;
+  color: #4c4f69;
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin: 0 4px 4px 0;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* TEMPLATE 3: SERIF */
+.template-serif {
+  font-family: 'Georgia', serif;
+  color: #222;
+}
+.template-serif .res-hdr {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.template-serif .res-name {
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+.template-serif .res-subtitle {
+  font-size: 13px;
+  font-style: italic;
+  color: #555;
+  margin-top: 4px;
+}
+.template-serif .res-contact {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 11px;
+  color: #444;
+  margin-top: 10px;
+}
+.template-serif .res-sec {
+  margin-bottom: 22px;
+}
+.template-serif .res-sec-title {
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+  border-bottom: 1px solid #222;
+  padding-bottom: 2px;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+.template-serif .res-item {
+  margin-bottom: 12px;
+}
+.template-serif .res-item-hdr {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+.template-serif .res-item-sub {
+  display: flex;
+  justify-content: space-between;
+  font-style: italic;
+  font-size: 12px;
+  color: #444;
+  margin-top: 1px;
+}
+.template-serif .res-item-desc {
+  font-size: 12px;
+  color: #222;
+  margin-top: 4px;
+  text-align: justify;
+  white-space: pre-line;
+}
+
+/* ─── PRINT MEDIA QUERY ────────────────────────────── */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .layout, .main, .content {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  .sidebar, .topbar, .hud-terminal-wrap, .settings-fab, .mobile-tab-bar, .mobile-drawer-overlay, .resume-editor-panel, .resume-controls-row, .section-hdr, .sidebar-toggle, .toast {
+    display: none !important;
+  }
+  #page-resume {
+    display: block !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .resume-builder-layout {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .resume-preview-panel {
+    border: none !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-height: none !important;
+    position: static !important;
+    overflow: visible !important;
+  }
+  #resume-preview-document {
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    padding: 0px !important;
+    margin: 0px !important;
+    border: none !important;
+    width: 100% !important;
+    min-height: auto !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -1805,6 +2144,7 @@ html.light .glass-card:hover {
     <div class="nav-item" onclick="gotoPage('applications',this)"><span class="nav-icon">💼</span>Applications<span class="nav-badge green" id="app-badge">0</span></div>
     <div class="nav-item" onclick="gotoPage('budget',this)"><span class="nav-icon">💳</span>Budget</div>
     <div class="nav-item" onclick="gotoPage('trips',this)"><span class="nav-icon">✈️</span>Trips</div>
+    <div class="nav-item" onclick="gotoPage('resume',this)"><span class="nav-icon">📄</span>Resume</div>
   </nav>
   <!-- HUD Terminal -->
   <div class="hud-terminal-wrap">
@@ -2275,6 +2615,120 @@ html.light .glass-card:hover {
     </div>
   </div>
 
+  <!-- RESUME HQ -->
+  <div id="page-resume" class="content">
+    <div class="section-hdr" style="display:flex;justify-content:space-between;align-items:center;">
+      <span>RESUME HQ</span>
+      <div class="resume-controls-row" style="display:flex;gap:10px;align-items:center;">
+        <select id="resume-template-select" class="form-select" onchange="changeResumeTemplate(this.value)" style="width:auto;padding:6px 10px;font-size:11px;font-family:var(--font-mono);background:var(--bg1);">
+          <option value="minimalist">Minimalist Mono</option>
+          <option value="tech">Modern Tech</option>
+          <option value="serif">Elegant Serif</option>
+        </select>
+        <button class="btn-primary" onclick="exportResumePDF()" style="padding:6px 12px;font-size:11px;font-family:var(--font-mono);cursor:pointer;border-radius:4px;border:none;">🖨️ PRINT / PDF</button>
+        <button class="btn-secondary" onclick="resetResumeData()" style="padding:6px 12px;font-size:11px;font-family:var(--font-mono);cursor:pointer;border-radius:4px;border:1px solid var(--line2);background:var(--bg2);color:var(--text);">♻️ RESET</button>
+      </div>
+    </div>
+    <div class="resume-builder-layout">
+      <!-- Left: Editor Panel -->
+      <div class="resume-editor-panel glass-card">
+        <!-- Personal Section -->
+        <div class="resume-section-group">
+          <div class="resume-section-title" style="font-family:var(--font-mono);font-size:11px;letter-spacing:1px;color:var(--mauve);text-transform:uppercase;margin-bottom:10px;">Personal Information</div>
+          <div class="form-row">
+            <label class="form-label">Full Name</label>
+            <input type="text" id="res-name" class="form-input" placeholder="e.g. Abhishikth" oninput="updateResumeData('name', this.value)">
+          </div>
+          <div class="form-row" style="margin-top:8px;">
+            <label class="form-label">Subtitle / Title</label>
+            <input type="text" id="res-title" class="form-input" placeholder="e.g. AI Engineer & Full-Stack Developer" oninput="updateResumeData('title', this.value)">
+          </div>
+          <div class="form-grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;">
+            <div class="form-row">
+              <label class="form-label">Email</label>
+              <input type="email" id="res-email" class="form-input" placeholder="e.g. abhi@example.com" oninput="updateResumeData('email', this.value)">
+            </div>
+            <div class="form-row">
+              <label class="form-label">Phone</label>
+              <input type="text" id="res-phone" class="form-input" placeholder="e.g. +91 9876543210" oninput="updateResumeData('phone', this.value)">
+            </div>
+          </div>
+          <div class="form-grid-3" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:8px;">
+            <div class="form-row">
+              <label class="form-label">Location</label>
+              <input type="text" id="res-location" class="form-input" placeholder="e.g. Chennai, India" oninput="updateResumeData('location', this.value)">
+            </div>
+            <div class="form-row">
+              <label class="form-label">GitHub</label>
+              <input type="text" id="res-github" class="form-input" placeholder="github.com/username" oninput="updateResumeData('github', this.value)">
+            </div>
+            <div class="form-row">
+              <label class="form-label">LinkedIn</label>
+              <input type="text" id="res-linkedin" class="form-input" placeholder="linkedin.com/in/username" oninput="updateResumeData('linkedin', this.value)">
+            </div>
+          </div>
+          <div class="form-row" style="margin-top:8px;">
+            <label class="form-label">Summary / Bio</label>
+            <textarea id="res-summary" class="form-input" style="height:60px;resize:vertical;" placeholder="Write a short summary about yourself..." oninput="updateResumeData('summary', this.value)"></textarea>
+          </div>
+        </div>
+
+        <div class="sid-sep" style="margin:16px 0;"></div>
+
+        <!-- Experience Section -->
+        <div class="resume-section-group">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <div class="resume-section-title" style="font-family:var(--font-mono);font-size:11px;letter-spacing:1px;color:var(--mauve);text-transform:uppercase;margin:0;">Experience</div>
+            <button class="btn-primary" onclick="addResumeListEntry('experience')" style="padding:4px 8px;font-size:10px;border-radius:4px;border:none;cursor:pointer;">+ Add</button>
+          </div>
+          <div id="resume-experience-inputs" style="display:flex;flex-direction:column;gap:10px;"></div>
+        </div>
+
+        <div class="sid-sep" style="margin:16px 0;"></div>
+
+        <!-- Projects Section -->
+        <div class="resume-section-group">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <div class="resume-section-title" style="font-family:var(--font-mono);font-size:11px;letter-spacing:1px;color:var(--mauve);text-transform:uppercase;margin:0;">Projects</div>
+            <button class="btn-primary" onclick="addResumeListEntry('projects')" style="padding:4px 8px;font-size:10px;border-radius:4px;border:none;cursor:pointer;">+ Add</button>
+          </div>
+          <div id="resume-projects-inputs" style="display:flex;flex-direction:column;gap:10px;"></div>
+        </div>
+
+        <div class="sid-sep" style="margin:16px 0;"></div>
+
+        <!-- Education Section -->
+        <div class="resume-section-group">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <div class="resume-section-title" style="font-family:var(--font-mono);font-size:11px;letter-spacing:1px;color:var(--mauve);text-transform:uppercase;margin:0;">Education</div>
+            <button class="btn-primary" onclick="addResumeListEntry('education')" style="padding:4px 8px;font-size:10px;border-radius:4px;border:none;cursor:pointer;">+ Add</button>
+          </div>
+          <div id="resume-education-inputs" style="display:flex;flex-direction:column;gap:10px;"></div>
+        </div>
+
+        <div class="sid-sep" style="margin:16px 0;"></div>
+
+        <!-- Skills Section -->
+        <div class="resume-section-group">
+          <div class="resume-section-title" style="font-family:var(--font-mono);font-size:11px;letter-spacing:1px;color:var(--mauve);text-transform:uppercase;margin-bottom:10px;">Skills</div>
+          <div class="form-row">
+            <label class="form-label">Technical Skills (Comma separated)</label>
+            <input type="text" id="res-skills" class="form-input" placeholder="e.g. Python, JS, TensorFlow, React, SQL" oninput="updateResumeData('skills', this.value)">
+          </div>
+          <div class="form-row" style="margin-top:8px;">
+            <label class="form-label">Tools / Soft Skills (Comma separated)</label>
+            <input type="text" id="res-tools" class="form-input" placeholder="e.g. Git, Docker, Agile, Communication" oninput="updateResumeData('tools', this.value)">
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Preview Panel -->
+      <div class="resume-preview-panel glass-card">
+        <div id="resume-preview-document"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- ACADEMIC CALENDAR -->
   <div id="page-calendar" class="content">
     <div class="calendar-view-toggles">
@@ -2388,6 +2842,7 @@ html.light .glass-card:hover {
       <div class="mobile-drawer-item" onclick="gotoMobilePage('notes')"><span class="mobile-drawer-icon">📝</span>Notes</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('applications')"><span class="mobile-drawer-icon">💼</span>Applications</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('trips')"><span class="mobile-drawer-icon">✈️</span>Trips</div>
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('resume')"><span class="mobile-drawer-icon">📄</span>Resume</div>
       <div class="mobile-drawer-item" onclick="openSettings(); toggleMobileDrawer();"><span class="mobile-drawer-icon">⚙️</span>Settings</div>
     </div>
   </div>
@@ -5663,7 +6118,7 @@ document.addEventListener('keydown', e => {
 });
 
 // ─── NAVIGATION ───────────────────────────────────────────
-const pageTitles={today:'Today',roadmap:'AI Roadmap',semester:'Semester 3',calendar:'Academic Calendar',dsa:'DSA Track',projects:'Projects',targets:'Targets',gaming:'Gaming',notes:'Notes',tasks:'Mission Board',applications:'Applications',budget:'Expense Tracker',trips:'Trip Planner'};
+const pageTitles={today:'Today',roadmap:'AI Roadmap',semester:'Semester 3',calendar:'Academic Calendar',dsa:'DSA Track',projects:'Projects',targets:'Targets',gaming:'Gaming',notes:'Notes',tasks:'Mission Board',applications:'Applications',budget:'Expense Tracker',trips:'Trip Planner',resume:'Resume HQ'};
 
 function gotoPage(id,el){
   playClickSound();
@@ -5684,6 +6139,7 @@ function gotoPage(id,el){
   if(id==='applications'){renderKanban();}
   if(id==='budget'){renderBudget();}
   if(id==='trips'){renderTrips();}
+  if(id==='resume'){renderResume();}
   syncMobileActiveTab(id);
 }
 
@@ -6912,6 +7368,457 @@ function deleteTrip(tripId) {
   }
 }
 
+// ─── RESUME HQ JS ──────────────────────────────────────────
+const defaultResumeData = {
+  name: "Abhishikth",
+  title: "AI Engineer & Web Developer",
+  email: "abhishikth@student.amrita.edu",
+  phone: "+91 98765 43210",
+  location: "Chennai, India",
+  github: "github.com/chadaabhishikth",
+  linkedin: "linkedin.com/in/abhishikth",
+  summary: "Aspiring Artificial Intelligence & Data Science student at Amrita Vishwa Vidyapeetham, Chennai. Passionate about building intelligent systems, full-stack applications, and grinding Leetcode.",
+  experience: [
+    { role: "Developer Intern", org: "AIE Research Club", date: "Jan 2026 - Present", desc: "Designed and implemented Machine Learning models for predictive analysis.\nCreated data visualization dashboards for club activities." }
+  ],
+  projects: [
+    { name: "OS Dashboard & Planner", tech: "HTML5, Vanilla CSS, JS", desc: "Developed a comprehensive personal hub with academic trackers, DSA logs, expense planners, and productivity timers.\nConfigured PWA support for offline capability." }
+  ],
+  education: [
+    { degree: "B.Tech in Artificial Intelligence & Data Science", org: "Amrita Vishwa Vidyapeetham", date: "2024 - 2028", desc: "CGPA: 9.2 (Current)\nRelevant Coursework: Machine Learning, Data Structures, Algorithms" }
+  ],
+  skills: "Python, JavaScript, PyTorch, SQL, HTML, CSS",
+  tools: "Git, VS Code, Docker, Google Colab",
+  template: "minimalist"
+};
+
+function renderResume() {
+  if (!localStorage.getItem('abhi_os_resume')) {
+    localStorage.setItem('abhi_os_resume', JSON.stringify(defaultResumeData));
+  }
+  const data = JSON.parse(localStorage.getItem('abhi_os_resume'));
+  
+  document.getElementById('res-name').value = data.name || '';
+  document.getElementById('res-title').value = data.title || '';
+  document.getElementById('res-email').value = data.email || '';
+  document.getElementById('res-phone').value = data.phone || '';
+  document.getElementById('res-location').value = data.location || '';
+  document.getElementById('res-github').value = data.github || '';
+  document.getElementById('res-linkedin').value = data.linkedin || '';
+  document.getElementById('res-summary').value = data.summary || '';
+  document.getElementById('res-skills').value = data.skills || '';
+  document.getElementById('res-tools').value = data.tools || '';
+  document.getElementById('resume-template-select').value = data.template || 'minimalist';
+
+  const expContainer = document.getElementById('resume-experience-inputs');
+  expContainer.innerHTML = (data.experience || []).map((exp, idx) => `
+    <div class="resume-entry-card">
+      <button class="remove-btn" onclick="removeResumeListEntry('experience', ${idx})">&times;</button>
+      <div class="form-grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="form-row">
+          <label class="form-label">Role / Job Title</label>
+          <input type="text" class="form-input" value="${exp.role || ''}" oninput="updateResumeListEntry('experience', ${idx}, 'role', this.value)">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Company / Org</label>
+          <input type="text" class="form-input" value="${exp.org || ''}" oninput="updateResumeListEntry('experience', ${idx}, 'org', this.value)">
+        </div>
+      </div>
+      <div class="form-row" style="margin-top:6px;">
+        <label class="form-label">Date Range</label>
+        <input type="text" class="form-input" value="${exp.date || ''}" placeholder="e.g. Jan 2026 - Present" oninput="updateResumeListEntry('experience', ${idx}, 'date', this.value)">
+      </div>
+      <div class="form-row" style="margin-top:6px;">
+        <label class="form-label">Description / Bullet points</label>
+        <textarea class="form-input" style="height:50px;resize:vertical;" oninput="updateResumeListEntry('experience', ${idx}, 'desc', this.value)">${exp.desc || ''}</textarea>
+      </div>
+    </div>
+  `).join('');
+
+  const projContainer = document.getElementById('resume-projects-inputs');
+  projContainer.innerHTML = (data.projects || []).map((proj, idx) => `
+    <div class="resume-entry-card">
+      <button class="remove-btn" onclick="removeResumeListEntry('projects', ${idx})">&times;</button>
+      <div class="form-grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="form-row">
+          <label class="form-label">Project Name</label>
+          <input type="text" class="form-input" value="${proj.name || ''}" oninput="updateResumeListEntry('projects', ${idx}, 'name', this.value)">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Technologies Used</label>
+          <input type="text" class="form-input" value="${proj.tech || ''}" placeholder="e.g. React, Node.js" oninput="updateResumeListEntry('projects', ${idx}, 'tech', this.value)">
+        </div>
+      </div>
+      <div class="form-row" style="margin-top:6px;">
+        <label class="form-label">Description</label>
+        <textarea class="form-input" style="height:50px;resize:vertical;" oninput="updateResumeListEntry('projects', ${idx}, 'desc', this.value)">${proj.desc || ''}</textarea>
+      </div>
+    </div>
+  `).join('');
+
+  const eduContainer = document.getElementById('resume-education-inputs');
+  eduContainer.innerHTML = (data.education || []).map((edu, idx) => `
+    <div class="resume-entry-card">
+      <button class="remove-btn" onclick="removeResumeListEntry('education', ${idx})">&times;</button>
+      <div class="form-grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="form-row">
+          <label class="form-label">Degree / Course</label>
+          <input type="text" class="form-input" value="${edu.degree || ''}" oninput="updateResumeListEntry('education', ${idx}, 'degree', this.value)">
+        </div>
+        <div class="form-row">
+          <label class="form-label">School / University</label>
+          <input type="text" class="form-input" value="${edu.org || ''}" oninput="updateResumeListEntry('education', ${idx}, 'org', this.value)">
+        </div>
+      </div>
+      <div class="form-grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;">
+        <div class="form-row">
+          <label class="form-label">Date Range</label>
+          <input type="text" class="form-input" value="${edu.date || ''}" placeholder="e.g. 2024 - 2028" oninput="updateResumeListEntry('education', ${idx}, 'date', this.value)">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Details / GPA</label>
+          <input type="text" class="form-input" value="${edu.desc || ''}" placeholder="e.g. GPA: 9.2" oninput="updateResumeListEntry('education', ${idx}, 'desc', this.value)">
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  updateResumePreview();
+}
+
+function updateResumeData(field, val) {
+  const data = JSON.parse(localStorage.getItem('abhi_os_resume') || JSON.stringify(defaultResumeData));
+  data[field] = val;
+  localStorage.setItem('abhi_os_resume', JSON.stringify(data));
+  updateResumePreview();
+}
+
+function updateResumeListEntry(type, index, field, val) {
+  const data = JSON.parse(localStorage.getItem('abhi_os_resume') || JSON.stringify(defaultResumeData));
+  if (data[type] && data[type][index]) {
+    data[type][index][field] = val;
+  }
+  localStorage.setItem('abhi_os_resume', JSON.stringify(data));
+  updateResumePreview();
+}
+
+function addResumeListEntry(type) {
+  playClickSound();
+  const data = JSON.parse(localStorage.getItem('abhi_os_resume') || JSON.stringify(defaultResumeData));
+  if (!data[type]) data[type] = [];
+  
+  if (type === 'experience') {
+    data[type].push({ role: '', org: '', date: '', desc: '' });
+  } else if (type === 'projects') {
+    data[type].push({ name: '', tech: '', desc: '' });
+  } else if (type === 'education') {
+    data[type].push({ degree: '', org: '', date: '', desc: '' });
+  }
+  
+  localStorage.setItem('abhi_os_resume', JSON.stringify(data));
+  renderResume();
+}
+
+function removeResumeListEntry(type, index) {
+  playClickSound();
+  const data = JSON.parse(localStorage.getItem('abhi_os_resume') || JSON.stringify(defaultResumeData));
+  if (data[type]) {
+    data[type].splice(index, 1);
+  }
+  localStorage.setItem('abhi_os_resume', JSON.stringify(data));
+  renderResume();
+}
+
+function changeResumeTemplate(temp) {
+  playClickSound();
+  const data = JSON.parse(localStorage.getItem('abhi_os_resume') || JSON.stringify(defaultResumeData));
+  data.template = temp;
+  localStorage.setItem('abhi_os_resume', JSON.stringify(data));
+  updateResumePreview();
+}
+
+function resetResumeData() {
+  if (confirm('Reset resume to default template data?')) {
+    playClickSound();
+    localStorage.setItem('abhi_os_resume', JSON.stringify(defaultResumeData));
+    renderResume();
+    showToast('Resume data reset to default.');
+  }
+}
+
+function exportResumePDF() {
+  playClickSound();
+  window.print();
+}
+
+function updateResumePreview() {
+  const data = JSON.parse(localStorage.getItem('abhi_os_resume') || JSON.stringify(defaultResumeData));
+  const doc = document.getElementById('resume-preview-document');
+  if (!doc) return;
+  
+  doc.className = '';
+  doc.classList.add('template-' + data.template);
+
+  let html = '';
+  
+  if (data.template === 'minimalist') {
+    html = `
+      <div class="res-hdr">
+        <div class="res-name">${data.name || 'Your Name'}</div>
+        <div class="res-subtitle">${data.title || 'Professional Title'}</div>
+        <div class="res-contact">
+          ${data.email ? `<span>Email: ${data.email}</span>` : ''}
+          ${data.phone ? `<span>Phone: ${data.phone}</span>` : ''}
+          ${data.location ? `<span>Location: ${data.location}</span>` : ''}
+          ${data.github ? `<span>GitHub: ${data.github}</span>` : ''}
+          ${data.linkedin ? `<span>LinkedIn: ${data.linkedin}</span>` : ''}
+        </div>
+      </div>
+      
+      ${data.summary ? `
+        <div class="res-sec">
+          <div class="res-sec-title">Summary</div>
+          <div style="font-size:11px;color:#333;white-space:pre-line;">${data.summary}</div>
+        </div>
+      ` : ''}
+
+      ${data.experience && data.experience.length > 0 ? `
+        <div class="res-sec">
+          <div class="res-sec-title">Experience</div>
+          ${data.experience.map(exp => `
+            <div class="res-item">
+              <div class="res-item-hdr">
+                <span>${exp.role || 'Role'}</span>
+                <span>${exp.date || ''}</span>
+              </div>
+              <div class="res-item-sub">
+                <span>${exp.org || 'Organization'}</span>
+              </div>
+              ${exp.desc ? `<div class="res-item-desc">${exp.desc}</div>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+
+      ${data.projects && data.projects.length > 0 ? `
+        <div class="res-sec">
+          <div class="res-sec-title">Projects</div>
+          ${data.projects.map(proj => `
+            <div class="res-item">
+              <div class="res-item-hdr">
+                <span>${proj.name || 'Project'}</span>
+                <span style="font-size:10px;font-weight:normal;color:#666;">${proj.tech || ''}</span>
+              </div>
+              ${proj.desc ? `<div class="res-item-desc" style="margin-top:4px;">${proj.desc}</div>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+
+      ${data.education && data.education.length > 0 ? `
+        <div class="res-sec">
+          <div class="res-sec-title">Education</div>
+          ${data.education.map(edu => `
+            <div class="res-item">
+              <div class="res-item-hdr">
+                <span>${edu.degree || 'Degree'}</span>
+                <span>${edu.date || ''}</span>
+              </div>
+              <div class="res-item-sub">
+                <span>${edu.org || 'School'}</span>
+                <span>${edu.desc || ''}</span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+
+      ${data.skills || data.tools ? `
+        <div class="res-sec">
+          <div class="res-sec-title">Skills & Tools</div>
+          <div style="font-size:11px;color:#333;line-height:1.6;">
+            ${data.skills ? `<div><strong>Skills:</strong> ${data.skills}</div>` : ''}
+            ${data.tools ? `<div style="margin-top:4px;"><strong>Tools:</strong> ${data.tools}</div>` : ''}
+          </div>
+        </div>
+      ` : ''}
+    `;
+  } else if (data.template === 'tech') {
+    html = `
+      <div class="res-left-col">
+        <div>
+          <div class="res-name">${data.name || 'Your Name'}</div>
+          <div class="res-subtitle">${data.title || 'Professional Title'}</div>
+        </div>
+        
+        <div class="res-contact-vertical">
+          ${data.email ? `<div>📧 ${data.email}</div>` : ''}
+          ${data.phone ? `<div>📱 ${data.phone}</div>` : ''}
+          ${data.location ? `<div>📍 ${data.location}</div>` : ''}
+          ${data.github ? `<div style="word-break:break-all;">🌐 ${data.github}</div>` : ''}
+          ${data.linkedin ? `<div style="word-break:break-all;">🔗 ${data.linkedin}</div>` : ''}
+        </div>
+
+        ${data.skills ? `
+          <div class="res-sec" style="margin-top:24px;">
+            <div class="res-sec-title">Skills</div>
+            <div style="margin-top:8px;">
+              ${data.skills.split(',').map(s => `<span class="skill-tag-pill">${s.trim()}</span>`).join('')}
+            </div>
+          </div>
+        ` : ''}
+
+        ${data.tools ? `
+          <div class="res-sec" style="margin-top:16px;">
+            <div class="res-sec-title">Tools</div>
+            <div style="margin-top:8px;">
+              ${data.tools.split(',').map(t => `<span class="skill-tag-pill" style="background:#e8ebf0;">${t.trim()}</span>`).join('')}
+            </div>
+          </div>
+        ` : ''}
+      </div>
+
+      <div class="res-right-col">
+        ${data.summary ? `
+          <div class="res-sec">
+            <div class="res-sec-title">About Me</div>
+            <div style="font-size:11px;color:#4c4f69;line-height:1.6;white-space:pre-line;">${data.summary}</div>
+          </div>
+        ` : ''}
+
+        ${data.experience && data.experience.length > 0 ? `
+          <div class="res-sec">
+            <div class="res-sec-title">Experience</div>
+            ${data.experience.map(exp => `
+              <div class="res-item">
+                <div class="res-item-title">${exp.role || 'Role'}</div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span class="res-item-org">${exp.org || 'Organization'}</span>
+                  <span class="res-item-date">${exp.date || ''}</span>
+                </div>
+                ${exp.desc ? `<div class="res-item-desc" style="margin-top:4px;">${exp.desc}</div>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+
+        ${data.projects && data.projects.length > 0 ? `
+          <div class="res-sec">
+            <div class="res-sec-title">Projects</div>
+            ${data.projects.map(proj => `
+              <div class="res-item">
+                <div class="res-item-title">${proj.name || 'Project'}</div>
+                <div style="font-size:10px;color:#1e66f5;margin-bottom:2px;font-family:monospace;">${proj.tech || ''}</div>
+                ${proj.desc ? `<div class="res-item-desc">${proj.desc}</div>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+
+        ${data.education && data.education.length > 0 ? `
+          <div class="res-sec">
+            <div class="res-sec-title">Education</div>
+            ${data.education.map(edu => `
+              <div class="res-item">
+                <div class="res-item-title">${edu.degree || 'Degree'}</div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span class="res-item-org">${edu.org || 'School'}</span>
+                  <span class="res-item-date">${edu.date || ''}</span>
+                </div>
+                ${edu.desc ? `<div style="font-size:11px;color:#6c6f85;margin-top:2px;">${edu.desc}</div>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+      </div>
+    `;
+  } else if (data.template === 'serif') {
+    html = `
+      <div class="res-hdr">
+        <div class="res-name">${data.name || 'Your Name'}</div>
+        <div class="res-subtitle">${data.title || 'Professional Title'}</div>
+        <div class="res-contact">
+          ${data.email ? `<span>${data.email}</span>` : ''}
+          ${data.phone ? `<span>${data.phone}</span>` : ''}
+          ${data.location ? `<span>${data.location}</span>` : ''}
+          ${data.github ? `<span>${data.github}</span>` : ''}
+          ${data.linkedin ? `<span>${data.linkedin}</span>` : ''}
+        </div>
+      </div>
+
+      ${data.summary ? `
+        <div class="res-sec">
+          <div class="res-sec-title">Professional Summary</div>
+          <div style="font-size:12px;color:#222;line-height:1.6;white-space:pre-line;text-align:justify;">${data.summary}</div>
+        </div>
+      ` : ''}
+
+      ${data.experience && data.experience.length > 0 ? `
+        <div class="res-sec">
+          <div class="res-sec-title">Professional Experience</div>
+          ${data.experience.map(exp => `
+            <div class="res-item">
+              <div class="res-item-hdr">
+                <span>${exp.org || 'Organization'}</span>
+                <span>${exp.date || ''}</span>
+              </div>
+              <div class="res-item-sub">
+                <span>${exp.role || 'Role'}</span>
+              </div>
+              ${exp.desc ? `<div class="res-item-desc">${exp.desc}</div>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+
+      ${data.projects && data.projects.length > 0 ? `
+        <div class="res-sec">
+          <div class="res-sec-title">Selected Projects</div>
+          ${data.projects.map(proj => `
+            <div class="res-item">
+              <div class="res-item-hdr">
+                <span>${proj.name || 'Project'}</span>
+                <span style="font-size:11px;font-weight:normal;font-style:italic;">${proj.tech || ''}</span>
+              </div>
+              ${proj.desc ? `<div class="res-item-desc">${proj.desc}</div>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+
+      ${data.education && data.education.length > 0 ? `
+        <div class="res-sec">
+          <div class="res-sec-title">Education</div>
+          ${data.education.map(edu => `
+            <div class="res-item">
+              <div class="res-item-hdr">
+                <span>${edu.org || 'School'}</span>
+                <span>${edu.date || ''}</span>
+              </div>
+              <div class="res-item-sub">
+                <span>${edu.degree || 'Degree'}</span>
+                <span>${edu.desc || ''}</span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+
+      ${data.skills || data.tools ? `
+        <div class="res-sec">
+          <div class="res-sec-title">Skills & Expertise</div>
+          <div style="font-size:12px;color:#222;line-height:1.6;">
+            ${data.skills ? `<div><strong>Skills:</strong> ${data.skills}</div>` : ''}
+            ${data.tools ? `<div style="margin-top:4px;"><strong>Tools & Technologies:</strong> ${data.tools}</div>` : ''}
+          </div>
+        </div>
+      ` : ''}
+    `;
+  }
+  
+  doc.innerHTML = html;
+}
+
 // ─── GLASSMORPHIC MODAL HANDLERS ─────────────────────────
 
 function openModal(title, bodyHtml, onSave) {
@@ -7322,6 +8229,7 @@ const paletteCommands = [
   { label: "Go to Job Applications", type: "nav", action: () => { gotoPage('applications', document.querySelector('.nav-item[onclick*=applications]')); } },
   { label: "Go to Expense Tracker", type: "nav", action: () => { gotoPage('budget', document.querySelector('.nav-item[onclick*=budget]')); } },
   { label: "Go to Trip Expense Planner", type: "nav", action: () => { gotoPage('trips', document.querySelector('.nav-item[onclick*=trips]')); } },
+  { label: "Go to Resume Builder", type: "nav", action: () => { gotoPage('resume', document.querySelector('.nav-item[onclick*=resume]')); } },
   { label: "Go to Academic Calendar", type: "nav", action: () => { gotoPage('calendar', document.querySelector('.nav-item[onclick*=calendar]')); } },
   
   // Quick Actions & Logging
