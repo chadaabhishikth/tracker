@@ -1664,6 +1664,95 @@ html.light .glass-card:hover {
 .fc-rate-btn:hover { border-color: var(--blue); color: var(--blue); }
 .fc-rate-btn.forgot:hover { border-color: var(--red); color: var(--red); }
 .fc-rate-btn.easy:hover { border-color: var(--green); color: var(--green); }
+
+/* ─── COMMAND PALETTE ───────────────────────────────────── */
+.palette-backdrop {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(7, 8, 13, 0.6);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: none;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 10vh;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.palette-backdrop.show {
+  display: flex;
+  opacity: 1;
+}
+.palette-container {
+  background: var(--bg1);
+  border: 1px solid var(--line2);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 550px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.65);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(-10px);
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.palette-backdrop.show .palette-container {
+  transform: translateY(0);
+}
+.palette-input-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+}
+.palette-search-icon {
+  font-size: 16px;
+  color: var(--blue);
+}
+.palette-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+}
+.palette-list {
+  max-height: 350px;
+  overflow-y: auto;
+  padding: 8px;
+}
+.palette-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--sub);
+  font-size: 13px;
+  transition: background 0.1s, color 0.1s;
+}
+.palette-item:hover, .palette-item.active {
+  background: var(--bg3);
+  color: var(--blue);
+}
+.palette-item-icon {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+}
+.palette-item-details {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+}
+.palette-item.active .palette-item-details {
+  color: var(--sub);
+}
 </style>
 </head>
 <body>
@@ -1848,12 +1937,15 @@ html.light .glass-card:hover {
           <div class="pomo-progress-wrap">
             <div class="pomo-progress-fill" id="pomo-progress-fill" style="width: 100%;"></div>
           </div>
-          <div class="focus-sound-row">
-            <span class="fs-label">focus sound</span>
-            <div style="display:flex; align-items:center; gap:6px;">
-              <button class="fs-btn" id="fs-sound-rain" onclick="toggleFocusSound('rain')">🌧️ Rain</button>
-              <button class="fs-btn" id="fs-sound-brown" onclick="toggleFocusSound('brown')">🟫 Noise</button>
-              <input type="range" class="fs-volume" id="fs-volume-slider" min="0" max="1" step="0.1" value="0.5" oninput="changeFocusSoundVolume(this.value)" title="Volume">
+          <div class="focus-sound-row" style="flex-direction:column; gap:8px; align-items:stretch;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span class="fs-label" style="font-size:9px; letter-spacing:1px;">focus ambient mixer</span>
+              <input type="range" class="fs-volume" id="fs-volume-slider" min="0" max="1" step="0.05" value="0.5" oninput="changeFocusSoundVolume(this.value)" title="Master Volume" style="width:70px;">
+            </div>
+            <div style="display:flex; gap:4px; justify-content:space-between;">
+              <button class="fs-btn" id="fs-sound-rain" onclick="toggleFocusSound('rain')" style="flex:1; font-size:10px; padding:4px 0;">🌧️ Rain</button>
+              <button class="fs-btn" id="fs-sound-brown" onclick="toggleFocusSound('brown')" style="flex:1; font-size:10px; padding:4px 0;">🟫 Noise</button>
+              <button class="fs-btn" id="fs-sound-drone" onclick="toggleFocusSound('drone')" style="flex:1; font-size:10px; padding:4px 0;">🧬 Drone</button>
             </div>
           </div>
         </div>
@@ -2313,6 +2405,17 @@ html.light .glass-card:hover {
       <button class="btn-secondary" onclick="closeModal()">Cancel</button>
       <button class="btn-primary" id="modal-save-btn">Save Changes</button>
     </div>
+  </div>
+</div>
+
+<!-- Command Palette Overlay -->
+<div class="palette-backdrop" id="palette-backdrop" onclick="if(event.target===this)closeCommandPalette()">
+  <div class="palette-container">
+    <div class="palette-input-row">
+      <span class="palette-search-icon">🔍</span>
+      <input type="text" class="palette-input" id="palette-input" placeholder="Type a command or navigate..." oninput="onPaletteInput(this.value)" onkeydown="onPaletteKeyDown(event)">
+    </div>
+    <div class="palette-list" id="palette-list"></div>
   </div>
 </div>
 
@@ -3193,102 +3296,146 @@ document.addEventListener('keydown', (e) => {
 
 // ─── PROCEDURAL AMBIENT FOCUS SOUNDS ─────────────────────
 let focusAudioCtx = null;
-let focusNoiseNode = null;
-let focusGainNode = null;
-let focusSoundType = null; // 'rain' or 'brown'
+let focusMasterGainNode = null;
+let activeSoundSources = {}; // { rain: { source, gain }, brown: { source, gain }, drone: { oscL, oscR, gain } }
 let focusVolume = 0.5;
 
 function toggleFocusSound(type) {
   playClickSound();
   
-  if (focusSoundType === type) {
-    stopFocusSound();
-    return;
+  if (activeSoundSources[type]) {
+    stopSingleFocusSound(type);
+  } else {
+    startSingleFocusSound(type);
   }
-  
-  if (focusSoundType) {
-    stopFocusSound();
-  }
-  
-  startFocusSound(type);
 }
 
-function startFocusSound(type) {
+function startSingleFocusSound(type) {
   try {
-    focusAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    focusGainNode = focusAudioCtx.createGain();
-    focusGainNode.gain.setValueAtTime(focusVolume, focusAudioCtx.currentTime);
-    
-    const bufferSize = 2 * focusAudioCtx.sampleRate;
-    const noiseBuffer = focusAudioCtx.createBuffer(1, bufferSize, focusAudioCtx.sampleRate);
-    const output = noiseBuffer.getChannelData(0);
-    
-    let lastOut = 0.0;
-    for (let i = 0; i < bufferSize; i++) {
-      const white = Math.random() * 2 - 1;
-      // Brown noise synthesis formula
-      output[i] = (lastOut + (0.02 * white)) / 1.02;
-      lastOut = output[i];
-      output[i] *= 3.5; // Amplify to audibility
+    if (!focusAudioCtx) {
+      focusAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      focusMasterGainNode = focusAudioCtx.createGain();
+      focusMasterGainNode.gain.setValueAtTime(focusVolume, focusAudioCtx.currentTime);
+      focusMasterGainNode.connect(focusAudioCtx.destination);
     }
     
-    focusNoiseNode = focusAudioCtx.createBufferSource();
-    focusNoiseNode.buffer = noiseBuffer;
-    focusNoiseNode.loop = true;
+    // Resume context if suspended (browser security autoplays)
+    if (focusAudioCtx.state === 'suspended') {
+      focusAudioCtx.resume();
+    }
     
-    if (type === 'rain') {
-      // Rainfall filter simulation (Bandpass + lowpass)
-      const lowpass = focusAudioCtx.createBiquadFilter();
-      lowpass.type = 'lowpass';
-      lowpass.frequency.value = 550; // Rain rumble frequency
+    const trackGain = focusAudioCtx.createGain();
+    trackGain.gain.setValueAtTime(0.7, focusAudioCtx.currentTime); // internal balance
+    trackGain.connect(focusMasterGainNode);
+    
+    if (type === 'drone') {
+      // Binaural Beat Focus Drone
+      const oscL = focusAudioCtx.createOscillator();
+      const oscR = focusAudioCtx.createOscillator();
+      const pannerL = focusAudioCtx.createStereoPanner ? focusAudioCtx.createStereoPanner() : null;
+      const pannerR = focusAudioCtx.createStereoPanner ? focusAudioCtx.createStereoPanner() : null;
       
-      const bandpass = focusAudioCtx.createBiquadFilter();
-      bandpass.type = 'bandpass';
-      bandpass.frequency.value = 800;
-      bandpass.Q.value = 0.5;
+      oscL.type = 'sine';
+      oscL.frequency.setValueAtTime(110, focusAudioCtx.currentTime); // 110 Hz
+      oscR.type = 'sine';
+      oscR.frequency.setValueAtTime(114, focusAudioCtx.currentTime); // 114 Hz (4 Hz difference = Theta waves)
       
-      focusNoiseNode.connect(lowpass);
-      lowpass.connect(bandpass);
-      bandpass.connect(focusGainNode);
+      if (pannerL && pannerR) {
+        pannerL.pan.setValueAtTime(-1, focusAudioCtx.currentTime);
+        pannerR.pan.setValueAtTime(1, focusAudioCtx.currentTime);
+        oscL.connect(pannerL).connect(trackGain);
+        oscR.connect(pannerR).connect(trackGain);
+      } else {
+        oscL.connect(trackGain);
+        oscR.connect(trackGain);
+      }
+      
+      oscL.start();
+      oscR.start();
+      
+      activeSoundSources[type] = { oscL, oscR, gain: trackGain };
     } else {
-      // Pure Brown noise (deep static hum)
-      const lowpass = focusAudioCtx.createBiquadFilter();
-      lowpass.type = 'lowpass';
-      lowpass.frequency.value = 350;
-      focusNoiseNode.connect(lowpass);
-      lowpass.connect(focusGainNode);
+      // Generate Procedural Noise Buffer
+      const bufferSize = 2 * focusAudioCtx.sampleRate;
+      const noiseBuffer = focusAudioCtx.createBuffer(1, bufferSize, focusAudioCtx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      
+      let lastOut = 0.0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        output[i] = (lastOut + (0.02 * white)) / 1.02; // Brown noise formula
+        lastOut = output[i];
+        output[i] *= 3.5; // Amplify
+      }
+      
+      const noiseNode = focusAudioCtx.createBufferSource();
+      noiseNode.buffer = noiseBuffer;
+      noiseNode.loop = true;
+      
+      if (type === 'rain') {
+        const lowpass = focusAudioCtx.createBiquadFilter();
+        lowpass.type = 'lowpass';
+        lowpass.frequency.setValueAtTime(550, focusAudioCtx.currentTime);
+        
+        const bandpass = focusAudioCtx.createBiquadFilter();
+        bandpass.type = 'bandpass';
+        bandpass.frequency.setValueAtTime(800, focusAudioCtx.currentTime);
+        bandpass.Q.setValueAtTime(0.5, focusAudioCtx.currentTime);
+        
+        noiseNode.connect(lowpass);
+        lowpass.connect(bandpass);
+        bandpass.connect(trackGain);
+      } else {
+        // Pure Brown Noise
+        const lowpass = focusAudioCtx.createBiquadFilter();
+        lowpass.type = 'lowpass';
+        lowpass.frequency.setValueAtTime(320, focusAudioCtx.currentTime);
+        noiseNode.connect(lowpass);
+        lowpass.connect(trackGain);
+      }
+      
+      noiseNode.start(0);
+      activeSoundSources[type] = { source: noiseNode, gain: trackGain };
     }
     
-    focusGainNode.connect(focusAudioCtx.destination);
-    focusNoiseNode.start(0);
-    
-    focusSoundType = type;
     document.getElementById(`fs-sound-${type}`).classList.add('active');
-    showToast(`Focus ambient started: ${type} 🌧️`);
+    showToast(`Mixer: Activated ${type}`);
   } catch (e) {
-    console.warn("Could not start focus audio context", e);
+    console.warn("Could not start focus audio track", e);
   }
 }
 
-function stopFocusSound() {
-  if (focusNoiseNode) {
-    try { focusNoiseNode.stop(); } catch(e){}
-    focusNoiseNode = null;
-  }
-  if (focusAudioCtx) {
-    try { focusAudioCtx.close(); } catch(e){}
-    focusAudioCtx = null;
-  }
-  if (focusSoundType) {
-    document.getElementById(`fs-sound-${focusSoundType}`).classList.remove('active');
-    focusSoundType = null;
+function stopSingleFocusSound(type) {
+  const track = activeSoundSources[type];
+  if (!track) return;
+  
+  try {
+    if (type === 'drone') {
+      track.oscL.stop();
+      track.oscR.stop();
+    } else {
+      track.source.stop();
+    }
+  } catch(e) {}
+  
+  delete activeSoundSources[type];
+  const btn = document.getElementById(`fs-sound-${type}`);
+  if (btn) btn.classList.remove('active');
+  
+  // Clean up context if no tracks are active
+  if (Object.keys(activeSoundSources).length === 0) {
+    if (focusAudioCtx) {
+      focusAudioCtx.close();
+      focusAudioCtx = null;
+      focusMasterGainNode = null;
+    }
   }
 }
 
 function changeFocusSoundVolume(vol) {
   focusVolume = parseFloat(vol);
-  if (focusGainNode && focusAudioCtx) {
-    focusGainNode.gain.setValueAtTime(focusVolume, focusAudioCtx.currentTime);
+  if (focusMasterGainNode && focusAudioCtx) {
+    focusMasterGainNode.gain.setValueAtTime(focusVolume, focusAudioCtx.currentTime);
   }
 }
 
@@ -6033,12 +6180,14 @@ function pomoTick() {
       renderHeatmap();
       renderPomoAnalytics();
       showToast(`Study session complete! +${earnedXP} XP Earned! ⚔️`);
+      sendBrowserNotification('Study Session Complete! ⚔️', `Earned +${earnedXP} XP. Time for a break!`);
       
       playPomoChime(S.pomoSound || 'sine');
       
       promptPomoNote('break');
     } else {
       showToast('Break finished! Ready to lock in? 💪');
+      sendBrowserNotification('Break Finished! 💪', 'Ready to lock in for the next study block?');
       playPomoChime(S.pomoSound || 'sine');
       setPomoMode('work');
     }
@@ -7129,6 +7278,183 @@ function renderCalendarTimeline() {
     `;
   }).join('');
 }
+
+// ─── PWA BROWSER NOTIFICATIONS ───────────────────────────
+function requestNotificationPermission() {
+  if ('Notification' in window) {
+    Notification.requestPermission().then(permission => {
+      if (permission === 'granted') {
+        showToast('Notifications enabled! 🔔');
+      }
+    });
+  }
+}
+
+function sendBrowserNotification(title, body) {
+  if ('Notification' in window && Notification.permission === 'granted') {
+    try {
+      new Notification(title, {
+        body: body,
+        icon: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%23181a24"/><text y=".9em" font-size="90">⚡</text></svg>'
+      });
+    } catch (e) {
+      console.warn("Could not fire desktop notification", e);
+    }
+  }
+}
+
+// ─── COMMAND PALETTE (CTRL+K) SYSTEM ──────────────────────
+let isPaletteOpen = false;
+let activePaletteIndex = 0;
+let filteredCommands = [];
+
+const paletteCommands = [
+  // Navigation
+  { label: "Go to Today Dashboard", type: "nav", action: () => { gotoPage('today', document.querySelector('.nav-item[onclick*=today]')); } },
+  { label: "Go to AI Roadmap", type: "nav", action: () => { gotoPage('roadmap', document.querySelector('.nav-item[onclick*=roadmap]')); } },
+  { label: "Go to Semester 3 Track", type: "nav", action: () => { gotoPage('semester', document.querySelector('.nav-item[onclick*=semester]')); } },
+  { label: "Go to DSA Track Page", type: "nav", action: () => { gotoPage('dsa', document.querySelector('.nav-item[onclick*=dsa]')); } },
+  { label: "Go to Missions (Tasks)", type: "nav", action: () => { gotoPage('tasks', document.querySelector('.nav-item[onclick*=tasks]')); } },
+  { label: "Go to Projects", type: "nav", action: () => { gotoPage('projects', document.querySelector('.nav-item[onclick*=projects]')); } },
+  { label: "Go to Target Companies", type: "nav", action: () => { gotoPage('targets', document.querySelector('.nav-item[onclick*=targets]')); } },
+  { label: "Go to Gaming Lounge", type: "nav", action: () => { gotoPage('gaming', document.querySelector('.nav-item[onclick*=gaming]')); } },
+  { label: "Go to Study Notes", type: "nav", action: () => { gotoPage('notes', document.querySelector('.nav-item[onclick*=notes]')); } },
+  { label: "Go to Job Applications", type: "nav", action: () => { gotoPage('applications', document.querySelector('.nav-item[onclick*=applications]')); } },
+  { label: "Go to Expense Tracker", type: "nav", action: () => { gotoPage('budget', document.querySelector('.nav-item[onclick*=budget]')); } },
+  { label: "Go to Trip Expense Planner", type: "nav", action: () => { gotoPage('trips', document.querySelector('.nav-item[onclick*=trips]')); } },
+  { label: "Go to Academic Calendar", type: "nav", action: () => { gotoPage('calendar', document.querySelector('.nav-item[onclick*=calendar]')); } },
+  
+  // Quick Actions & Logging
+  { label: "Log Leetcode Solved Problem...", type: "action", action: () => { gotoPage('dsa', document.querySelector('.nav-item[onclick*=dsa]')); setTimeout(() => document.getElementById('lc-problem-name').focus(), 150); } },
+  { label: "Log New Budget Expense...", type: "action", action: () => { gotoPage('budget', document.querySelector('.nav-item[onclick*=budget]')); setTimeout(() => document.getElementById('exp-name').focus(), 150); } },
+  { label: "Add Mission Task...", type: "action", action: () => { gotoPage('tasks', document.querySelector('.nav-item[onclick*=tasks]')); setTimeout(() => {
+    // Open task adding modal or highlight input if it exists
+    const addBtn = document.querySelector('.btn-primary[onclick*="Mission"], .btn-primary[onclick*="Task"]');
+    if (addBtn) addBtn.click();
+  }, 150); } },
+  
+  // Ambient Sound Toggles
+  { label: "Ambient Mixer: Toggle Rain Sound", type: "sound", action: () => toggleFocusSound('rain') },
+  { label: "Ambient Mixer: Toggle Brown Noise", type: "sound", action: () => toggleFocusSound('brown') },
+  { label: "Ambient Mixer: Toggle Binaural Focus Drone", type: "sound", action: () => toggleFocusSound('drone') },
+  { label: "Ambient Mixer: Mute all Focus Audio", type: "sound", action: () => {
+    stopSingleFocusSound('rain'); stopSingleFocusSound('brown'); stopSingleFocusSound('drone');
+    showToast('Focus ambient muted');
+  } },
+
+  // System Controls
+  { label: "System: Toggle Theme (Dark / Light)", type: "system", action: () => toggleTheme() },
+  { label: "System: Toggle Sidebar Collapse", type: "system", action: () => toggleSidebar() },
+  { label: "System: Open System Settings", type: "system", action: () => openSettings() },
+  { label: "System: Start / Pause Pomodoro Timer", type: "system", action: () => togglePomo() },
+  { label: "System: Reset Pomodoro Timer", type: "system", action: () => resetPomo() },
+  { label: "System: Download Data Backup (JSON)", type: "system", action: () => exportDataJSON() },
+  { label: "System: Restore Data from Backup (JSON)", type: "system", action: () => triggerJSONUpload() },
+  { label: "System: Request Browser Notifications permission", type: "system", action: () => requestNotificationPermission() }
+];
+
+function openCommandPalette() {
+  playClickSound();
+  const backdrop = document.getElementById('palette-backdrop');
+  const input = document.getElementById('palette-input');
+  if (!backdrop || !input) return;
+  
+  // Request notifications permission proactively
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+  
+  backdrop.classList.add('show');
+  input.value = "";
+  isPaletteOpen = true;
+  activePaletteIndex = 0;
+  onPaletteInput("");
+  
+  setTimeout(() => input.focus(), 50);
+}
+
+function closeCommandPalette() {
+  const backdrop = document.getElementById('palette-backdrop');
+  if (backdrop) backdrop.classList.remove('show');
+  isPaletteOpen = false;
+}
+
+function onPaletteInput(query) {
+  const q = query.toLowerCase().trim();
+  if (!q) {
+    filteredCommands = [...paletteCommands];
+  } else {
+    filteredCommands = paletteCommands.filter(cmd => cmd.label.toLowerCase().includes(q));
+  }
+  activePaletteIndex = Math.min(activePaletteIndex, Math.max(0, filteredCommands.length - 1));
+  renderPaletteList();
+}
+
+function renderPaletteList() {
+  const listEl = document.getElementById('palette-list');
+  if (!listEl) return;
+  
+  if (filteredCommands.length === 0) {
+    listEl.innerHTML = `<div class="empty-state" style="padding: 20px;">No matching commands found.</div>`;
+    return;
+  }
+  
+  listEl.innerHTML = filteredCommands.map((cmd, idx) => {
+    const activeClass = idx === activePaletteIndex ? 'active' : '';
+    const icon = cmd.type === 'nav' ? '🗺️' : cmd.type === 'sound' ? '🎵' : cmd.type === 'action' ? '⚡' : '⚙️';
+    return `
+      <div class="palette-item ${activeClass}" onclick="executePaletteItem(${idx})">
+        <span class="palette-item-icon">${icon}</span>
+        <span>${cmd.label}</span>
+        <span class="palette-item-details">${cmd.type.toUpperCase()}</span>
+      </div>
+    `;
+  }).join('');
+  
+  // Scroll active item into view
+  const activeEl = listEl.querySelector('.palette-item.active');
+  if (activeEl) {
+    activeEl.scrollIntoView({ block: 'nearest' });
+  }
+}
+
+function onPaletteKeyDown(e) {
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    activePaletteIndex = (activePaletteIndex + 1) % filteredCommands.length;
+    renderPaletteList();
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    activePaletteIndex = (activePaletteIndex - 1 + filteredCommands.length) % filteredCommands.length;
+    renderPaletteList();
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    executePaletteItem(activePaletteIndex);
+  } else if (e.key === 'Escape') {
+    e.preventDefault();
+    closeCommandPalette();
+  }
+}
+
+function executePaletteItem(index) {
+  const cmd = filteredCommands[index];
+  if (cmd && cmd.action) {
+    closeCommandPalette();
+    cmd.action();
+  }
+}
+
+// Key listeners for global command palette trigger
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K' || e.key === 'p' || e.key === 'P')) {
+    e.preventDefault();
+    if (isPaletteOpen) {
+      closeCommandPalette();
+    } else {
+      openCommandPalette();
+    }
+  }
+});
 
 // Restore theme and sidebar state on load
 (function applyStoredPrefs() {
