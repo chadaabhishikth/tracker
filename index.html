@@ -3096,14 +3096,43 @@ function updateStats(){
   document.getElementById('dsa-badge').textContent=total;
   document.getElementById('stat-xp').textContent='+'+( S.xp.today||0);
   const xpTotal=S.xp.total||340;
-  const xpNext=1000;
-  const xpPct=Math.min(100,Math.round((xpTotal%xpNext)/xpNext*100));
+  let currentVal = 0;
+  let targetVal = 1100;
+  let labelText = '';
+
+  if (xpTotal >= 10000) {
+    currentVal = xpTotal;
+    targetVal = 10000;
+    labelText = `${xpTotal} / MAX`;
+  } else if (xpTotal >= 7600) {
+    currentVal = xpTotal - 7600;
+    targetVal = 10000 - 7600;
+    labelText = `${currentVal} / ${targetVal}`;
+  } else if (xpTotal >= 5100) {
+    currentVal = xpTotal - 5100;
+    targetVal = 7600 - 5100;
+    labelText = `${currentVal} / ${targetVal}`;
+  } else if (xpTotal >= 2600) {
+    currentVal = xpTotal - 2600;
+    targetVal = 5100 - 2600;
+    labelText = `${currentVal} / ${targetVal}`;
+  } else if (xpTotal >= 1100) {
+    currentVal = xpTotal - 1100;
+    targetVal = 2600 - 1100;
+    labelText = `${currentVal} / ${targetVal}`;
+  } else {
+    currentVal = xpTotal;
+    targetVal = 1100;
+    labelText = `${currentVal} / ${targetVal}`;
+  }
+  
+  const xpPct = Math.min(100, Math.round((currentVal / targetVal) * 100));
   document.getElementById('xp-fill').style.width=xpPct+'%';
-  document.getElementById('xp-display').textContent=xpTotal+' / '+xpNext;
+  document.getElementById('xp-display').textContent=labelText;
   const mXpFill = document.getElementById('xp-fill-mobile');
   if (mXpFill) mXpFill.style.width = xpPct+'%';
   const mXpDisp = document.getElementById('xp-display-mobile');
-  if (mXpDisp) mXpDisp.textContent = xpTotal+' / '+xpNext;
+  if (mXpDisp) mXpDisp.textContent = labelText;
   checkStreakRisk();
   checkMissionDueDates();
 }
