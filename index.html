@@ -2745,14 +2745,25 @@ async function syncGithubContributions() {
   }
   
   try {
-    const res = await fetch(`https://api.github.com/users/${S.githubUsername}/events`, { headers });
+    let res = await fetch(`https://api.github.com/users/${S.githubUsername}/events`, { headers });
+    
+    // Auth Token fallback - if PAT token gets 401/403 (unauthorized/invalid scope), retry anonymously
+    if (res.status === 401 || res.status === 403) {
+      console.warn("GitHub PAT rejected or rate-limited. Retrying anonymously...");
+      res = await fetch(`https://api.github.com/users/${S.githubUsername}/events`);
+    }
+    
+    if (res.status === 404) {
+      showToast(`⚠️ GitHub user "${S.githubUsername}" not found! Check spelling.`);
+      return;
+    }
+    
     if (res.ok) {
       const events = await res.json();
       const pushes = events.filter(e => e.type === 'PushEvent');
       
       const newCommitsByDate = {};
       const todayIso = getLocalISODate();
-      let newCommitsToday = 0;
       
       pushes.forEach(event => {
         if (!event.created_at) return;
@@ -2769,7 +2780,6 @@ async function syncGithubContributions() {
         const fetchedCount = newCommitsByDate[todayIso];
         if (fetchedCount > currentStored) {
           const delta = fetchedCount - currentStored;
-          // Capped at 25 XP per day (5 commits max rewarded)
           const currentRewarded = Math.min(25, currentStored * 5);
           const maxPossibleNewReward = Math.max(0, 25 - currentRewarded);
           const earnedXP = Math.min(maxPossibleNewReward, delta * 5);
@@ -2786,10 +2796,8 @@ async function syncGithubContributions() {
       // Update local storage commits counts
       Object.keys(newCommitsByDate).forEach(date => {
         S.githubCommits[date] = newCommitsByDate[date];
-        // Add visual weight points to heatmap for visual representation
         const count = newCommitsByDate[date];
         if(!S.heatmap[date]) S.heatmap[date] = 0;
-        // 5 weight points per commit (adds to color intensity)
         S.heatmap[date] = Math.max(S.heatmap[date], count * 5);
       });
       
@@ -2798,9 +2806,11 @@ async function syncGithubContributions() {
       updateStats();
       renderSidebar();
       renderHeatmap();
+    } else {
+      console.warn("GitHub API error status:", res.status);
     }
   } catch (e) {
-    console.warn("GitHub events fetch failed", e);
+    console.error("GitHub events sync failed:", e);
   }
 }
 
