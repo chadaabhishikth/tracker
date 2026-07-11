@@ -1,4 +1,4 @@
-const CACHE_NAME = 'os-dashboard-v1';
+const CACHE_NAME = 'os-dashboard-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -29,20 +29,35 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    caches.match(e.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        // Fetch new version in background to update cache (stale-while-revalidate)
-        fetch(e.request).then((networkResponse) => {
-          if (networkResponse.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(e.request, networkResponse);
-            });
-          }
-        }).catch(() => { /* Ignore offline fetch errors */ });
-        return cachedResponse;
-      }
-      return fetch(e.request);
-    })
-  );
+  // Use Network-First for main page and manifest to ensure new updates reflect immediately
+  if (e.request.mode === 'navigate' || e.request.url.includes('manifest.json') || e.request.url.includes('index.html')) {
+    e.respondWith(
+      fetch(e.request).then((networkResponse) => {
+        return caches.open(CACHE_NAME).then((cache) => {
+          cache.put(e.request, networkResponse.clone());
+          return networkResponse;
+        });
+      }).catch(() => {
+        return caches.match(e.request);
+      })
+    );
+  } else {
+    // Stale-While-Revalidate for other assets
+    e.respondWith(
+      caches.match(e.request).then((cachedResponse) => {
+        if (cachedResponse) {
+          fetch(e.request).then((networkResponse) => {
+            if (networkResponse.status === 200) {
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(e.request, networkResponse);
+              });
+            }
+          }).catch(() => {});
+          return cachedResponse;
+        }
+        return fetch(e.request);
+      })
+    );
+  }
 });
+
