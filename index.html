@@ -32,6 +32,43 @@
   --r: 8px;
 }
 
+/* ─── CUSTOM SCROLLBARS ──────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line2);
+  border-radius: 4px;
+  border: 2px solid var(--bg);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* Sidebar scrollbar customization (ultra thin and visible only on hover) */
+.sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background: transparent;
+  border: none;
+  border-radius: 2px;
+}
+.sidebar:hover::-webkit-scrollbar-thumb {
+  background: var(--line2);
+}
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+
 /* ─── LIGHT THEME ─────────────────────────────────────── */
 html.light {
   --bg:       #eff1f5;
