@@ -3490,7 +3490,7 @@ function executeTerminalCommand(cmdText) {
     S.lc.log.unshift({ id, name, diff: validDiff, date: new Date().toLocaleDateString('en-IN'), topic: 'General' });
     S.quests['q-lc'] = true;
     updateHeatmap(10);
-    save(); updateStats(); renderDSALog(); renderDSAPie(); checkAchievements();
+    recordLogActivity(); updateStats(); renderDSALog(); renderDSAPie(); checkAchievements();
     showToast(`Logged LC: ${name} ✓`);
   } 
   else if (cmd === '/add') {
@@ -3505,8 +3505,9 @@ function executeTerminalCommand(cmdText) {
     
     if (!S.budget) S.budget = { monthly: {}, log: [] };
     S.budget.log.push({ description: desc, amount, category: finalCat, date: getLocalISODate() });
-    save();
+    recordLogActivity();
     showToast(`Logged expense: ₹${amount} for ${finalCat}! 💳`);
+    checkBudgetWarnings(amount, finalCat);
   } 
   else if (cmd === '/pomo') {
     const action = tokens[1]?.toLowerCase();
@@ -4087,11 +4088,12 @@ function quickLogExpense() {
   if (!name||!amount||amount<=0) { showToast('Fill description and amount!'); return; }
   if (!S.budget) S.budget={monthly:{},log:[]};
   S.budget.log.push({description:name,amount,category:cat,date:getLocalISODate()});
-  save();
+  recordLogActivity();
   document.getElementById('quick-exp-name').value='';
   document.getElementById('quick-exp-amount').value='';
   document.getElementById('budget-quick-popover').classList.remove('show');
   showToast(`₹${amount} logged for ${cat}! 💳`);
+  checkBudgetWarnings(amount, cat);
 }
 
 // ─── POMODORO SESSION NOTES ──────────────────────────────
@@ -4110,7 +4112,7 @@ function promptPomoNote(nextMode) {
     if (note) {
       if (!S.pomoNotes) S.pomoNotes=[];
       S.pomoNotes.push({note,date:getLocalISODate(),time:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})});
-      save();
+      recordLogActivity();
     }
     setPomoMode(nextMode);
     return true;
@@ -4207,6 +4209,66 @@ function scheduleXPNotification() {
     }
     scheduleXPNotification();
   }, target-now);
+}
+
+function checkInactivityNotifications(previousVisit, previousLog) {
+  const now = Date.now();
+  const threshold = 20 * 60 * 60 * 1000;
+  
+  if (previousVisit) {
+    const elapsedVisit = now - previousVisit;
+    if (elapsedVisit > threshold) {
+      const hours = (elapsedVisit / (1000 * 60 * 60)).toFixed(1);
+      const msg = `Welcome back! It has been ${hours} hours since your last visit. ⚡`;
+      setTimeout(() => {
+        showToast(msg);
+        sendBrowserNotification('OS Dashboard', msg);
+      }, 2000);
+    }
+  }
+  
+  if (previousLog) {
+    const elapsedLog = now - previousLog;
+    if (elapsedLog > threshold) {
+      const hours = (elapsedLog / (1000 * 60 * 60)).toFixed(1);
+      const msg = `You haven't logged any items (expenses, DSA, or tasks) in the last ${hours} hours! 🔥`;
+      setTimeout(() => {
+        showToast(msg, true);
+        sendBrowserNotification('OS Dashboard 📈', msg);
+      }, 4500);
+    }
+  }
+  
+  // Register background interval checks (every hour) while tab is open
+  setInterval(() => {
+    const currentNow = Date.now();
+    if (S.lastVisitedTimestamp && (currentNow - S.lastVisitedTimestamp) > threshold) {
+      sendBrowserNotification('OS Dashboard', `You have been inactive for over 20 hours! ⚡`);
+    }
+    
+    if (S.lastLoggedTimestamp && (currentNow - S.lastLoggedTimestamp) > threshold) {
+      if (!S.lastLogWarned || (currentNow - S.lastLogWarned) > threshold) {
+        sendBrowserNotification('OS Dashboard 📈', `No activities logged in the last 20 hours! Keep grinding! 🔥`);
+        S.lastLogWarned = currentNow;
+        save();
+      }
+    }
+  }, 60 * 60 * 1000);
+}
+
+function initInactivityListeners() {
+  window.addEventListener('focus', () => {
+    S.lastVisitedTimestamp = Date.now();
+    save(true);
+  });
+  
+  document.addEventListener('click', () => {
+    const now = Date.now();
+    if (!S.lastVisitedTimestamp || (now - S.lastVisitedTimestamp) > 5 * 60 * 1000) {
+      S.lastVisitedTimestamp = now;
+      save(true);
+    }
+  });
 }
 
 // ─── TASK CARRY-OVER WARNING ─────────────────────────────
@@ -4317,7 +4379,7 @@ function quickSheet_LC() {
     const id='lc_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
     S.lc.log.unshift({id,name,diff:validDiff,date:new Date().toLocaleDateString('en-IN'),topic:'General'});
     S.quests['q-lc']=true; updateHeatmap(10);
-    save(); updateStats(); renderDSALog(); renderDSAPie(); checkAchievements();
+    recordLogActivity(); updateStats(); renderDSALog(); renderDSAPie(); checkAchievements();
     showToast(`Logged: ${name} ✓`);
   },300);
 }
@@ -4340,6 +4402,12 @@ function quickSheet_Gaming() {
 
 // ─── INIT ────────────────────────────────────────────────
 function init(){
+  const previousVisit = S.lastVisitedTimestamp;
+  const previousLog = S.lastLoggedTimestamp;
+  S.lastVisitedTimestamp = Date.now();
+  if (!S.lastLoggedTimestamp) S.lastLoggedTimestamp = Date.now();
+  save();
+
   precomputeCDs();
   updateClock();setInterval(updateClock,1000);
   updateDate();
@@ -4370,6 +4438,8 @@ function init(){
   renderXPChart();
   renderDSAPie();
   initNotifications();
+  checkInactivityNotifications(previousVisit, previousLog);
+  initInactivityListeners();
   initOfflineIndicator();
   initPullToRefresh();
   initSwipeNavigation();
@@ -4757,7 +4827,7 @@ function toggleTask(id,xp,btn){
     showToast('+'+xp+' XP earned');
     updateStreak();
   }
-  save();updateStats();renderSidebar();renderPomoAnalytics();
+  recordLogActivity();updateStats();renderSidebar();renderPomoAnalytics();
 }
 
 function updateStreak(){
@@ -4805,7 +4875,7 @@ function toggleQuest(id){
     S.xp.today = Math.max(0, (S.xp.today || 0) - xp);
     S.xp.total = Math.max(0, (S.xp.total || 340) - xp);
   }
-  save();
+  recordLogActivity();
   renderQuests();
   updateStats();
   renderSidebar();
@@ -4911,7 +4981,7 @@ function quickLogLC(){
   document.getElementById('lc-name-quick').value='';
   S.quests['q-lc']=true;
   updateHeatmap(10);
-  save();updateStats();renderQuests();renderDSALog();renderSRSQueue();renderHeatmap();
+  recordLogActivity();updateStats();renderQuests();renderDSALog();renderSRSQueue();renderHeatmap();
   showToast('Logged: '+name+' ✓');
 }
 
@@ -4944,11 +5014,11 @@ function renderMissions() {
 
 function toggleMission(type, idx) {
   S.missions[type][idx].done = !S.missions[type][idx].done;
-  save();
+  recordLogActivity();
   renderMissions();
   if(S.missions[type][idx].done) {
      S.xp.total += 25; S.xp.today = (S.xp.today || 0) + 25;
-     save(); updateStats(); renderSidebar();
+     recordLogActivity(); updateStats(); renderSidebar();
      showToast('Mission accomplished! +25 XP');
   }
 }
@@ -5644,7 +5714,7 @@ function logProblem(){
   document.getElementById('dsa-notes').value='';
   S.quests['q-lc']=true;
   updateHeatmap(15);
-  save();updateStats();renderDSALog();renderQuests();renderPhaseProgress();renderSRSQueue();
+  recordLogActivity();updateStats();renderDSALog();renderQuests();renderPhaseProgress();renderSRSQueue();
   showToast('Problem logged: '+name);
 }
 
@@ -7148,16 +7218,65 @@ function logExpense() {
   if (!date) { showToast('Please select a date!'); return; }
   if (!S.budget) S.budget = { monthly:{Food:4000,Transport:1000,Entertainment:1000,Study:2000,Misc:1000}, log:[] };
   S.budget.log.push({ description:name, amount, category:cat, date });
-  save(); renderBudget();
+  recordLogActivity(); renderBudget();
   document.getElementById('exp-name').value = '';
   document.getElementById('exp-amount').value = '';
   showToast(`₹${amount} logged for ${cat}! 💳`);
+  checkBudgetWarnings(amount, cat);
 }
 
 function deleteExpense(idx) {
   if (confirm('Delete this expense?')) {
     S.budget.log.splice(idx, 1);
     save(); renderBudget(); showToast('Expense deleted.');
+  }
+}
+
+function recordLogActivity() {
+  if (!S) return;
+  S.lastLoggedTimestamp = Date.now();
+  save();
+}
+
+function checkBudgetWarnings(addedAmount, category) {
+  if (!S.budget) return;
+  const now = new Date();
+  const monthStart = getLocalISODate(new Date(now.getFullYear(), now.getMonth(), 1));
+  const monthEnd = getLocalISODate(new Date(now.getFullYear(), now.getMonth()+1, 0));
+  const log = S.budget.log || [];
+  const monthLog = log.filter(e => e.date >= monthStart && e.date <= monthEnd);
+  
+  const cats = Object.keys(S.budget.monthly || {});
+  const spent = {};
+  cats.forEach(c => spent[c] = 0);
+  let totalSpent = 0;
+  monthLog.forEach(e => { spent[e.category] = (spent[e.category]||0) + e.amount; totalSpent += e.amount; });
+  
+  const totalBudget = cats.reduce((a,c)=>a+(S.budget.monthly[c]||0),0);
+  const catBudget = S.budget.monthly[category] || 0;
+  const catSpent = spent[category] || 0;
+  
+  let warnings = [];
+  
+  // Check category budget
+  if (catBudget > 0 && catSpent > catBudget) {
+    warnings.push(`⚠️ Category "${category}" budget exceeded! (Spent: ₹${catSpent.toFixed(0)} / Budget: ₹${catBudget})`);
+  } else if (catBudget > 0 && catSpent >= catBudget * 0.9 && (catSpent - addedAmount) < catBudget * 0.9) {
+    warnings.push(`⚠️ Category "${category}" is at 90% of budget!`);
+  }
+  
+  // Check overall monthly budget
+  if (totalBudget > 0 && totalSpent > totalBudget) {
+    warnings.push(`🚨 Overall monthly budget exceeded! (Spent: ₹${totalSpent.toFixed(0)} / Budget: ₹${totalBudget})`);
+  } else if (totalBudget > 0 && totalSpent >= totalBudget * 0.9 && (totalSpent - addedAmount) < totalBudget * 0.9) {
+    warnings.push(`🚨 Overall monthly budget is at 90% of budget!`);
+  }
+  
+  if (warnings.length > 0) {
+    warnings.forEach(warn => {
+      showToast(warn, true);
+      sendBrowserNotification('Budget Alert 💳', warn);
+    });
   }
 }
 
@@ -7846,10 +7965,23 @@ function closeModal() {
 }
 
 // ─── TOAST ────────────────────────────────────────────────
-function showToast(msg){
+function showToast(msg, isWarning = false){
   const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2500);
+  if (!t) return;
+  t.textContent=msg;
+  if (isWarning) {
+    t.style.color = 'var(--red)';
+    t.style.borderColor = 'var(--red)';
+    t.style.background = 'var(--bg2)';
+    t.style.boxShadow = '0 0 10px rgba(243,139,168,0.2)';
+  } else {
+    t.style.color = '';
+    t.style.borderColor = '';
+    t.style.background = '';
+    t.style.boxShadow = '';
+  }
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), isWarning ? 3500 : 2500);
 }
 
 // ─── THEME TOGGLE ────────────────────────────────────────────────
