@@ -3279,14 +3279,14 @@ const DEFAULT_PROJECTS = [
   }
 ];
 const DEFAULT_TARGETS = [
-  { tier: 'Reach', name: 'Goldman Sachs / JPMC', desc: 'DSA at hard-Leetcode comfort + OS/CN fundamentals + financial systems literacy + strong deployed portfolio. Achievable with consistent execution.', ctc: '₹20–35 LPA', type: 'reach' },
-  { tier: 'Target', name: 'Flipkart / Swiggy / Zepto', desc: 'Solid DSA (medium-hard), deployed projects, system design basics. Current trajectory lands here comfortably if DSA grind stays consistent.', ctc: '₹12–25 LPA', type: 'tgt' },
-  { tier: 'Floor', name: 'AI startups / mid-tier product', desc: 'AeroSynapse + System: Engineer already makes you competitive here. Guaranteed outcome even if everything else slows down.', ctc: '₹8–15 LPA', type: 'flr' }
+  { tier: 'Reach', name: 'AlphaGrep / Tower Research / Optiver', desc: 'Lethal C++ STL, Cache/Memory mastery, OS Internals, Custom Order Engine.', ctc: '₹40 - ₹80+ LPA', type: 'reach' },
+  { tier: 'Target', name: 'Goldman Sachs / JPMC / Uber', desc: 'Hard Leetcode DSA, Advanced CN/OS fundamentals, Strong Concurrent Portfolio.', ctc: '₹20 - ₹35 LPA', type: 'tgt' },
+  { tier: 'Floor', name: 'Top Product Startups / Flipkart', desc: 'Solid Medium-Hard DSA, Edge-AI deployment, robust backend design.', ctc: '₹12 - ₹20 LPA', type: 'flr' }
 ];
 const DEFAULT_TARGETS_HAVE = [
   { title: 'Portfolio breadth', items: ['Computer vision (AeroSynapse)', 'Mobile product (System: Engineer)', 'Web + backend (Satyam News)'] },
   { title: 'Technical depth', items: ['TensorRT + DeepStream at 150+ FPS', 'Flutter + Riverpod + Drift architecture', 'PostgreSQL production backend'] },
-  { title: 'Add by Sem 6', items: ['Fine-tuned LLM with RAG pipeline', 'Deployed model API with Docker', 'System design fundamentals (DDIA)'] }
+  { title: 'Add by Sem 6', items: ['Low-Latency C++ Order Matching Engine', 'Custom HTTP/1.1 Web Server in C++', 'System design fundamentals (DDIA)'] }
 ];
 const DEFAULT_GAMING = {
   verdict: "4 hours/week is 2.4% of your waking hours. That's not a threat to your goals — it's basic mental maintenance. The people who land top placements aren't the ones who studied every waking hour. They're the ones who studied consistently for 2 years without burning out. Sustainability beats intensity over an 18-month horizon every time.",
@@ -3329,6 +3329,11 @@ if(!S.gaming) S.gaming = JSON.parse(JSON.stringify(DEFAULT_GAMING));
 if(!S.noteTabs) S.noteTabs = JSON.parse(JSON.stringify(DEFAULT_NOTE_TABS));
 
 // Systems pivot state migrations and new properties
+if (S.targets && S.targets.length > 0 && S.targets[0].name.includes('Goldman Sachs')) {
+  S.targets = JSON.parse(JSON.stringify(DEFAULT_TARGETS));
+  S.targetsHave = JSON.parse(JSON.stringify(DEFAULT_TARGETS_HAVE));
+  localStorage.setItem('abhi_os', JSON.stringify(S));
+}
 if(!S.phases || !S.phases[0] || S.phases[0].title.includes('Classical AI') || !S.phases[0].learn.some(l => l.includes('CS50'))) {
   S.phases = JSON.parse(JSON.stringify(DEFAULT_PHASES));
 }
