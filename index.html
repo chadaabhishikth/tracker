@@ -2129,7 +2129,9 @@ html.light .glass-card:hover {
   <nav class="sid-nav">
     <div class="nav-section">HQ</div>
     <div class="nav-item active" onclick="gotoPage('today',this)"><span class="nav-icon">⚡</span>Today</div>
-    <div class="nav-item" onclick="gotoPage('roadmap',this)"><span class="nav-icon">🗺</span>AI Roadmap</div>
+    <div class="nav-item" onclick="gotoPage('schedule',this)"><span class="nav-icon">⏰</span>Daily Matrix</div>
+    <div class="nav-item" onclick="gotoPage('audit',this)"><span class="nav-icon">📊</span>Weekly Audit</div>
+    <div class="nav-item" onclick="gotoPage('roadmap',this)"><span class="nav-icon">🗺</span>Systems Roadmap</div>
     <div class="nav-item" onclick="gotoPage('semester',this)"><span class="nav-icon">📚</span>Semester 3</div>
     <div class="nav-item" onclick="gotoPage('calendar',this)"><span class="nav-icon">📅</span>Academic Calendar</div>
     <div class="nav-section">GRIND</div>
@@ -2183,7 +2185,7 @@ html.light .glass-card:hover {
       </div>
     </div>
     <div class="topbar-right">
-      <span class="phase-pill">Phase 1 · Classical AI</span>
+      <span class="phase-pill" id="topbar-phase-pill">Phase 1 · System Internals & C++ Pivot</span>
       <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()">
         <span class="theme-toggle-icon" id="theme-icon">🌙</span>
         <span id="theme-label">Dark</span>
@@ -2321,13 +2323,150 @@ html.light .glass-card:hover {
     </div>
   </div>
 
+  <!-- DAILY MATRIX (TIME-BLOCKING SCHEDULE) -->
+  <div id="page-schedule" class="content">
+    <div class="glass-card" style="padding: 20px; border-radius: var(--r); margin-bottom: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h2 style="font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 4px;">Daily Time-Block Matrix</h2>
+          <p style="font-size: 12px; color: var(--sub);">Fiercely protect your early morning and evening blocks to build low-level systems.</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-family: var(--font-mono); font-size: 11px; color: var(--sub);" id="schedule-mode-label">Mode: Exemption (ODS)</span>
+          <button class="theme-toggle" onclick="toggleScheduleMode()" style="border-radius: 6px; padding: 6px 12px;">
+            <span id="schedule-mode-btn-text">Switch to Class Day</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Progress Bar -->
+      <div style="margin-top: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <span style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 1px; color: var(--muted); text-transform: uppercase;">Today's Block Completion</span>
+          <span style="font-family: var(--font-mono); font-size: 11px; color: var(--green);" id="daily-matrix-progress-pct">0%</span>
+        </div>
+        <div class="prog-track" style="height: 6px;"><div class="prog-fill" id="daily-matrix-progress-fill" style="width: 0%; background: var(--green);"></div></div>
+      </div>
+    </div>
+
+    <div class="schedule-card glass-card">
+      <div class="card-hdr" style="border-bottom: 1px solid var(--line);">
+        <div class="card-title" id="daily-matrix-title">Operational Framework</div>
+        <div class="card-sub" id="daily-matrix-date"></div>
+      </div>
+      <div id="daily-matrix-list"></div>
+    </div>
+  </div>
+
+  <!-- WEEKLY AUDIT (SUNDAY AUDIT CHECKERS) -->
+  <div id="page-audit" class="content">
+    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px;">
+      
+      <!-- AUDIT LOGGING FORM -->
+      <div>
+        <div class="section-hdr">New Sunday Audit (20:00)</div>
+        <div class="glass-card" style="padding: 20px; border-radius: var(--r); display: flex; flex-direction: column; gap: 18px;">
+          <div style="font-size: 12px; color: var(--sub); line-height: 1.5; border-bottom: 1px solid var(--line); padding-bottom: 10px;">
+            Every Sunday at 20:00, open your tracker and force yourself to answer these specific binary and metric-driven questions. Be brutally honest.
+          </div>
+          
+          <!-- Category 1 -->
+          <div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--mauve); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; font-weight: 700;">1. Systems & C++ Check</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text); cursor: pointer;">
+                <input type="checkbox" id="audit-cpp-5days" style="margin-top: 3px;">
+                <span>Did I write C++ code for at least 5 days this week?</span>
+              </label>
+              <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text); cursor: pointer;">
+                <input type="checkbox" id="audit-cpp-concept" style="margin-top: 3px;">
+                <span>Did I implement one new OS concept into my core project?</span>
+              </label>
+              <div style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
+                <span style="font-size: 12px; color: var(--sub);">C++/Systems Hours:</span>
+                <input type="number" id="audit-cpp-hours" min="0" placeholder="e.g. 12" style="max-width: 80px; padding: 4px 8px; font-size: 12px; background: var(--bg2); border: 1px solid var(--line2); color: var(--text); border-radius: 4px; outline: none; text-align: center;">
+                <span style="font-size: 11px; color: var(--muted);">(Target: 10+ hours)</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Category 2 -->
+          <div style="border-top: 1px solid var(--line); padding-top: 12px;">
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--blue); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; font-weight: 700;">2. Mentorship & Academic Check</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text); cursor: pointer;">
+                <input type="checkbox" id="audit-mentor-sync" style="margin-top: 3px;">
+                <span>Did I meet with my PhD mentor and discuss an advanced problem?</span>
+              </label>
+              <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text); cursor: pointer;">
+                <input type="checkbox" id="audit-os-coursera" style="margin-top: 3px;">
+                <span>Did I complete the weekly module for Coursera OS course?</span>
+              </label>
+              <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text); cursor: pointer;">
+                <input type="checkbox" id="audit-gpa-safe" style="margin-top: 3px;">
+                <span>Are my current semester grades secured, protecting my 9+ CGPA?</span>
+              </label>
+            </div>
+          </div>
+          
+          <!-- Category 3 -->
+          <div style="border-top: 1px solid var(--line); padding-top: 12px;">
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--green); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; font-weight: 700;">3. R&D / Startup Check</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text); cursor: pointer;">
+                <input type="checkbox" id="audit-drone-deploy" style="margin-top: 3px;">
+                <span>Did I successfully deploy/optimize one feature for Aerosynapse?</span>
+              </label>
+              <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text); cursor: pointer;">
+                <input type="checkbox" id="audit-cms-bugs" style="margin-top: 3px;">
+                <span>Is the media outlet CMS running without critical bugs?</span>
+              </label>
+              <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 4px;">
+                <span style="font-size: 12px; color: var(--sub);">Model Performance Improvement (e.g. latency, accuracy):</span>
+                <input type="text" id="audit-drone-perf" placeholder="e.g. YOLOv8 TensorRT latency reduced by 14ms" style="width: 100%; padding: 6px 10px; font-size: 12px; background: var(--bg2); border: 1px solid var(--line2); color: var(--text); border-radius: 4px; outline: none;">
+              </div>
+            </div>
+          </div>
+          
+          <!-- Category 4 -->
+          <div style="border-top: 1px solid var(--line); padding-top: 12px;">
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--yellow); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; font-weight: 700;">4. Life & Reality Check</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text); cursor: pointer;">
+                <input type="checkbox" id="audit-run-5am" style="margin-top: 3px;">
+                <span>Did I hit my 2.5 km run at 5:30 AM at least 5 times this week?</span>
+              </label>
+              <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text); cursor: pointer;">
+                <input type="checkbox" id="audit-family-time" style="margin-top: 3px;">
+                <span>Did I dedicate quality distraction-free time to parents?</span>
+              </label>
+              <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text); cursor: pointer;">
+                <input type="checkbox" id="audit-no-hype" style="margin-top: 3px;">
+                <span>Did I protect myself from chasing generic AI hype or distractions?</span>
+              </label>
+            </div>
+          </div>
+          
+          <button class="form-btn" onclick="submitWeeklyAudit()" style="margin-top: 10px;">Log Weekly Audit</button>
+        </div>
+      </div>
+      
+      <!-- AUDIT HISTORY -->
+      <div>
+        <div class="section-hdr">Audit History</div>
+        <div id="weekly-audit-history-list" style="display: flex; flex-direction: column; gap: 12px;"></div>
+      </div>
+      
+    </div>
+  </div>
+
   <!-- ROADMAP -->
   <div id="page-roadmap" class="content">
     <div class="phase-tabs">
-      <button class="ptab active" onclick="swPhase(1,this)">Phase 1 — Classical AI</button>
-      <button class="ptab" onclick="swPhase(2,this)">Phase 2 — Stat ML</button>
-      <button class="ptab" onclick="swPhase(3,this)">Phase 3 — Deep Learning</button>
-      <button class="ptab" onclick="swPhase(4,this)">Phase 4 — MLOps</button>
+      <button class="ptab active" onclick="swPhase(1,this)">Phase 1 — System Internals</button>
+      <button class="ptab" onclick="swPhase(2,this)">Phase 2 — Algo & Edge AI</button>
+      <button class="ptab" onclick="swPhase(3,this)">Phase 3 — Concurrency</button>
+      <button class="ptab" onclick="swPhase(4,this)">Phase 4 — FinTech Integration</button>
     </div>
     <div id="phase-content"></div>
   </div>
@@ -2833,7 +2972,9 @@ html.light .glass-card:hover {
   <div class="mobile-drawer" onclick="event.stopPropagation()">
     <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted); text-transform:uppercase; margin-bottom:12px; letter-spacing:1px; text-align:center;">Navigation Menu</div>
     <div class="mobile-drawer-grid">
-      <div class="mobile-drawer-item" onclick="gotoMobilePage('roadmap')"><span class="mobile-drawer-icon">🗺</span>AI Roadmap</div>
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('schedule')"><span class="mobile-drawer-icon">⏰</span>Daily Matrix</div>
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('audit')"><span class="mobile-drawer-icon">📊</span>Weekly Audit</div>
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('roadmap')"><span class="mobile-drawer-icon">🗺</span>Systems Roadmap</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('semester')"><span class="mobile-drawer-icon">📚</span>Sem 3</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('dsa')"><span class="mobile-drawer-icon">🧩</span>DSA Track</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('projects')"><span class="mobile-drawer-icon">🛠</span>Projects</div>
@@ -2984,10 +3125,78 @@ const DEFAULT_QUESTS = [
   {id:'q-review',text:'Review one concept from yesterday',xp:10},
 ];
 const DEFAULT_PHASES = [
-  {n:1,title:'Classical AI Foundation',period:'Now → Dec 2026 · Sem 3',status:'▶ Active',learn:['Search: BFS, DFS, A*, UCS','Adversarial: Minimax + Alpha-Beta pruning','Constraint Satisfaction Problems','Propositional & first-order logic','Bayesian networks & uncertainty','Markov Decision Processes'],res:['AIMA — Russell & Norvig (primary)','CS50 AI — Harvard (supplement)','Sebastian Lague — Chess AI (YouTube)','David Silver RL Lecture 2 — MDPs'],stack:['Python','AIMA','CS50 AI','FAI Course'],ms:'Unbeatable Connect 4 AI with Minimax + Alpha-Beta pruning — built from scratch in Python, no libraries. If it beats you every time, Phase 1 is done.'},
-  {n:2,title:'Statistical Machine Learning',period:'Jan → Jun 2027 · Sem 4',status:'Next up',learn:['Linear & logistic regression','Decision trees & random forests','Support Vector Machines','Gradient boosting & XGBoost','Feature engineering & selection','Cross-validation & hyperparameter tuning'],res:['Hands-On ML — Géron (primary)','StatQuest — Josh Starmer (YouTube)','Kaggle Learn — free structured track','fast.ai Part 1 — practical ML'],stack:['scikit-learn','pandas','numpy','XGBoost','Kaggle'],ms:'Top 20% in a Kaggle competition using only classical ML — no neural nets. XGBoost with good feature engineering beating most neural net submissions = Phase 2 complete.'},
-  {n:3,title:'Deep Learning & Transformers',period:'Jul → Dec 2027 · Sem 5',status:'Year 3',learn:['Neural network fundamentals & backprop','CNNs for computer vision','Attention mechanism from scratch','Transformer architecture (GPT, BERT)','Fine-tuning pre-trained LLMs','RAG pipelines & LangChain'],res:['Andrej Karpathy — makemore, nanoGPT','fast.ai Part 2 — deep learning from scratch','Hugging Face course — transformers','Attention is All You Need — original paper'],stack:['PyTorch','Hugging Face','LangChain','LlamaIndex','CUDA'],ms:'Fine-tune an open-source LLM (Mistral or LLaMA) on a domain-specific dataset and build a working RAG pipeline. This project gets you into AI-first company interviews.'},
-  {n:4,title:'MLOps & System Design',period:'Jan → Jun 2028 · Sem 6',status:'Elite layer',learn:['Model serving with FastAPI + TorchServe','Docker + Kubernetes for ML workloads','MLflow for experiment tracking','CI/CD pipelines for model deployment','System design for scale (DDIA)','Monitoring & observability in production'],res:['DDIA — Kleppmann (system design bible)','Made With ML — Goku Mohandas','Full Stack Deep Learning — course','AeroSynapse — your own live project'],stack:['Docker','Kubernetes','FastAPI','MLflow','CI/CD','TensorRT'],ms:'Deploy a PyTorch model behind FastAPI, containerized in Docker, with auto-scaling — handling 1000 concurrent requests without crashing. Demo this in every single interview.'},
+  {
+    n: 1,
+    title: 'System Internals & C++ Pivot',
+    period: 'Months 1–6 · Sem 3',
+    status: '▶ Active',
+    learn: [
+      'Modern C++ (C++17/20), STL internals, vector/unordered_map/priority_queue memory allocation',
+      'POSIX system calls (fork, exec, wait, pipe, mmap), descriptor manipulation, process signals',
+      'Custom shell, custom memory graph structures, spatial indexing (Quad-trees, R-trees)',
+      'Transport Layer (TCP/UDP mechanisms, sliding window, socket programming)'
+    ],
+    res: [
+      'Silberschatz OS Dinosaur Book + CodeVault YouTube (OS)',
+      'Kurose & Ross Computer Networks (CN)',
+      'Linux Kernel and POSIX API Documentation'
+    ],
+    stack: ['Modern C++ (C++17/20)', 'POSIX API', 'epoll / select', 'pthread'],
+    ms: 'Multi-Threaded HTTP/1.1 Web Server built from scratch in C++ using POSIX sockets, a thread-pool architecture, and non-blocking I/O multiplexing.'
+  },
+  {
+    n: 2,
+    title: 'Algorithmic Complexity & Edge-AI Optimization',
+    period: 'Months 7–12 · Sem 4',
+    status: 'Next up',
+    learn: [
+      'Dynamic Programming, greedy strategies, network flow, string-matching, graph traversals (Tarjan)',
+      'Advanced linear algebra, SVD, LU Decomposition, proximal gradient optimization',
+      'Edge AI optimization: ONNX format export, FP32 to INT8 model quantization',
+      'NVIDIA TensorRT / Intel OpenVINO runtime performance tracking'
+    ],
+    res: [
+      'CLRS (primary algorithms) + MIT 6.046',
+      'Boyd Convex Optimization / linear algebra resources',
+      'NVIDIA TensorRT & OpenVINO official docs'
+    ],
+    stack: ['C++', 'Python', 'ONNX', 'TensorRT', 'OpenVINO'],
+    ms: 'Ultra-Low Latency Order-Matching Engine with pre-allocated object pools, achieving zero dynamic memory allocation and O(1) order operations.'
+  },
+  {
+    n: 3,
+    title: 'Hardware-Level Concurrency & Advanced Finance Electives',
+    period: 'Months 13–18 · Sem 5',
+    status: 'Year 3',
+    learn: [
+      'CPU Cache alignment (L1, L2, L3), sequential memory layouts, false sharing prevention',
+      'Advanced concurrency primitives: std::atomic, memory barriers, sequential consistency vs relaxed ordering',
+      'Lock-free data structures (single-producer single-consumer queues)',
+      'Time Series Analysis (ARMA, ARIMA, ARCH, GARCH) & concurrent programming optimizations'
+    ],
+    res: [
+      'C++ Concurrency in Action (Williams)',
+      'Time Series Analysis (Hamilton) + professional elective textbooks'
+    ],
+    stack: ['C++', 'std::atomic', 'Linux Shared Memory (shm)', 'Time Series'],
+    ms: 'High-Performance Shared-Memory IPC Ring Buffer with atomic read/write markers and acquire-release memory fences.'
+  },
+  {
+    n: 4,
+    title: 'Placement Strategy & FinTech Integration',
+    period: 'Months 19+ · Sem 6',
+    status: 'Elite layer',
+    learn: [
+      'Interview optimization: C++ question banks, OS memory parsing, networking loops',
+      'Resume tailoring emphasizing Aerosynapse R&D, CMS, and custom matching engines',
+      'Placement execution: direct HFT outreach and on-campus placement tests'
+    ],
+    res: [
+      'HFT developer prep guides, systems architecture mock interviews'
+    ],
+    stack: ['C++', 'Python', 'IPC', 'WebSockets', 'Vol-Prediction'],
+    ms: 'Live End-to-End Algorithmic Trading Mock Pipeline (WebSocket Data Engine, Analytical Volatility Predictor, Shared-Memory IPC matching).'
+  }
 ];
 const DEFAULT_SUBJECTS = [
   {name:'Data Structures & Algorithms 2',code:'22AIE203 — graphs, tries, hash functions, Merkle trees',pri:'Critical',pclass:'pri-c',res:'CLRS + MIT 6.006 on YouTube',res2:'Sync Leetcode problems to class topics weekly'},
@@ -3092,6 +3301,14 @@ if(!S.targets) S.targets = JSON.parse(JSON.stringify(DEFAULT_TARGETS));
 if(!S.targetsHave) S.targetsHave = JSON.parse(JSON.stringify(DEFAULT_TARGETS_HAVE));
 if(!S.gaming) S.gaming = JSON.parse(JSON.stringify(DEFAULT_GAMING));
 if(!S.noteTabs) S.noteTabs = JSON.parse(JSON.stringify(DEFAULT_NOTE_TABS));
+
+// Systems pivot state migrations and new properties
+if(!S.phases || !S.phases[0] || S.phases[0].title.includes('Classical AI')) {
+  S.phases = JSON.parse(JSON.stringify(DEFAULT_PHASES));
+}
+if(S.scheduleExemptionMode === undefined) S.scheduleExemptionMode = true;
+if(!S.weeklyAudits) S.weeklyAudits = [];
+if(!S.blockCompletions) S.blockCompletions = {};
 
 if(!S.tasks) S.tasks = {};
 if(!S.quests) S.quests = {};
@@ -4515,6 +4732,14 @@ function checkDailyReset(){
 function updateStats(){
   const day=DAYS[new Date().getDay()];
   const sched=S.schedule[day]||[];
+  
+  // Dynamic topbar phase pill update
+  const activePhase = (S.phases || []).find(p => p.status && p.status.includes('Active')) || { n: 1, title: 'System Internals & C++ Pivot' };
+  const pillEl = document.getElementById('topbar-phase-pill');
+  if (pillEl) {
+    pillEl.textContent = `Phase ${activePhase.n} · ${activePhase.title}`;
+  }
+
   const taskable=sched.filter(b=>b.xp>0);
   const done=taskable.filter(b=>S.tasks[b.id]).length;
   document.getElementById('stat-tasks').textContent=done+'/'+taskable.length;
@@ -5063,6 +5288,224 @@ function openMissionModal(type, idx = null) {
     renderMissions();
     return true;
   });
+}
+
+// ─── DAILY MATRIX BLOCK LIST DEFINITION ───────────────────
+const DAILY_MATRIX_BLOCKS = [
+  { id: 'anchor', time: '05:30 – 06:30', name: 'The Anchor (Physical Conditioning & Mental Reset)', desc: 'Execute your 2.5 km run. Do not listen to tech podcasts or think about code during this time. Let your brain rest.', tag: 'blue', focus: 'Physical endurance' },
+  { id: 'deep1', time: '06:30 – 08:30', name: 'Deep Work Block 1 (The Non-Negotiable Core)', desc: 'C++ Mastery and Systems Engineering (No startup work, no university homework). Build your custom C++ web server, master STL containers, or work through low-latency OS concepts.', tag: 'red', focus: 'C++ & Systems' },
+  { id: 'breakfast', time: '08:30 – 09:30', name: 'Breakfast & Family Operations', desc: 'Fuel up, handle morning household responsibilities, and assist your parents where needed.', tag: 'yellow', focus: 'Family ops' },
+  { id: 'acad', time: '09:30 – 13:30', name: 'Academic & Mentorship Block', desc: 'Coursera OS Audit, interacting with your PhD mentor, and maintaining your 9.37 CGPA. Complete required coursework, read Linux kernel documentation.', tag: 'mauve', focus: 'OS & Mentor Sync' },
+  { id: 'lunch', time: '13:30 – 14:30', name: 'Lunch & Disconnect', desc: 'Step away from all screens. Give your eyes and mind a full break.', tag: 'muted', focus: 'Mental reset' },
+  { id: 'deep2', time: '14:30 – 17:30', name: 'Deep Work Block 2 (Execution & Applied R&D)', desc: 'Aerosynapse and Freelance CMS. Optimize the edge-AI drone models, write Python scripts for heat mapping, or fix database bugs in the e-paper CMS.', tag: 'green', focus: 'Applied R&D' },
+  { id: 'flex', time: '17:30 – 19:30', name: 'The Flex & Family Buffer', desc: 'Contingency time. If father needs medical attention, errands need to run, this buffer absorbs the shock. If calm, read up on quantitative finance or stochastic calculus.', tag: 'yellow', focus: 'Buffer / Quant' },
+  { id: 'dinner', time: '19:30 – 20:30', name: 'Dinner', desc: 'Eat, relax, and transition to evening shutdown.', tag: 'muted', focus: 'Recovery' },
+  { id: 'winddown', time: '20:30 – 21:30', name: 'The Wind Down & Tracker Audit', desc: 'Preparation for tomorrow. Push your daily updates to tracker. Review what you accomplished, write down 3 specific tasks for tomorrow, and shut down.', tag: 'blue', focus: 'Tracker Audit' }
+];
+
+function renderDailyMatrix() {
+  const dateStr = getLocalISODate();
+  const titleEl = document.getElementById('daily-matrix-title');
+  const dateEl = document.getElementById('daily-matrix-date');
+  if (titleEl) titleEl.textContent = 'Operational Framework';
+  if (dateEl) dateEl.textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  
+  const isExemption = S.scheduleExemptionMode !== false;
+  const labelEl = document.getElementById('schedule-mode-label');
+  const btnTextEl = document.getElementById('schedule-mode-btn-text');
+  if (labelEl) labelEl.textContent = 'Mode: ' + (isExemption ? 'Exemption (ODS)' : 'Class Day');
+  if (btnTextEl) btnTextEl.textContent = isExemption ? 'Switch to Class Day' : 'Switch to Exemption (ODS)';
+  
+  const comps = S.blockCompletions[dateStr] || [];
+  
+  let html = '';
+  DAILY_MATRIX_BLOCKS.forEach((b) => {
+    let name = b.name;
+    let desc = b.desc;
+    let focus = b.focus;
+    let tag = b.tag;
+    
+    // Swap morning deep work on Class days
+    if (!isExemption && b.id === 'deep1') {
+      name = 'Academic Lectures & Classes';
+      desc = 'Mandatory university lecture blocks. Swapped out from Morning Deep Work. Focus on coursework, reading kernel docs, and mentorship discussions.';
+      focus = 'Institutional Requirements';
+    }
+    
+    const isDone = comps.includes(b.id);
+    
+    html += `
+      <div class="time-block ${isDone ? 'done' : ''}" onclick="toggleMatrixBlock('${b.id}')">
+        <div class="tb-time">${b.time}</div>
+        <div class="tb-body">
+          <div class="tb-name">${name}</div>
+          <div class="tb-desc" style="margin-bottom: 4px;">${desc}</div>
+          <div style="display: flex; gap: 6px; align-items: center;">
+            <span class="tb-tag ${tag}">${focus}</span>
+            ${b.id === 'anchor' ? `<span class="tb-tag" style="background: rgba(250,179,135,0.1); color: var(--peach);">Veteran Tip 🏃‍♂️</span>` : ''}
+          </div>
+        </div>
+        <div class="tb-check">
+          <button class="check-btn ${isDone ? 'checked' : ''}" style="pointer-events: none;">${isDone ? '✓' : ''}</button>
+        </div>
+      </div>
+    `;
+  });
+  
+  const listEl = document.getElementById('daily-matrix-list');
+  if (listEl) listEl.innerHTML = html;
+  
+  // Calculate completion percentage
+  const total = DAILY_MATRIX_BLOCKS.length;
+  const done = comps.length;
+  const pct = Math.round((done / total) * 100) || 0;
+  
+  const progressPctEl = document.getElementById('daily-matrix-progress-pct');
+  const progressFillEl = document.getElementById('daily-matrix-progress-fill');
+  if (progressPctEl) progressPctEl.textContent = pct + '%';
+  if (progressFillEl) progressFillEl.style.width = pct + '%';
+}
+
+function toggleScheduleMode() {
+  S.scheduleExemptionMode = !S.scheduleExemptionMode;
+  save();
+  renderDailyMatrix();
+  showToast('Switched schedule operational mode.');
+}
+
+function toggleMatrixBlock(blockId) {
+  const dateStr = getLocalISODate();
+  if (!S.blockCompletions[dateStr]) S.blockCompletions[dateStr] = [];
+  
+  const idx = S.blockCompletions[dateStr].indexOf(blockId);
+  if (idx > -1) {
+    S.blockCompletions[dateStr].splice(idx, 1);
+    save();
+    renderDailyMatrix();
+  } else {
+    S.blockCompletions[dateStr].push(blockId);
+    S.xp.total += 10;
+    S.xp.today = (S.xp.today || 0) + 10;
+    recordLogActivity();
+    updateStats();
+    renderSidebar();
+    renderDailyMatrix();
+    showToast('Block completed! +10 XP');
+  }
+}
+
+// ─── WEEKLY AUDIT ─────────────────────────────────────────
+function renderWeeklyAudit() {
+  const list = document.getElementById('weekly-audit-history-list');
+  if (!list) return;
+  
+  const audits = S.weeklyAudits || [];
+  if (audits.length === 0) {
+    list.innerHTML = `<div class="empty-state glass-card">No audits logged yet.<br>Sunday audits will appear here.</div>`;
+    return;
+  }
+  
+  list.innerHTML = audits.map((a, idx) => {
+    const totalCheckers = 10;
+    let passed = 0;
+    if (a.cpp5days) passed++;
+    if (a.cppConcept) passed++;
+    if (a.mentorSync) passed++;
+    if (a.osCoursera) passed++;
+    if (a.gpaSafe) passed++;
+    if (a.droneDeploy) passed++;
+    if (a.cmsBugs) passed++;
+    if (a.run5am) passed++;
+    if (a.familyTime) passed++;
+    if (a.noHype) passed++;
+    
+    const pct = Math.round((passed / totalCheckers) * 100);
+    const color = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--red)';
+    
+    return `
+      <div class="glass-card" style="padding: 14px; border-radius: var(--r);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span style="font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--peach);">${a.weekEnding}</span>
+          <span style="font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: ${color};">${passed}/${totalCheckers} Passed (${pct}%)</span>
+        </div>
+        <div style="font-size: 12px; color: var(--sub); display: flex; flex-direction: column; gap: 4px;">
+          <div>📚 C++ Hours: <strong style="color: var(--text); font-family: var(--font-mono);">${a.cppHours}h</strong> (Target: 10h)</div>
+          ${a.dronePerf ? `<div>🤖 CV Optimization: <em style="color: var(--text);">${a.dronePerf}</em></div>` : ''}
+        </div>
+        <div style="margin-top: 8px; text-align: right;">
+          <button class="edit-btn" onclick="deleteWeeklyAudit(${idx})" style="color: var(--red); font-size: 10px;">🗑️ Delete</button>
+        </div>
+      </div>
+    `;
+  }).reverse().join('');
+}
+
+function submitWeeklyAudit() {
+  const cpp5days = document.getElementById('audit-cpp-5days').checked;
+  const cppConcept = document.getElementById('audit-cpp-concept').checked;
+  const cppHours = parseFloat(document.getElementById('audit-cpp-hours').value) || 0;
+  const mentorSync = document.getElementById('audit-mentor-sync').checked;
+  const osCoursera = document.getElementById('audit-os-coursera').checked;
+  const gpaSafe = document.getElementById('audit-gpa-safe').checked;
+  const droneDeploy = document.getElementById('audit-drone-deploy').checked;
+  const cmsBugs = document.getElementById('audit-cms-bugs').checked;
+  const dronePerf = document.getElementById('audit-drone-perf').value.trim();
+  const run5am = document.getElementById('audit-run-5am').checked;
+  const familyTime = document.getElementById('audit-family-time').checked;
+  const noHype = document.getElementById('audit-no-hype').checked;
+  
+  const weekEnding = new Date().toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' });
+  
+  const newAudit = {
+    weekEnding,
+    cpp5days,
+    cppConcept,
+    cppHours,
+    mentorSync,
+    osCoursera,
+    gpaSafe,
+    droneDeploy,
+    cmsBugs,
+    dronePerf,
+    run5am,
+    familyTime,
+    noHype
+  };
+  
+  if (!S.weeklyAudits) S.weeklyAudits = [];
+  S.weeklyAudits.push(newAudit);
+  
+  S.xp.total += 50;
+  S.xp.today = (S.xp.today || 0) + 50;
+  
+  recordLogActivity();
+  updateStats();
+  renderSidebar();
+  renderWeeklyAudit();
+  
+  document.getElementById('audit-cpp-5days').checked = false;
+  document.getElementById('audit-cpp-concept').checked = false;
+  document.getElementById('audit-cpp-hours').value = '';
+  document.getElementById('audit-mentor-sync').checked = false;
+  document.getElementById('audit-os-coursera').checked = false;
+  document.getElementById('audit-gpa-safe').checked = false;
+  document.getElementById('audit-drone-deploy').checked = false;
+  document.getElementById('audit-cms-bugs').checked = false;
+  document.getElementById('audit-drone-perf').value = '';
+  document.getElementById('audit-run-5am').checked = false;
+  document.getElementById('audit-family-time').checked = false;
+  document.getElementById('audit-no-hype').checked = false;
+  
+  showToast('Weekly audit logged! +50 XP');
+}
+
+function deleteWeeklyAudit(idx) {
+  if (confirm('Delete this audit record?')) {
+    S.weeklyAudits.splice(idx, 1);
+    save();
+    renderWeeklyAudit();
+    showToast('Audit record deleted.');
+  }
 }
 
 // ─── ROADMAP ──────────────────────────────────────────────
@@ -6188,7 +6631,7 @@ document.addEventListener('keydown', e => {
 });
 
 // ─── NAVIGATION ───────────────────────────────────────────
-const pageTitles={today:'Today',roadmap:'AI Roadmap',semester:'Semester 3',calendar:'Academic Calendar',dsa:'DSA Track',projects:'Projects',targets:'Targets',gaming:'Gaming',notes:'Notes',tasks:'Mission Board',applications:'Applications',budget:'Expense Tracker',trips:'Trip Planner',resume:'Resume HQ'};
+const pageTitles={today:'Today',roadmap:'Systems Roadmap',semester:'Semester 3',calendar:'Academic Calendar',dsa:'DSA Track',projects:'Projects',targets:'Targets',gaming:'Gaming',notes:'Notes',tasks:'Mission Board',applications:'Applications',budget:'Expense Tracker',trips:'Trip Planner',resume:'Resume HQ',schedule:'Daily Matrix',audit:'Weekly Audit'};
 
 function gotoPage(id,el){
   playClickSound();
@@ -6198,6 +6641,8 @@ function gotoPage(id,el){
   el.classList.add('active');
   document.getElementById('page-title').textContent=pageTitles[id];
   if(id==='today'){renderToday();updateStats();}
+  if(id==='schedule'){renderDailyMatrix();}
+  if(id==='audit'){renderWeeklyAudit();}
   if(id==='tasks'){renderMissions();}
   if(id==='notes'){renderNotesSidebar();}
   if(id==='projects'){renderProjects();}
