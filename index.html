@@ -3123,6 +3123,7 @@ const DEFAULT_SCHEDULE = {
   ],
 };
 const DEFAULT_QUESTS = [
+  {id:'q-run',text:'Execute your 2.5 km run at 05:30 AM',xp:15},
   {id:'q-lc',text:'Log at least 1 Leetcode problem',xp:20},
   {id:'q-read',text:'Read textbook / watch lecture resource',xp:15},
   {id:'q-build',text:'Write or run code today',xp:15},
@@ -3331,6 +3332,9 @@ if (S.subjects && !S.subjects.some(s => s.name === 'CS50 AI with Python')) {
 }
 
 if(!S.tasks) S.tasks = {};
+if (S.questsList && !S.questsList.some(q => q.id === 'q-run')) {
+  S.questsList.unshift({id:'q-run',text:'Execute your 2.5 km run at 05:30 AM',xp:15});
+}
 if(!S.quests) S.quests = {};
 if(!S.lc) S.lc = {easy:0,medium:0,hard:0,log:[]};
 else if (S.lc.log) {
@@ -5095,7 +5099,12 @@ function renderQuests(){
   const list=document.getElementById('quest-list');
   list.innerHTML='';
   let done=0;
-  S.questsList.forEach(q=>{
+  
+  // Filter out the running quest on Saturdays
+  const isSaturday = new Date().getDay() === 6;
+  const activeQuests = S.questsList.filter(q => !(isSaturday && q.id === 'q-run'));
+  
+  activeQuests.forEach(q=>{
     const isDone=!!S.quests[q.id];
     if(isDone)done++;
     const div=document.createElement('div');
@@ -5104,7 +5113,7 @@ function renderQuests(){
     div.innerHTML=`<div class="quest-check ${isDone?'done':''}">${isDone?'✓':''}</div><div class="quest-text">${q.text}</div><div class="quest-xp">+${q.xp} XP</div>`;
     list.appendChild(div);
   });
-  document.getElementById('quest-count').textContent=done+'/'+S.questsList.length+' done';
+  document.getElementById('quest-count').textContent=done+'/'+activeQuests.length+' done';
 }
 
 function toggleQuest(id){
