@@ -2562,6 +2562,11 @@ html.light .glass-card:hover {
       <button class="btn-primary" onclick="editTargetsHave()" style="padding: 4px 10px; font-size: 11px; font-family: var(--font-mono);">⚙️ EDIT LISTS</button>
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;" id="targets-have-container"></div>
+
+    <div class="section-hdr" style="margin-top:28px;">
+      <span>TECHNICAL COMPETENCY TRACKER</span>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;" id="competency-tracker-container"></div>
   </div>
 
   <!-- GAMING -->
@@ -3134,14 +3139,16 @@ const DEFAULT_PHASES = [
       'Modern C++ (C++17/20), STL internals, vector/unordered_map/priority_queue memory allocation',
       'POSIX system calls (fork, exec, wait, pipe, mmap), descriptor manipulation, process signals',
       'Custom shell, custom memory graph structures, spatial indexing (Quad-trees, R-trees)',
-      'Transport Layer (TCP/UDP mechanisms, sliding window, socket programming)'
+      'Transport Layer (TCP/UDP mechanisms, sliding window, socket programming)',
+      'AI Foundation: CS50’s Introduction to Artificial Intelligence with Python'
     ],
     res: [
       'Silberschatz OS Dinosaur Book + CodeVault YouTube (OS)',
       'Kurose & Ross Computer Networks (CN)',
-      'Linux Kernel and POSIX API Documentation'
+      'Linux Kernel and POSIX API Documentation',
+      'CS50 AI with Python — Harvard (online supplemental course)'
     ],
-    stack: ['Modern C++ (C++17/20)', 'POSIX API', 'epoll / select', 'pthread'],
+    stack: ['Modern C++ (C++17/20)', 'POSIX API', 'epoll / select', 'pthread', 'Python / CS50 AI'],
     ms: 'Multi-Threaded HTTP/1.1 Web Server built from scratch in C++ using POSIX sockets, a thread-pool architecture, and non-blocking I/O multiplexing.'
   },
   {
@@ -3207,6 +3214,7 @@ const DEFAULT_SUBJECTS = [
   {name:'Introduction to Python',code:'22AIE205 — NumPy, Pandas, Django, multithreading',pri:'Routine',pclass:'pri-l',res:'Official docs only',res2:'You\'re already beyond this syllabus — attend and score'},
   {name:'Intelligence of Biological Systems',code:'22BIO201 — bioinformatics, DNA algorithms',pri:'Routine',pclass:'pri-l',res:'Class notes only',res2:'Zero placement relevance — minimum viable effort'},
   {name:'Strategic Lessons from Mahabharata',code:'22ADM201',pri:'Routine',pclass:'pri-l',res:'Class notes only',res2:'Attend and clear the exam'},
+  {name:'CS50 AI with Python',code:'Self-Study Foundation — search, optimization, logic, machine learning',pri:'High',pclass:'pri-h',res:'CS50 AI — Harvard (online course)',res2:'Build classical AI search & logic paradigms to ground your mathematical foundation'},
 ];
 const DEFAULT_MISSIONS = { daily: [{id:"m1", text:"Complete 2 LeetCode problems", done:false}, {id:"m2", text:"Read 1 chapter of OS", done:false}], longTerm: [{id:"l1", text:"Build a Fullstack App", done:false, deadline:"Aug 30"}, {id:"l2", text:"Get an Internship", done:false, deadline:"Dec 2026"}] };
 const DEFAULT_PROJECTS = [
@@ -3303,12 +3311,24 @@ if(!S.gaming) S.gaming = JSON.parse(JSON.stringify(DEFAULT_GAMING));
 if(!S.noteTabs) S.noteTabs = JSON.parse(JSON.stringify(DEFAULT_NOTE_TABS));
 
 // Systems pivot state migrations and new properties
-if(!S.phases || !S.phases[0] || S.phases[0].title.includes('Classical AI')) {
+if(!S.phases || !S.phases[0] || S.phases[0].title.includes('Classical AI') || !S.phases[0].learn.some(l => l.includes('CS50'))) {
   S.phases = JSON.parse(JSON.stringify(DEFAULT_PHASES));
 }
 if(S.scheduleExemptionMode === undefined) S.scheduleExemptionMode = true;
 if(!S.weeklyAudits) S.weeklyAudits = [];
 if(!S.blockCompletions) S.blockCompletions = {};
+if(!S.competencyMastery) S.competencyMastery = {};
+
+if (S.subjects && !S.subjects.some(s => s.name === 'CS50 AI with Python')) {
+  S.subjects.push({
+    name: 'CS50 AI with Python',
+    code: 'Self-Study Foundation — search, optimization, logic, machine learning',
+    pri: 'High',
+    pclass: 'pri-h',
+    res: 'CS50 AI — Harvard (online course)',
+    res2: 'Build classical AI search & logic paradigms to ground your mathematical foundation'
+  });
+}
 
 if(!S.tasks) S.tasks = {};
 if(!S.quests) S.quests = {};
@@ -5290,6 +5310,87 @@ function openMissionModal(type, idx = null) {
   });
 }
 
+// ─── TECHNICAL COMPETENCIES DEFINITIONS ──────────────────
+const DEFAULT_COMPETENCY_LIST = {
+  osRoles: [
+    { id: 'c_sockets', name: 'POSIX Sockets', desc: 'TCP/UDP network socket lifecycle' },
+    { id: 'c_proc', name: 'Process Lifecycle', desc: 'Fork/exec/wait process management & pthreads' },
+    { id: 'c_cache', name: 'Cache Alignment', desc: 'CPU L1/L2/L3 cache alignment & false sharing rules' },
+    { id: 'c_lockfree', name: 'Lock-Free Structures', desc: 'Atomics & Single-Producer Single-Consumer queues' },
+    { id: 'c_io', name: 'I/O Multiplexing', desc: 'Non-blocking select/epoll for concurrent connections' },
+    { id: 'c_ipc', name: 'Shared Memory IPC', desc: 'Linux shm structures & ring buffer streaming' }
+  ],
+  aiArch: [
+    { id: 'c_yolo', name: 'YOLOv8 Detection', desc: 'Live counting & density heatmap modeling' },
+    { id: 'c_onnx', name: 'ONNX Portability', desc: 'Interoperable model formats & graph validation' },
+    { id: 'c_tensorrt', name: 'NVIDIA TensorRT', desc: 'Highly optimized CUDA execution engines' },
+    { id: 'c_deepstream', name: 'DeepStream Pipeline', desc: 'Video processing pipelines & GStreamer layout' },
+    { id: 'c_sahi', name: 'SAHI Tiling', desc: 'Sliced inference for small targets in 4K' },
+    { id: 'c_quant', name: 'Model Quantization', desc: 'FP32 to INT8 weights scaling & post-training compression' }
+  ]
+};
+
+function renderCompetencyTracker() {
+  const container = document.getElementById('competency-tracker-container');
+  if(!container) return;
+  
+  const comp = DEFAULT_COMPETENCY_LIST;
+  const mastery = S.competencyMastery || {};
+  
+  const getListHTML = (items, category) => {
+    let total = items.length;
+    let done = items.filter(x => mastery[x.id]).length;
+    let pct = Math.round((done / total) * 100) || 0;
+    
+    let listHTML = items.map(item => {
+      const isDone = !!mastery[item.id];
+      return `
+        <div class="quest-item ${isDone ? 'done-item' : ''}" onclick="toggleCompetency('${item.id}', '${category}')">
+          <div class="quest-check ${isDone ? 'done' : ''}">${isDone ? '✓' : ''}</div>
+          <div class="quest-text">
+            <strong>${item.name}</strong>
+            <div style="font-size:10px; color:var(--sub);">${item.desc}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+    
+    return `
+      <div class="glass-card" style="padding: 16px; border-radius: var(--r);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <div style="font-family:var(--font-mono); font-size:10px; font-weight:700; color:var(--mauve); text-transform:uppercase;">${category === 'os' ? 'OS Core Competencies' : 'AI Architectures & Edge'}</div>
+          <span style="font-family:var(--font-mono); font-size:11px; color:var(--green); font-weight:700;">${pct}%</span>
+        </div>
+        <div class="prog-track" style="height:4px; margin-bottom:16px;">
+          <div class="prog-fill" style="width:${pct}%; background:var(--green);"></div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          ${listHTML}
+        </div>
+      </div>
+    `;
+  };
+  
+  container.innerHTML = getListHTML(comp.osRoles, 'os') + getListHTML(comp.aiArch, 'ai');
+}
+
+function toggleCompetency(id, category) {
+  if(!S.competencyMastery) S.competencyMastery = {};
+  S.competencyMastery[id] = !S.competencyMastery[id];
+  
+  if (S.competencyMastery[id]) {
+    S.xp.total += 15;
+    S.xp.today = (S.xp.today || 0) + 15;
+    recordLogActivity();
+    updateStats();
+    renderSidebar();
+    showToast('Competency mastered! +15 XP');
+  } else {
+    save();
+  }
+  renderCompetencyTracker();
+}
+
 // ─── DAILY MATRIX BLOCK LIST DEFINITION ───────────────────
 const DAILY_MATRIX_BLOCKS = [
   { id: 'anchor', time: '05:30 – 06:30', name: 'The Anchor (Physical Conditioning & Mental Reset)', desc: 'Execute your 2.5 km run. Do not listen to tech podcasts or think about code during this time. Let your brain rest.', tag: 'blue', focus: 'Physical endurance' },
@@ -6648,7 +6749,7 @@ function gotoPage(id,el){
   if(id==='projects'){renderProjects();}
   if(id==='semester'){renderSemester();}
   if(id==='calendar'){renderAcademicCalendar();}
-  if(id==='targets'){renderTargets();}
+  if(id==='targets'){renderTargets(); renderCompetencyTracker();}
   if(id==='gaming'){renderGaming();updateGamingLogDisplay();}
   if(id==='dsa'){renderSRSQueue();renderDSALog();}
   if(id==='applications'){renderKanban();}
