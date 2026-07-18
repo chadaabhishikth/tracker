@@ -5435,6 +5435,13 @@ function renderDailyMatrix() {
     let focus = b.focus;
     let tag = b.tag;
     
+    const currentDay = new Date().getDay();
+    if (currentDay === 6 && b.id === 'anchor') {
+      name = 'The Anchor (Saturday Rest Day)';
+      desc = 'Let your body recover. No running required today. Focus on mental recharge.';
+      focus = 'Rest & Recovery';
+    }
+    
     // Swap morning deep work on Class days
     if (!isExemption && b.id === 'deep1') {
       name = 'Academic Lectures & Classes';
