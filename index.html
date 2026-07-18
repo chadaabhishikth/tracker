@@ -606,7 +606,7 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
 /* Floating Settings Button */
 .settings-fab {
   position: fixed;
-  bottom: 24px;
+  bottom: 38px;
   right: 24px;
   width: 42px;
   height: 42px;
@@ -772,6 +772,9 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
 .timeline-event-item.exam { border-left: 3px solid var(--red); }
 .timeline-event-item.academic { border-left: 3px solid var(--green); }
 .timeline-event-item.non-instructional { border-left: 3px solid var(--blue); }
+.timeline-event-item.task { border-left: 3px solid var(--green); }
+.timeline-event-item.exam-prep { border-left: 3px solid var(--red); }
+.timeline-event-item.milestone { border-left: 3px solid var(--blue); }
 .timeline-event-date { font-family: var(--font-mono); font-size: 11px; color: var(--sub); min-width: 60px; }
 .timeline-event-badge { font-family: var(--font-mono); font-size: 9px; padding: 2px 6px; border-radius: 3px; background: var(--bg3); color: var(--sub); min-width: 50px; text-align: center; }
 .timeline-event-badge.academic { background: rgba(166,227,161,0.1); color: var(--green); }
@@ -1390,7 +1393,7 @@ html.light .glass-card:hover {
 
 /* ─── FLOATING SCRATCHPAD DRAWER ────────────────────────── */
 .floating-scratchpad-btn {
-  position: fixed; bottom: 80px; left: 16px; width: 44px; height: 44px;
+  position: fixed; bottom: 92px; right: 24px; width: 44px; height: 44px;
   background: var(--bg2); border: 1px solid var(--line2); border-radius: 50%;
   display: flex; align-items: center; justify-content: center; cursor: pointer;
   z-index: 990; font-size: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
@@ -1398,13 +1401,13 @@ html.light .glass-card:hover {
 }
 .floating-scratchpad-btn:hover { border-color: var(--blue); transform: scale(1.08); }
 .scratchpad-drawer {
-  position: fixed; top: 80px; left: -360px; width: 340px; bottom: 80px;
-  background: var(--bg1); border: 1px solid var(--line); border-radius: 0 16px 16px 0;
-  box-shadow: 8px 0 32px rgba(0,0,0,0.5); z-index: 989;
+  position: fixed; top: 80px; right: -360px; width: 340px; bottom: 148px;
+  background: var(--bg1); border: 1px solid var(--line); border-radius: 16px 0 0 16px;
+  box-shadow: -8px 0 32px rgba(0,0,0,0.5); z-index: 989;
   display: flex; flex-direction: column; padding: 18px;
-  transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.scratchpad-drawer.show { left: 0; }
+.scratchpad-drawer.show { right: 0; }
 .scratchpad-hdr {
   display: flex; justify-content: space-between; align-items: center;
   font-family: var(--font-mono); font-size: 10px; color: var(--muted);
@@ -1427,8 +1430,9 @@ html.light .glass-card:hover {
 }
 @media (max-width: 900px) {
   .ticker-bar { display: none; }
-  .floating-scratchpad-btn { bottom: calc(85px + env(safe-area-inset-bottom)); left: 16px; }
-  .scratchpad-drawer { bottom: calc(85px + env(safe-area-inset-bottom)); }
+  .floating-scratchpad-btn { bottom: calc(85px + env(safe-area-inset-bottom)); right: 24px; }
+  .scratchpad-drawer { bottom: calc(85px + env(safe-area-inset-bottom)); right: -360px; }
+  .scratchpad-drawer.show { right: 0; }
 }
 .ticker-wrapper { display: flex; width: 100%; align-items: center; justify-content: space-between; }
 .ticker-title { color: var(--blue); font-weight: 700; margin-right: 12px; flex-shrink: 0; }
@@ -2899,6 +2903,19 @@ html.light .glass-card:hover {
     <div id="calendar-timeline-container-wrap" style="display: none;">
       <div class="calendar-timeline-wrap" id="calendar-timeline-body"></div>
     </div>
+
+    <!-- Smart Academic & Placement Recommendations -->
+    <div class="calendar-recs-panel" style="margin-top: 24px; background: var(--bg1); border: 1px solid var(--line); border-radius: var(--r); padding: 18px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--line); padding-bottom:8px;">
+        <span style="font-family:var(--font-mono); font-size:12px; font-weight:700; color:var(--mauve); text-transform:uppercase; display:flex; align-items:center; gap:6px;">
+          💡 Smart Study & Placement Planner
+        </span>
+        <span style="font-size:10px; color:var(--muted); font-family:var(--font-mono);">Click to quick-schedule tasks</span>
+      </div>
+      <div class="calendar-recs-grid" id="calendar-recs-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:12px;">
+        <!-- Dynamically rendered study recommendations -->
+      </div>
+    </div>
   </div>
 
 </div>
@@ -3371,6 +3388,7 @@ if (S.budget && S.budget.monthly) {
   if (!S.budget.monthly.hasOwnProperty('Outings')) S.budget.monthly.Outings = 2000;
   if (!S.budget.monthly.hasOwnProperty('Monthly')) S.budget.monthly.Monthly = 10000;
 }
+if(!S.customCalendarEvents) S.customCalendarEvents = [];
 let pushTimeout = null;
 function save(skipPush){
   if (!skipPush) {
@@ -3560,6 +3578,7 @@ function playPomoChime(type) {
 function showCalendarDayDetails(iso, dayNum, monthName) {
   const event = ACADEMIC_CALENDAR_EVENTS.find(e => e.date === iso);
   const cd = CD_MAP[iso];
+  const dayCustomEvents = (S.customCalendarEvents || []).filter(e => e.date === iso);
   
   let contentHtml = `
     <div style="text-align:center;margin-bottom:16px;">
@@ -3583,19 +3602,71 @@ function showCalendarDayDetails(iso, dayNum, monthName) {
     `;
   } else {
     contentHtml += `
-      <div style="text-align:center; padding:20px; color:var(--sub); font-size:13px;">
-        No academic events or exams scheduled for this day.
+      <div style="text-align:center; padding:12px; color:var(--sub); font-size:13px; border: 1px dashed var(--line2); border-radius: 8px; margin-bottom: 12px;">
+        No official academic events scheduled.
       </div>
     `;
   }
   
   if (cd) {
     contentHtml += `
-      <div style="border: 1px solid rgba(137,180,250,0.2); padding: 10px 14px; border-radius: 8px; background: rgba(137,180,250,0.04); font-family: var(--font-mono); font-size: 11px; color: var(--blue);">
+      <div style="border: 1px solid rgba(137,180,250,0.2); padding: 10px 14px; border-radius: 8px; background: rgba(137,180,250,0.04); font-family: var(--font-mono); font-size: 11px; color: var(--blue); margin-bottom: 12px;">
         📅 Countdown Milestone: ${cd}
       </div>
     `;
   }
+  
+  let customHtml = '';
+  if (dayCustomEvents.length > 0) {
+    customHtml = `
+      <div style="margin-top:16px;">
+        <div style="font-family:var(--font-mono); font-size:10px; font-weight:700; color:var(--mauve); text-transform:uppercase; margin-bottom:8px;">Custom Tasks & Plans</div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          ${dayCustomEvents.map(ce => {
+            const doneStyle = ce.done ? 'text-decoration:line-through; opacity:0.6;' : '';
+            const dotColor = ce.type === 'exam-prep' ? 'var(--red)' : ce.type === 'milestone' ? 'var(--blue)' : 'var(--green)';
+            const typeText = ce.type === 'exam-prep' ? 'Exam Prep' : ce.type === 'milestone' ? 'Milestone' : 'Task';
+            return `
+              <div style="background:var(--bg3); border:1px solid var(--line2); border-radius:6px; padding:10px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                <div style="display:flex; align-items:center; gap:8px; flex:1; min-width: 0;">
+                  <button class="check-btn ${ce.done ? 'checked' : ''}" onclick="toggleCustomCalendarTask('${ce.id}', ${ce.xp}); closeModal(); showCalendarDayDetails('${iso}', ${dayNum}, '${monthName}');" style="width:16px; height:16px; font-size:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                    ${ce.done ? '✓' : ''}
+                  </button>
+                  <div style="font-size:12px; color:var(--text); ${doneStyle}; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex: 1;">
+                    ${ce.details}
+                    <div style="font-size:9px; color:var(--sub); display:flex; align-items:center; gap:4px; margin-top:2px;">
+                      <span style="width:4px; height:4px; border-radius:50%; background:${dotColor}; display:inline-block;"></span>
+                      ${typeText} &middot; +${ce.xp} XP
+                    </div>
+                  </div>
+                </div>
+                <button class="edit-btn" onclick="deleteCustomCalendarEvent('${ce.id}'); closeModal(); showCalendarDayDetails('${iso}', ${dayNum}, '${monthName}');" style="color:var(--red); font-size:10px; margin:0; padding:4px; flex-shrink: 0;">🗑️</button>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+  
+  const addFormHtml = `
+    <div style="margin-top:18px; border-top: 1px solid var(--line2); padding-top:14px;">
+      <div style="font-family:var(--font-mono); font-size:10px; font-weight:700; color:var(--mauve); text-transform:uppercase; margin-bottom:8px;">+ Add Custom Task / Scheduled Study</div>
+      <div class="modal-form-group" style="margin-bottom:8px;">
+        <input type="text" class="modal-form-input" id="new-cal-event-desc" placeholder="e.g. Revise CPU scheduling algorithms" style="padding:6px 8px; font-size:12px;">
+      </div>
+      <div style="display:grid; grid-template-columns: 2fr 1fr; gap:8px;">
+        <select class="modal-form-select" id="new-cal-event-type" style="padding:6px 8px; font-size:12px; background:var(--bg2); color:var(--text); border:1px solid var(--line2);">
+          <option value="task">Standard Task (+15 XP)</option>
+          <option value="exam-prep">Exam Prep Study (+25 XP)</option>
+          <option value="milestone">Milestone / Deadline (+30 XP)</option>
+        </select>
+        <button class="form-btn" onclick="addCustomCalendarEvent('${iso}', ${dayNum}, '${monthName}')" style="font-size:11px; padding:6px; background:var(--blue); color:var(--bg);">Add Plan</button>
+      </div>
+    </div>
+  `;
+  
+  contentHtml += customHtml + addFormHtml;
   
   openModal('Day Details', contentHtml, () => true);
   setTimeout(() => {
@@ -3607,6 +3678,69 @@ function showCalendarDayDetails(iso, dayNum, monthName) {
       btn.style.border = '1px solid var(--line2)';
     }
   }, 20);
+}
+
+function addCustomCalendarEvent(iso, dayNum, monthName) {
+  const descEl = document.getElementById('new-cal-event-desc');
+  const typeEl = document.getElementById('new-cal-event-type');
+  if (!descEl) return;
+  const desc = descEl.value.trim();
+  const type = typeEl ? typeEl.value : 'task';
+  if (!desc) { showToast('Please enter a description!'); return; }
+  
+  const xpValues = {
+    'task': 15,
+    'exam-prep': 25,
+    'milestone': 30
+  };
+  const xp = xpValues[type] || 15;
+  const id = 'cal_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+  
+  S.customCalendarEvents.push({
+    id,
+    date: iso,
+    type,
+    details: desc,
+    done: false,
+    xp
+  });
+  save();
+  renderAcademicCalendar();
+  showToast('Task added to calendar! 📅');
+  
+  closeModal();
+  setTimeout(() => showCalendarDayDetails(iso, dayNum, monthName), 100);
+}
+
+function toggleCustomCalendarTask(id, xp) {
+  const ce = S.customCalendarEvents.find(e => e.id === id);
+  if (ce) {
+    ce.done = !ce.done;
+    if (ce.done) {
+      S.xp.total = (S.xp.total || 0) + xp;
+      S.xp.today = (S.xp.today || 0) + xp;
+      updateHeatmap(xp);
+      showToast(`Task accomplished! +${xp} XP earned! 🏆`);
+    } else {
+      S.xp.total = Math.max(0, (S.xp.total || 0) - xp);
+      S.xp.today = Math.max(0, (S.xp.today || 0) - xp);
+      showToast('Task marked incomplete.');
+    }
+    save();
+    renderAcademicCalendar();
+    updateStats();
+    renderSidebar();
+    renderHeatmap();
+  }
+}
+
+function deleteCustomCalendarEvent(id) {
+  if (confirm('Delete this calendar task?')) {
+    S.customCalendarEvents = S.customCalendarEvents.filter(e => e.id !== id);
+    save();
+    renderAcademicCalendar();
+    showToast('Task deleted from calendar.');
+  }
 }
 
 // ─── XP MULTIPLIER STREAKS ───────────────────────────────
@@ -8730,6 +8864,79 @@ function renderAcademicCalendar() {
   } else {
     renderCalendarTimeline();
   }
+  renderCalendarRecommendations();
+}
+
+const ACADEMIC_RECOMMENDATIONS = [
+  { details: 'LeetCode DP & Graph Grinds', type: 'exam-prep', xp: 25, badge: 'Placement' },
+  { details: 'OS Processes & IPC Revision', type: 'exam-prep', xp: 25, badge: 'Academic' },
+  { details: 'Goldman Sachs Mock OA Practice', type: 'milestone', xp: 30, badge: 'Placement' },
+  { details: 'Draft System Design Architecture', type: 'milestone', xp: 30, badge: 'Projects' },
+  { details: 'Review Coursera OS Audit Lab', type: 'task', xp: 15, badge: 'Academic' },
+  { details: 'Resume HQ Updates & Refinement', type: 'task', xp: 15, badge: 'Placement' }
+];
+
+function renderCalendarRecommendations() {
+  const container = document.getElementById('calendar-recs-grid');
+  if (!container) return;
+  
+  container.innerHTML = ACADEMIC_RECOMMENDATIONS.map(rec => {
+    const dotColor = rec.type === 'exam-prep' ? 'var(--red)' : rec.type === 'milestone' ? 'var(--blue)' : 'var(--green)';
+    const typeLabel = rec.type === 'exam-prep' ? 'Exam Prep' : rec.type === 'milestone' ? 'Milestone' : 'Task';
+    return `
+      <div class="rec-card" onclick="quickScheduleRec('${rec.details.replace(/'/g, "\\'")}', '${rec.type}', ${rec.xp})" style="background:var(--bg2); border:1px solid var(--line2); border-radius:8px; padding:12px; cursor:pointer; transition:all 0.2s ease; display:flex; flex-direction:column; justify-content:space-between; gap:10px;">
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span style="font-family:var(--font-mono); font-size:9px; background:rgba(203,166,247,0.1); color:var(--mauve); padding:2px 6px; border-radius:4px; font-weight:700;">${rec.badge}</span>
+            <span style="font-family:var(--font-mono); font-size:10px; color:var(--mauve); font-weight:700;">+${rec.xp} XP</span>
+          </div>
+          <div style="font-size:12px; color:var(--text); font-weight:600; line-height:1.4;">${rec.details}</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:4px; font-size:10px; color:var(--sub);">
+          <span style="width:4px; height:4px; border-radius:50%; background:${dotColor};"></span>
+          ${typeLabel}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function quickScheduleRec(details, type, xp) {
+  playClickSound();
+  const html = `
+    <div style="text-align:center;margin-bottom:16px;">
+      <div style="font-size:28px;margin-bottom:8px;">💡</div>
+      <div style="font-size:14px;font-weight:600;color:var(--text);">${details}</div>
+      <div style="font-size:11px;color:var(--sub);margin-top:2px;">Category: ${type.toUpperCase()} &middot; Award: +${xp} XP</div>
+    </div>
+    <div class="modal-form-group">
+      <label class="modal-form-label">Choose Date to Schedule</label>
+      <input type="date" class="modal-form-input" id="sched-rec-date" style="background:var(--bg2); color:var(--text); border:1px solid var(--line2);">
+    </div>
+  `;
+  openModal('Quick-Schedule Study Plan', html, () => {
+    const dateVal = document.getElementById('sched-rec-date').value;
+    if (!dateVal) { showToast('Please select a date!'); return false; }
+    
+    const id = 'cal_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+    S.customCalendarEvents.push({
+      id,
+      date: dateVal,
+      type,
+      details,
+      done: false,
+      xp
+    });
+    save();
+    renderAcademicCalendar();
+    showToast(`Scheduled: "${details}" 📅`);
+    return true;
+  });
+  
+  setTimeout(() => {
+    const dateInput = document.getElementById('sched-rec-date');
+    if (dateInput) dateInput.value = getLocalISODate();
+  }, 50);
 }
 
 function renderCalendarCountdowns() {
@@ -8800,16 +9007,26 @@ function renderCalendarGrid(year, month) {
     const date = new Date(year, month, d);
     const iso = getLocalISODate(date);
     const event = ACADEMIC_CALENDAR_EVENTS.find(e => e.date === iso);
+    const dayCustomEvents = (S.customCalendarEvents || []).filter(e => e.date === iso);
+    const hasCustom = dayCustomEvents.length > 0;
     const cd = CD_MAP[iso];
     const isToday = (iso === todayIso);
     
     let cellCls = '';
     if (isToday) cellCls += ' today';
-    if (event) {
+    if (event || hasCustom) {
       cellCls += ' has-event';
-      if (event.type === 'holiday') cellCls += ' holiday';
-      else if (event.type === 'exam') cellCls += ' exam-day';
-      else cellCls += ' special-day';
+      if (event) {
+        if (event.type === 'holiday') cellCls += ' holiday';
+        else if (event.type === 'exam') cellCls += ' exam-day';
+        else cellCls += ' special-day';
+      } else {
+        const hasCustomExam = dayCustomEvents.some(e => e.type === 'exam-prep');
+        const hasCustomMilestone = dayCustomEvents.some(e => e.type === 'milestone');
+        if (hasCustomExam) cellCls += ' exam-day';
+        else if (hasCustomMilestone) cellCls += ' special-day';
+        else cellCls += ' custom-task-day';
+      }
     } else {
       const day = date.getDay();
       if (day === 0 || day === 6) {
@@ -8817,16 +9034,36 @@ function renderCalendarGrid(year, month) {
       }
     }
     
-    const displayEvent = event ? event.details : '';
+    let displayEvents = '';
+    if (event) {
+      displayEvents += `<div class="day-cell-event static-event" style="color:var(--text);font-weight:500;">${event.details}</div>`;
+    }
+    dayCustomEvents.forEach(ce => {
+      const doneStyle = ce.done ? 'text-decoration:line-through; opacity:0.5;' : '';
+      const dotColor = ce.type === 'exam-prep' ? 'var(--red)' : ce.type === 'milestone' ? 'var(--blue)' : 'var(--green)';
+      displayEvents += `
+        <div class="day-cell-event custom-event" style="${doneStyle} display:flex; align-items:center; gap:4px; margin-top:2px;">
+          <span style="width:4px; height:4px; border-radius:50%; background:${dotColor}; display:inline-block; flex-shrink:0;"></span>
+          <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${ce.done ? '✓ ' : ''}${ce.details}</span>
+        </div>
+      `;
+    });
+
+    let tooltipText = `${d} ${MONTH_NAMES[month]}`;
+    if (event) tooltipText += `\nAcademic: ${event.details}`;
+    dayCustomEvents.forEach(ce => {
+      tooltipText += `\n[${ce.done ? '✓' : ' '}] ${ce.details} (${ce.xp} XP)`;
+    });
+
     const cdBadge = cd ? `<span class="day-cd-badge">${cd}</span>` : '';
     
     html += `
-      <div class="calendar-day-cell${cellCls}" title="${d} ${MONTH_NAMES[month]}: ${displayEvent || (cd ? cd : '')}" onclick="showCalendarDayDetails('${iso}', ${d}, '${MONTH_NAMES[month]}')">
+      <div class="calendar-day-cell${cellCls}" title="${tooltipText}" onclick="showCalendarDayDetails('${iso}', ${d}, '${MONTH_NAMES[month]}')">
         <div class="day-cell-top">
           <span class="day-num">${d}</span>
           ${cdBadge}
         </div>
-        <div class="day-cell-event">${displayEvent}</div>
+        ${displayEvents}
       </div>
     `;
   }
@@ -8845,7 +9082,23 @@ function renderCalendarTimeline() {
   if (!container) return;
   
   const groups = {};
-  ACADEMIC_CALENDAR_EVENTS.forEach(e => {
+  const allEvents = [...ACADEMIC_CALENDAR_EVENTS];
+  (S.customCalendarEvents || []).forEach(ce => {
+    allEvents.push({
+      date: ce.date,
+      type: ce.type,
+      label: ce.type === 'exam-prep' ? 'Exam Prep' : ce.type === 'milestone' ? 'Milestone' : 'Task',
+      details: ce.details,
+      isCustom: true,
+      id: ce.id,
+      done: ce.done,
+      xp: ce.xp
+    });
+  });
+  
+  allEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  allEvents.forEach(e => {
     const dateObj = new Date(e.date);
     const key = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
     if (!groups[key]) groups[key] = [];
@@ -8861,12 +9114,35 @@ function renderCalendarTimeline() {
     
     const eventsHtml = events.map(e => {
       const d = new Date(e.date).getDate();
-      const badgeCls = e.type;
+      let badgeCls = e.type;
+      let checkboxHtml = '';
+      let deleteBtn = '';
+      let itemCls = e.type;
+      
+      if (e.isCustom) {
+        itemCls += ' custom-timeline-item';
+        badgeCls = e.type === 'exam-prep' ? 'exam' : e.type === 'milestone' ? 'feedback' : 'academic';
+        
+        checkboxHtml = `
+          <button class="check-btn ${e.done ? 'checked' : ''}" onclick="toggleCustomCalendarTask('${e.id}', ${e.xp})" style="width:16px; height:16px; font-size:9px; margin-right:8px; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;">
+            ${e.done ? '✓' : ''}
+          </button>
+        `;
+        deleteBtn = `
+          <button class="edit-btn" onclick="deleteCustomCalendarEvent('${e.id}')" style="color:var(--red); font-size:11px; margin-left:8px; opacity:0.8;">🗑️</button>
+        `;
+      }
+      
+      const doneStyle = e.done ? 'text-decoration:line-through; opacity:0.5;' : '';
+      const xpText = (e.isCustom && e.xp) ? `<span style="font-family:var(--font-mono); font-size:10px; color:var(--mauve); margin-left:6px;">+${e.xp} XP</span>` : '';
+
       return `
-        <div class="timeline-event-item ${e.type}">
+        <div class="timeline-event-item ${itemCls}" style="display:flex; align-items:center;">
           <span class="timeline-event-date">${d} ${monthName.slice(0,3)}</span>
-          <span class="timeline-event-badge ${badgeCls}">${e.label || e.type}</span>
-          <span class="timeline-event-desc">${e.details}</span>
+          <span class="timeline-event-badge ${badgeCls}" style="min-width:70px;">${e.label || e.type}</span>
+          ${checkboxHtml}
+          <span class="timeline-event-desc" style="flex:1; ${doneStyle}">${e.details}${xpText}</span>
+          ${deleteBtn}
         </div>
       `;
     }).join('');
