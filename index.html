@@ -7991,10 +7991,10 @@ function printExpensesPDF() {
   });
   
   const printWindow = window.open('', '_blank');
-  printWindow.document.write(\`
+  printWindow.document.write(`
     <html>
       <head>
-        <title>Expense Report - \${userName}</title>
+        <title>Expense Report - ${userName}</title>
         <style>
           body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; padding: 40px; line-height: 1.6; }
           .header { border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-end; }
@@ -8018,10 +8018,10 @@ function printExpensesPDF() {
         <div class="header">
           <div>
             <h1>Expense Statement</h1>
-            <div style="font-size: 15px; color: #555; margin-top: 4px;">Accountability Log for <strong>\${userName}</strong></div>
+            <div style="font-size: 15px; color: #555; margin-top: 4px;">Accountability Log for <strong>${userName}</strong></div>
           </div>
           <div class="header-meta">
-            <div>Date Generated: \${todayStr}</div>
+            <div>Date Generated: ${todayStr}</div>
             <div>Status: Verified</div>
           </div>
         </div>
@@ -8035,10 +8035,10 @@ function printExpensesPDF() {
             </tr>
           </thead>
           <tbody>
-            \${rowsHtml}
+            ${rowsHtml}
             <tr class="total-row">
               <td colspan="3" style="text-align: right;">Total Amount:</td>
-              <td class="amount">₹\${total}</td>
+              <td class="amount">₹${total}</td>
             </tr>
           </tbody>
         </table>
@@ -8053,7 +8053,7 @@ function printExpensesPDF() {
         </script>
       </body>
     </html>
-  \`);
+  `);
   printWindow.document.close();
 }
 
