@@ -2686,7 +2686,10 @@ html.light .glass-card:hover {
   <div id="page-budget" class="content">
     <div class="section-hdr" style="display:flex;justify-content:space-between;align-items:center;">
       <span>EXPENSE TRACKER — <span id="budget-month-label"></span></span>
-      <button class="btn-primary" onclick="editBudgetSetup()" style="padding:4px 10px;font-size:11px;font-family:var(--font-mono);">⚙️ EDIT BUDGETS</button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-primary" onclick="downloadExpensesCSV()" style="padding:4px 10px;font-size:11px;font-family:var(--font-mono);">📥 DOWNLOAD SHEET</button>
+        <button class="btn-primary" onclick="editBudgetSetup()" style="padding:4px 10px;font-size:11px;font-family:var(--font-mono);">⚙️ EDIT BUDGETS</button>
+      </div>
     </div>
     <div class="budget-grid">
       <div>
@@ -7926,6 +7929,38 @@ function logExpense() {
   checkBudgetWarnings(amount, cat);
 }
 
+function downloadExpensesCSV() {
+  playClickSound();
+  const log = (S.budget && S.budget.log) || [];
+  if (log.length === 0) {
+    showToast('No expenses logged to download!', true);
+    return;
+  }
+  
+  // Sort log by date ascending
+  const sortedLog = [...log].sort((a, b) => new Date(a.date) - new Date(b.date));
+  
+  // CSV Headers
+  let csvContent = "Date,Category,Details,Amount\n";
+  
+  // CSV Rows
+  sortedLog.forEach(e => {
+    // Escape double quotes and wrap in quotes
+    const escapedDesc = `"${e.description.replace(/"/g, '""')}"`;
+    const escapedCat = `"${e.category.replace(/"/g, '""')}"`;
+    csvContent += `${e.date},${escapedCat},${escapedDesc},${e.amount}\n`;
+  });
+  
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const a = document.createElement("a");
+  const today = getLocalISODate();
+  a.href = URL.createObjectURL(blob);
+  a.download = `expenses_sheet_${today}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast("Expenses sheet downloaded! 📊");
+}
+
 function deleteExpense(idx) {
   if (confirm('Delete this expense?')) {
     S.budget.log.splice(idx, 1);
@@ -9232,6 +9267,7 @@ const paletteCommands = [
   { label: "System: Start / Pause Pomodoro Timer", type: "system", action: () => togglePomo() },
   { label: "System: Reset Pomodoro Timer", type: "system", action: () => resetPomo() },
   { label: "System: Download Data Backup (JSON)", type: "system", action: () => exportDataJSON() },
+  { label: "System: Download Expense Sheet (CSV)", type: "system", action: () => downloadExpensesCSV() },
   { label: "System: Restore Data from Backup (JSON)", type: "system", action: () => triggerJSONUpload() },
   { label: "System: Request Browser Notifications permission", type: "system", action: () => requestNotificationPermission() }
 ];
