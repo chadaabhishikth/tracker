@@ -2687,7 +2687,8 @@ html.light .glass-card:hover {
     <div class="section-hdr" style="display:flex;justify-content:space-between;align-items:center;">
       <span>EXPENSE TRACKER — <span id="budget-month-label"></span></span>
       <div style="display:flex;gap:8px;">
-        <button class="btn-primary" onclick="downloadExpensesCSV()" style="padding:4px 10px;font-size:11px;font-family:var(--font-mono);">📥 DOWNLOAD SHEET</button>
+        <button class="btn-primary" onclick="downloadExpensesCSV()" style="padding:4px 10px;font-size:11px;font-family:var(--font-mono);">📥 DOWNLOAD CSV</button>
+        <button class="btn-primary" onclick="printExpensesPDF()" style="padding:4px 10px;font-size:11px;font-family:var(--font-mono);">🖨️ PRINT PDF</button>
         <button class="btn-primary" onclick="editBudgetSetup()" style="padding:4px 10px;font-size:11px;font-family:var(--font-mono);">⚙️ EDIT BUDGETS</button>
       </div>
     </div>
@@ -7961,6 +7962,101 @@ function downloadExpensesCSV() {
   showToast("Expenses sheet downloaded! 📊");
 }
 
+function printExpensesPDF() {
+  playClickSound();
+  const log = (S.budget && S.budget.log) || [];
+  if (log.length === 0) {
+    showToast('No expenses logged to print!', true);
+    return;
+  }
+  
+  // Sort log by date ascending
+  const sortedLog = [...log].sort((a, b) => new Date(a.date) - new Date(b.date));
+  
+  const userName = S.profile.name || "Abhishikth";
+  const todayStr = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+  
+  let total = 0;
+  let rowsHtml = "";
+  sortedLog.forEach(e => {
+    total += e.amount;
+    rowsHtml += `
+      <tr>
+        <td>${e.date}</td>
+        <td>${e.category}</td>
+        <td>${e.description}</td>
+        <td class="amount">₹${e.amount}</td>
+      </tr>
+    `;
+  });
+  
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(\`
+    <html>
+      <head>
+        <title>Expense Report - \${userName}</title>
+        <style>
+          body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; padding: 40px; line-height: 1.6; }
+          .header { border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-end; }
+          .header h1 { margin: 0; font-size: 24px; font-weight: 700; color: #111; text-transform: uppercase; letter-spacing: 0.5px; }
+          .header-meta { text-align: right; font-size: 13px; color: #666; }
+          table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+          th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; font-size: 14px; }
+          th { background-color: #f8f9fa; font-weight: 600; color: #555; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; }
+          .amount { text-align: right; font-family: monospace; font-weight: 600; }
+          th.amount { text-align: right; }
+          .total-row { font-size: 16px; font-weight: 700; border-top: 2px solid #333; border-bottom: 2px solid #333; }
+          .total-row td { padding: 16px 15px; }
+          .footer { text-align: center; font-size: 11px; color: #999; margin-top: 60px; }
+          @media print {
+            body { padding: 20px; }
+            button { display: none; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div>
+            <h1>Expense Statement</h1>
+            <div style="font-size: 15px; color: #555; margin-top: 4px;">Accountability Log for <strong>\${userName}</strong></div>
+          </div>
+          <div class="header-meta">
+            <div>Date Generated: \${todayStr}</div>
+            <div>Status: Verified</div>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Category</th>
+              <th>Details</th>
+              <th class="amount">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            \${rowsHtml}
+            <tr class="total-row">
+              <td colspan="3" style="text-align: right;">Total Amount:</td>
+              <td class="amount">₹\${total}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="footer">
+          Self-generated via OS Dashboard. Shared for parental accountability.
+        </div>
+        <script>
+          window.onload = function() {
+            window.print();
+            setTimeout(function() { window.close(); }, 500);
+          };
+        </script>
+      </body>
+    </html>
+  \`);
+  printWindow.document.close();
+}
+
 function deleteExpense(idx) {
   if (confirm('Delete this expense?')) {
     S.budget.log.splice(idx, 1);
@@ -9268,6 +9364,7 @@ const paletteCommands = [
   { label: "System: Reset Pomodoro Timer", type: "system", action: () => resetPomo() },
   { label: "System: Download Data Backup (JSON)", type: "system", action: () => exportDataJSON() },
   { label: "System: Download Expense Sheet (CSV)", type: "system", action: () => downloadExpensesCSV() },
+  { label: "System: Print Expense Statement (PDF)", type: "system", action: () => printExpensesPDF() },
   { label: "System: Restore Data from Backup (JSON)", type: "system", action: () => triggerJSONUpload() },
   { label: "System: Request Browser Notifications permission", type: "system", action: () => requestNotificationPermission() }
 ];
