@@ -2255,6 +2255,10 @@ html.light .glass-card:hover {
           </div>
           <div id="schedule-list"></div>
         </div>
+        
+        <!-- Delayed Daily Tasks Section -->
+        <div class="section-hdr" id="delayed-tasks-hdr" style="margin-top:14px; display:none;">DELAYED DAILY TASKS</div>
+        <div id="delayed-tasks-container" style="display:none; flex-direction:column; gap:8px;"></div>
       </div>
       <div class="right-col">
         <div class="section-hdr">STUDY TIMER <button class="edit-btn" onclick="editPomoDurations()" title="Configure Durations & Sound">⚙️</button></div>
@@ -3238,7 +3242,7 @@ const DEFAULT_SUBJECTS = [
   {name:'Strategic Lessons from Mahabharata',code:'22ADM201',pri:'Routine',pclass:'pri-l',res:'Class notes only',res2:'Attend and clear the exam'},
   {name:'CS50 AI with Python',code:'Self-Study Foundation — search, optimization, logic, machine learning',pri:'High',pclass:'pri-h',res:'CS50 AI — Harvard (online course)',res2:'Build classical AI search & logic paradigms to ground your mathematical foundation'},
 ];
-const DEFAULT_MISSIONS = { daily: [{id:"m1", text:"Complete 2 LeetCode problems", done:false}, {id:"m2", text:"Read 1 chapter of OS", done:false}], longTerm: [{id:"l1", text:"Build a Fullstack App", done:false, deadline:"Aug 30"}, {id:"l2", text:"Get an Internship", done:false, deadline:"Dec 2026"}] };
+const DEFAULT_MISSIONS = { daily: [{id:"m1", text:"Complete 2 LeetCode problems", done:false, xp:25}, {id:"m2", text:"Read 1 chapter of OS", done:false, xp:25}], longTerm: [{id:"l1", text:"Build a Fullstack App", done:false, deadline:"Aug 30"}, {id:"l2", text:"Get an Internship", done:false, deadline:"Dec 2026"}] };
 const DEFAULT_PROJECTS = [
   {
     id: 'p-1',
@@ -4889,6 +4893,20 @@ function checkDailyReset(){
   const today = new Date().toDateString();
   if(S.streak.last && S.streak.last !== today){
     showCarryOverWarning();
+    
+    // Carry over / compound unfinished daily missions
+    if(S.missions && S.missions.daily) {
+      // 1. Remove completed daily tasks
+      S.missions.daily = S.missions.daily.filter(t => !t.done);
+      
+      // 2. Compound unfinished daily tasks
+      S.missions.daily.forEach(t => {
+        t.delayed = true;
+        t.delayCount = (t.delayCount || 0) + 1;
+        t.xp = Math.round((t.xp || 25) * 1.25);
+      });
+    }
+    
     S.tasks = {};
     S.quests = {};
     S.xp.today = 0;
@@ -5196,6 +5214,45 @@ function renderToday(){
   renderPhaseProgress();
   renderHeatmap();
   renderPomoAnalytics();
+  renderDelayedTasks();
+}
+
+function renderDelayedTasks() {
+  const container = document.getElementById('delayed-tasks-container');
+  const hdr = document.getElementById('delayed-tasks-hdr');
+  if (!container || !hdr) return;
+  
+  if (!S.missions || !S.missions.daily) {
+    container.style.display = 'none';
+    hdr.style.display = 'none';
+    return;
+  }
+  
+  const delayed = S.missions.daily.filter(t => t.delayed && !t.done);
+  if (delayed.length === 0) {
+    container.style.display = 'none';
+    hdr.style.display = 'none';
+    return;
+  }
+  
+  hdr.style.display = 'block';
+  container.style.display = 'flex';
+  
+  container.innerHTML = S.missions.daily.map((t, idx) => {
+    if (!t.delayed || t.done) return '';
+    const xpReward = t.xp || 25;
+    return `
+      <div style="background:var(--bg1);border:1px solid rgba(249,226,175,0.28);border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;gap:12px;">
+        <button class="check-btn" onclick="toggleMission('daily', ${idx})" style="width:20px;height:20px;border-color:var(--yellow);"></button>
+        <div style="flex:1;font-size:13px;color:var(--text);">
+          <span style="color:var(--yellow);font-weight:600;margin-right:6px;">[Delayed ${t.delayCount || 1}x]</span> ${t.text}
+          <span style="font-size:10px;color:var(--mauve);margin-left:8px;font-family:var(--font-mono);font-weight:600;">+${xpReward} XP</span>
+        </div>
+        <button class="edit-btn" onclick="openMissionModal('daily', ${idx})" style="margin:0; opacity: 0.8;">⚙️</button>
+        <button class="edit-btn" onclick="deleteMission('daily', ${idx})" style="margin:0; opacity: 0.8; color:var(--red);">🗑️</button>
+      </div>
+    `;
+  }).join('');
 }
 
 function toMins(t){
@@ -5397,8 +5454,10 @@ function renderMissions() {
       <div style="background:var(--bg1);border:1px solid var(--line);border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;gap:12px;">
         <button class="check-btn ${t.done ? 'checked' : ''}" onclick="toggleMission('${type}', ${idx})" style="width:20px;height:20px;">${t.done ? '✓' : ''}</button>
         <div style="flex:1;font-size:13px;${t.done ? 'text-decoration:line-through;color:var(--muted);' : 'color:var(--text);'}">
+          ${t.delayed ? `<span style="color:var(--yellow);font-weight:600;margin-right:4px;">[Delayed ${t.delayCount || 1}x]</span>` : ''}
           ${t.text}
           ${t.deadline ? `<span style="font-size:10px;color:var(--yellow);margin-left:8px;font-family:var(--font-mono);">[Due: ${t.deadline}]</span>` : ''}
+          <span style="font-size:10px;color:var(--mauve);margin-left:8px;font-family:var(--font-mono);font-weight:600;">+${t.xp || 25} XP</span>
         </div>
         <button class="edit-btn" onclick="openMissionModal('${type}', ${idx})" style="margin:0; opacity: 0.8;">⚙️</button>
         <button class="edit-btn" onclick="deleteMission('${type}', ${idx})" style="margin:0; opacity: 0.8; color:var(--red);">🗑️</button>
@@ -5410,13 +5469,21 @@ function renderMissions() {
 }
 
 function toggleMission(type, idx) {
-  S.missions[type][idx].done = !S.missions[type][idx].done;
+  const mission = S.missions[type][idx];
+  mission.done = !mission.done;
   recordLogActivity();
   renderMissions();
-  if(S.missions[type][idx].done) {
-     S.xp.total += 25; S.xp.today = (S.xp.today || 0) + 25;
+  if (typeof renderDelayedTasks === 'function') renderDelayedTasks();
+  
+  const xpReward = mission.xp || 25;
+  if(mission.done) {
+     S.xp.total += xpReward; S.xp.today = (S.xp.today || 0) + xpReward;
      recordLogActivity(); updateStats(); renderSidebar();
-     showToast('Mission accomplished! +25 XP');
+     showToast(`Mission accomplished! +${xpReward} XP`);
+  } else {
+     S.xp.total = Math.max(0, S.xp.total - xpReward);
+     S.xp.today = Math.max(0, S.xp.today - xpReward);
+     recordLogActivity(); updateStats(); renderSidebar();
   }
 }
 
@@ -5424,6 +5491,7 @@ function deleteMission(type, idx) {
   S.missions[type].splice(idx, 1);
   save();
   renderMissions();
+  if (typeof renderDelayedTasks === 'function') renderDelayedTasks();
 }
 
 function openMissionModal(type, idx = null) {
@@ -5453,11 +5521,12 @@ function openMissionModal(type, idx = null) {
       S.missions[type][idx].text = text;
       S.missions[type][idx].deadline = deadline;
     } else {
-      S.missions[type].push({ id: 'm_' + Date.now(), text, done: false, deadline });
+      S.missions[type].push({ id: 'm_' + Date.now(), text, done: false, deadline, xp: 25 });
     }
     
     save();
     renderMissions();
+    if (typeof renderDelayedTasks === 'function') renderDelayedTasks();
     return true;
   });
 }
