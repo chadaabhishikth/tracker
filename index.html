@@ -2259,6 +2259,21 @@ html.light .glass-card:hover {
         <!-- Delayed Daily Tasks Section -->
         <div class="section-hdr" id="delayed-tasks-hdr" style="margin-top:14px; display:none;">DELAYED DAILY TASKS</div>
         <div id="delayed-tasks-container" style="display:none; flex-direction:column; gap:8px;"></div>
+
+        <!-- Retroactive Logging Section -->
+        <div class="section-hdr" style="margin-top:14px;">RETROACTIVE LOGS (3 DAYS AGO)</div>
+        <div class="glass-card" style="padding:16px;">
+          <div style="font-size:12px; color:var(--sub); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+            <span id="past-date-label" style="font-weight:600; color:var(--lavender);">3 Days Ago: --</span>
+            <span id="past-tasks-count" style="font-family:var(--font-mono); font-size:11px; background:rgba(180,190,254,0.1); padding:2px 6px; border-radius:4px; color:var(--lavender);">0/3 logged</span>
+          </div>
+          <div id="past-tasks-list" style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;"></div>
+          <div id="past-task-form" style="display:flex; gap:8px; align-items:center;">
+            <input type="text" id="past-task-name" placeholder="What did you complete?" style="flex:1; height:34px; padding:0 10px; font-size:12px; background:var(--bg2); border:1px solid var(--line2); border-radius:4px; color:var(--text); outline:none; transition:border-color 0.2s;" />
+            <input type="number" id="past-task-xp" placeholder="XP" style="width:60px; height:34px; padding:0 8px; font-size:12px; background:var(--bg2); border:1px solid var(--line2); border-radius:4px; color:var(--text); font-family:var(--font-mono); outline:none;" value="15" />
+            <button class="lc-btn" onclick="addPastDoneTask()" style="height:34px; width:44px; display:flex; align-items:center; justify-content:center; padding:0; font-size:16px; font-weight:700; background:var(--lavender); color:var(--bg); border:none; border-radius:4px; cursor:pointer;">+</button>
+          </div>
+        </div>
       </div>
       <div class="right-col">
         <div class="section-hdr">STUDY TIMER <button class="edit-btn" onclick="editPomoDurations()" title="Configure Durations & Sound">⚙️</button></div>
@@ -3402,6 +3417,7 @@ if (S.budget && S.budget.monthly) {
   if (!S.budget.monthly.hasOwnProperty('Monthly')) S.budget.monthly.Monthly = 10000;
 }
 if(!S.customCalendarEvents) S.customCalendarEvents = [];
+if(!S.pastDoneTasks) S.pastDoneTasks = [];
 let pushTimeout = null;
 function save(skipPush){
   if (!skipPush) {
@@ -4588,15 +4604,20 @@ function initNotifications() {
   scheduleXPNotification();
 }
 function scheduleXPNotification() {
-  const now=new Date();
-  const target=new Date(); target.setHours(21,0,0,0);
-  if (target<=now) target.setDate(target.getDate()+1);
-  setTimeout(()=>{
-    if ((S.xp.today||0)===0 && Notification.permission==='granted') {
-      new Notification('⚡ System: Abhishikth', {body:"No XP logged today! Don't break your streak — grind time! 🔥"});
+  const now = new Date();
+  const target = new Date(); target.setHours(21,0,0,0);
+  if (target <= now) target.setDate(target.getDate()+1);
+  
+  if (window.xpNotificationTimeout) {
+    clearTimeout(window.xpNotificationTimeout);
+  }
+  
+  window.xpNotificationTimeout = setTimeout(() => {
+    if ((S.xp.today || 0) === 0) {
+      sendBrowserNotification('⚡ System: Abhishikth', "No XP logged today! Don't break your streak — grind time! 🔥");
     }
     scheduleXPNotification();
-  }, target-now);
+  }, target - now);
 }
 
 function checkInactivityNotifications(previousVisit, previousLog) {
@@ -5215,6 +5236,7 @@ function renderToday(){
   renderHeatmap();
   renderPomoAnalytics();
   renderDelayedTasks();
+  renderPastDoneTasks();
 }
 
 function renderDelayedTasks() {
@@ -5254,6 +5276,140 @@ function renderDelayedTasks() {
     `;
   }).join('');
 }
+
+function getThreeDaysAgoDate() {
+  const d = new Date();
+  d.setDate(d.getDate() - 3);
+  return d;
+}
+
+function renderPastDoneTasks() {
+  const pastDateLabel = document.getElementById('past-date-label');
+  const pastTasksCount = document.getElementById('past-tasks-count');
+  const pastTasksList = document.getElementById('past-tasks-list');
+  const pastTaskForm = document.getElementById('past-task-form');
+  
+  if (!pastDateLabel || !pastTasksCount || !pastTasksList || !pastTaskForm) return;
+
+  const pastDate = getThreeDaysAgoDate();
+  const pastIso = getLocalISODate(pastDate);
+  const options = { weekday: 'long', day: 'numeric', month: 'short' };
+  const dateStrFormatted = pastDate.toLocaleDateString('en-US', options);
+  
+  pastDateLabel.textContent = `3 Days Ago: ${dateStrFormatted}`;
+  
+  const tasksForDate = (S.pastDoneTasks || []).filter(t => t.date === pastIso);
+  pastTasksCount.textContent = `${tasksForDate.length}/3 logged`;
+  
+  if (tasksForDate.length >= 3) {
+    pastTaskForm.style.display = 'none';
+  } else {
+    pastTaskForm.style.display = 'flex';
+  }
+  
+  if (tasksForDate.length === 0) {
+    pastTasksList.innerHTML = `<div style="font-size:11px; color:var(--muted); text-align:center; padding:10px 0;">No retroactive tasks logged.</div>`;
+  } else {
+    pastTasksList.innerHTML = tasksForDate.map(t => `
+      <div style="background:var(--bg1); border:1px solid var(--line); border-radius:4px; padding:8px 12px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <div style="font-size:12px; color:var(--text); flex:1;">
+          ${t.name}
+          <span style="font-size:10px; color:var(--mauve); font-family:var(--font-mono); margin-left:6px; font-weight:700;">+${t.xp} XP</span>
+        </div>
+        <button onclick="deletePastDoneTask('${t.id}')" style="background:none; border:none; color:var(--red); font-size:12px; cursor:pointer; opacity:0.8; padding:2px;">🗑️</button>
+      </div>
+    `).join('');
+  }
+}
+
+function addPastDoneTask() {
+  playClickSound();
+  const nameInput = document.getElementById('past-task-name');
+  const xpInput = document.getElementById('past-task-xp');
+  if (!nameInput || !xpInput) return;
+  
+  const name = nameInput.value.trim();
+  const xp = parseInt(xpInput.value) || 0;
+  
+  if (!name) {
+    showToast('Please enter a task name!', true);
+    return;
+  }
+  if (xp <= 0) {
+    showToast('Please enter a valid XP value!', true);
+    return;
+  }
+  
+  const pastDate = getThreeDaysAgoDate();
+  const pastIso = getLocalISODate(pastDate);
+  
+  const tasksForDate = (S.pastDoneTasks || []).filter(t => t.date === pastIso);
+  if (tasksForDate.length >= 3) {
+    showToast('Limit of 3 retroactive tasks reached!', true);
+    return;
+  }
+  
+  const newTask = {
+    id: 'past_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+    date: pastIso,
+    name: name,
+    xp: xp
+  };
+  
+  S.pastDoneTasks.push(newTask);
+  S.xp.total = (S.xp.total || 340) + xp;
+  
+  // Update heatmap for the specific past date
+  if (!S.heatmap) S.heatmap = {};
+  S.heatmap[pastIso] = (S.heatmap[pastIso] || 0) + xp;
+  
+  save();
+  
+  nameInput.value = '';
+  xpInput.value = '15';
+  
+  showToast(`Logged: "${name}" (+${xp} XP) 📅`);
+  
+  // Refresh views
+  renderPastDoneTasks();
+  updateStats();
+  renderSidebar();
+  renderHeatmap();
+  renderXPChart();
+  renderPomoAnalytics();
+}
+
+function deletePastDoneTask(id) {
+  playClickSound();
+  if (!confirm('Are you sure you want to delete this logged task?')) return;
+  
+  const idx = S.pastDoneTasks.findIndex(t => t.id === id);
+  if (idx === -1) return;
+  
+  const task = S.pastDoneTasks[idx];
+  S.pastDoneTasks.splice(idx, 1);
+  
+  S.xp.total = Math.max(0, (S.xp.total || 340) - task.xp);
+  
+  // Deduct from heatmap
+  if (S.heatmap && S.heatmap[task.date]) {
+    S.heatmap[task.date] = Math.max(0, S.heatmap[task.date] - task.xp);
+    if (S.heatmap[task.date] === 0) delete S.heatmap[task.date];
+  }
+  
+  save();
+  
+  showToast(`Deleted retroactive task: "${task.name}"`);
+  
+  // Refresh views
+  renderPastDoneTasks();
+  updateStats();
+  renderSidebar();
+  renderHeatmap();
+  renderXPChart();
+  renderPomoAnalytics();
+}
+
 
 function toMins(t){
   const [h,m]=t.split(':').map(Number);return h*60+m;
@@ -9374,14 +9530,32 @@ function requestNotificationPermission() {
 
 function sendBrowserNotification(title, body) {
   if ('Notification' in window && Notification.permission === 'granted') {
-    try {
-      new Notification(title, {
-        body: body,
-        icon: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%23181a24"/><text y=".9em" font-size="90">⚡</text></svg>'
+    if (navigator.serviceWorker && navigator.serviceWorker.ready) {
+      navigator.serviceWorker.ready.then(reg => {
+        reg.showNotification(title, {
+          body: body,
+          icon: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%23181a24"/><text y=".9em" font-size="90">⚡</text></svg>',
+          tag: 'daily-reminder',
+          renotify: true
+        });
+      }).catch(err => {
+        console.warn("Service worker notification failed, falling back", err);
+        fallbackNotification(title, body);
       });
-    } catch (e) {
-      console.warn("Could not fire desktop notification", e);
+    } else {
+      fallbackNotification(title, body);
     }
+  }
+}
+
+function fallbackNotification(title, body) {
+  try {
+    new Notification(title, {
+      body: body,
+      icon: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%23181a24"/><text y=".9em" font-size="90">⚡</text></svg>'
+    });
+  } catch (e) {
+    console.warn("Could not fire desktop notification", e);
   }
 }
 
