@@ -2261,11 +2261,13 @@ html.light .glass-card:hover {
         <div id="delayed-tasks-container" style="display:none; flex-direction:column; gap:8px;"></div>
 
         <!-- Retroactive Logging Section -->
-        <div class="section-hdr" style="margin-top:14px;">RETROACTIVE LOGS (3 DAYS AGO)</div>
+        <div class="section-hdr" style="margin-top:14px;">RETROACTIVE LOGS (PAST 3 DAYS)</div>
         <div class="glass-card" style="padding:16px;">
-          <div style="font-size:12px; color:var(--sub); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
-            <span id="past-date-label" style="font-weight:600; color:var(--lavender);">3 Days Ago: --</span>
-            <span id="past-tasks-count" style="font-family:var(--font-mono); font-size:11px; background:rgba(180,190,254,0.1); padding:2px 6px; border-radius:4px; color:var(--lavender);">0/3 logged</span>
+          <div style="font-size:12px; color:var(--sub); margin-bottom:12px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <span style="font-weight:600; color:var(--lavender);">Select Day:</span>
+            <select id="past-date-select" onchange="renderPastDoneTasks()" style="background:var(--bg2); color:var(--text); border:1px solid var(--line2); border-radius:4px; padding:4px 8px; font-size:12px; outline:none; cursor:pointer;">
+            </select>
+            <span id="past-tasks-count" style="font-family:var(--font-mono); font-size:11px; background:rgba(180,190,254,0.1); padding:2px 6px; border-radius:4px; color:var(--lavender); margin-left:auto;">0/3 logged</span>
           </div>
           <div id="past-tasks-list" style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;"></div>
           <div id="past-task-form" style="display:flex; gap:8px; align-items:center;">
@@ -5277,28 +5279,45 @@ function renderDelayedTasks() {
   }).join('');
 }
 
-function getThreeDaysAgoDate() {
-  const d = new Date();
-  d.setDate(d.getDate() - 3);
-  return d;
+function getPastThreeDays() {
+  const days = [];
+  for (let i = 1; i <= 3; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    days.push(d);
+  }
+  return days;
 }
 
 function renderPastDoneTasks() {
-  const pastDateLabel = document.getElementById('past-date-label');
+  const selectEl = document.getElementById('past-date-select');
   const pastTasksCount = document.getElementById('past-tasks-count');
   const pastTasksList = document.getElementById('past-tasks-list');
   const pastTaskForm = document.getElementById('past-task-form');
   
-  if (!pastDateLabel || !pastTasksCount || !pastTasksList || !pastTaskForm) return;
+  if (!pastTasksCount || !pastTasksList || !pastTaskForm) return;
 
-  const pastDate = getThreeDaysAgoDate();
-  const pastIso = getLocalISODate(pastDate);
-  const options = { weekday: 'long', day: 'numeric', month: 'short' };
-  const dateStrFormatted = pastDate.toLocaleDateString('en-US', options);
+  const pastDays = getPastThreeDays();
+
+  // Populate options dynamically if select is empty or if dates shifted (e.g. past midnight)
+  if (selectEl) {
+    const selectedValue = selectEl.value;
+    selectEl.innerHTML = pastDays.map((d, idx) => {
+      const iso = getLocalISODate(d);
+      const options = { weekday: 'short', day: 'numeric', month: 'short' };
+      const formatted = d.toLocaleDateString('en-US', options);
+      const agoLabel = idx === 0 ? 'Yesterday' : `${idx + 1} days ago`;
+      return `<option value="${iso}">${formatted} (${agoLabel})</option>`;
+    }).join('');
+    
+    if (selectedValue && [...selectEl.options].some(opt => opt.value === selectedValue)) {
+      selectEl.value = selectedValue;
+    }
+  }
+
+  const selectedIso = selectEl ? selectEl.value : getLocalISODate(pastDays[0]);
   
-  pastDateLabel.textContent = `3 Days Ago: ${dateStrFormatted}`;
-  
-  const tasksForDate = (S.pastDoneTasks || []).filter(t => t.date === pastIso);
+  const tasksForDate = (S.pastDoneTasks || []).filter(t => t.date === selectedIso);
   pastTasksCount.textContent = `${tasksForDate.length}/3 logged`;
   
   if (tasksForDate.length >= 3) {
@@ -5308,7 +5327,7 @@ function renderPastDoneTasks() {
   }
   
   if (tasksForDate.length === 0) {
-    pastTasksList.innerHTML = `<div style="font-size:11px; color:var(--muted); text-align:center; padding:10px 0;">No retroactive tasks logged.</div>`;
+    pastTasksList.innerHTML = `<div style="font-size:11px; color:var(--muted); text-align:center; padding:10px 0;">No retroactive tasks logged for this day.</div>`;
   } else {
     pastTasksList.innerHTML = tasksForDate.map(t => `
       <div style="background:var(--bg1); border:1px solid var(--line); border-radius:4px; padding:8px 12px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
@@ -5324,13 +5343,19 @@ function renderPastDoneTasks() {
 
 function addPastDoneTask() {
   playClickSound();
+  const selectEl = document.getElementById('past-date-select');
   const nameInput = document.getElementById('past-task-name');
   const xpInput = document.getElementById('past-task-xp');
-  if (!nameInput || !xpInput) return;
+  if (!selectEl || !nameInput || !xpInput) return;
   
+  const selectedIso = selectEl.value;
   const name = nameInput.value.trim();
   const xp = parseInt(xpInput.value) || 0;
   
+  if (!selectedIso) {
+    showToast('Please select a valid date!', true);
+    return;
+  }
   if (!name) {
     showToast('Please enter a task name!', true);
     return;
@@ -5340,18 +5365,15 @@ function addPastDoneTask() {
     return;
   }
   
-  const pastDate = getThreeDaysAgoDate();
-  const pastIso = getLocalISODate(pastDate);
-  
-  const tasksForDate = (S.pastDoneTasks || []).filter(t => t.date === pastIso);
+  const tasksForDate = (S.pastDoneTasks || []).filter(t => t.date === selectedIso);
   if (tasksForDate.length >= 3) {
-    showToast('Limit of 3 retroactive tasks reached!', true);
+    showToast('Limit of 3 retroactive tasks reached for this day!', true);
     return;
   }
   
   const newTask = {
     id: 'past_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-    date: pastIso,
+    date: selectedIso,
     name: name,
     xp: xp
   };
@@ -5361,14 +5383,14 @@ function addPastDoneTask() {
   
   // Update heatmap for the specific past date
   if (!S.heatmap) S.heatmap = {};
-  S.heatmap[pastIso] = (S.heatmap[pastIso] || 0) + xp;
+  S.heatmap[selectedIso] = (S.heatmap[selectedIso] || 0) + xp;
   
   save();
   
   nameInput.value = '';
   xpInput.value = '15';
   
-  showToast(`Logged: "${name}" (+${xp} XP) 📅`);
+  showToast(`Logged task for ${selectedIso}: "${name}" (+${xp} XP) 📅`);
   
   // Refresh views
   renderPastDoneTasks();
