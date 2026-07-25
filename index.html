@@ -3979,80 +3979,121 @@ async function syncGithubContributions() {
   console.log("Syncing GitHub contributions for:", S.githubUsername);
   
   const cfg = getSyncConfig();
-  const headers = {};
+  const headers = {
+    'Accept': 'application/vnd.github.v3+json'
+  };
   if (cfg.token) {
     headers['Authorization'] = `token ${cfg.token}`;
   }
   
+  const newCommitsByDate = {};
+  const todayIso = getLocalISODate();
+  let success = false;
+  
+  // 1. Primary Method: Search Commits API (extremely accurate, handles private repos if token is provided)
   try {
-    let res = await fetch(`https://api.github.com/users/${S.githubUsername}/events`, { headers });
+    const dateLimit = new Date();
+    dateLimit.setDate(dateLimit.getDate() - 105); // 15 weeks
+    const dateLimitStr = getLocalISODate(dateLimit);
     
-    // Auth Token fallback - if PAT token gets 401/403 (unauthorized/invalid scope), retry anonymously
+    let res = await fetch(`https://api.github.com/search/commits?q=author:${S.githubUsername}+committer-date:>=${dateLimitStr}&sort=committer-date&order=desc&per_page=100`, { headers });
+    
     if (res.status === 401 || res.status === 403) {
-      console.warn("GitHub PAT rejected or rate-limited. Retrying anonymously...");
-      res = await fetch(`https://api.github.com/users/${S.githubUsername}/events`);
-    }
-    
-    if (res.status === 404) {
-      showToast(`⚠️ GitHub user "${S.githubUsername}" not found! Check spelling.`);
-      return;
+      console.warn("GitHub PAT rejected or rate-limited on Search API. Retrying anonymously...");
+      res = await fetch(`https://api.github.com/search/commits?q=author:${S.githubUsername}+committer-date:>=${dateLimitStr}&sort=committer-date&order=desc&per_page=100`, {
+        headers: { 'Accept': 'application/vnd.github.v3+json' }
+      });
     }
     
     if (res.ok) {
-      const events = await res.json();
-      const pushes = events.filter(e => e.type === 'PushEvent');
-      
-      const newCommitsByDate = {};
-      const todayIso = getLocalISODate();
-      
-      pushes.forEach(event => {
-        if (!event.created_at) return;
-        const date = getLocalISODate(new Date(event.created_at));
-        const commitCount = event.payload?.commits?.length || 0;
-        if (commitCount > 0) {
-          newCommitsByDate[date] = (newCommitsByDate[date] || 0) + commitCount;
-        }
-      });
-      
-      // Check for new commits today and award XP
-      if (newCommitsByDate[todayIso]) {
-        const currentStored = S.githubCommits[todayIso] || 0;
-        const fetchedCount = newCommitsByDate[todayIso];
-        if (fetchedCount > currentStored) {
-          const delta = fetchedCount - currentStored;
-          const currentRewarded = Math.min(25, currentStored * 5);
-          const maxPossibleNewReward = Math.max(0, 25 - currentRewarded);
-          const earnedXP = Math.min(maxPossibleNewReward, delta * 5);
-          
-          if (earnedXP > 0) {
-            S.xp.total = (S.xp.total || 0) + earnedXP;
-            S.xp.today = (S.xp.today || 0) + earnedXP;
-            updateHeatmap(earnedXP);
-            showToast(`🐙 Pushed ${delta} commit(s)! +${earnedXP} XP!`);
-          }
-        }
+      const data = await res.json();
+      if (data.items) {
+        data.items.forEach(item => {
+          if (!item.commit?.committer?.date) return;
+          const date = getLocalISODate(new Date(item.commit.committer.date));
+          newCommitsByDate[date] = (newCommitsByDate[date] || 0) + 1;
+        });
+        success = true;
       }
-      
-      // Update local storage commits counts
-      Object.keys(newCommitsByDate).forEach(date => {
-        S.githubCommits[date] = newCommitsByDate[date];
-        const count = newCommitsByDate[date];
-        if(!S.heatmap[date]) S.heatmap[date] = 0;
-        S.heatmap[date] = Math.max(S.heatmap[date], count * 5);
-      });
-      
-      S.lastGithubSync = Date.now();
-      save();
-      updateStats();
-      renderSidebar();
-      renderHeatmap();
     } else {
-      console.warn("GitHub API error status:", res.status);
+      console.warn("GitHub Search Commits API returned status:", res.status);
     }
   } catch (e) {
-    console.error("GitHub events sync failed:", e);
+    console.warn("GitHub Search Commits API failed, falling back to Events API:", e);
+  }
+  
+  // 2. Fallback Method: Public Events API (uses PushEvents as a proxy, assuming at least 1 commit per push)
+  if (!success) {
+    try {
+      let res = await fetch(`https://api.github.com/users/${S.githubUsername}/events`, { headers });
+      
+      if (res.status === 401 || res.status === 403) {
+        console.warn("GitHub PAT rejected or rate-limited on Events API. Retrying anonymously...");
+        res = await fetch(`https://api.github.com/users/${S.githubUsername}/events`);
+      }
+      
+      if (res.status === 404) {
+        showToast(`⚠️ GitHub user "${S.githubUsername}" not found! Check spelling.`);
+        return;
+      }
+      
+      if (res.ok) {
+        const events = await res.json();
+        const pushes = events.filter(e => e.type === 'PushEvent');
+        
+        pushes.forEach(event => {
+          if (!event.created_at) return;
+          const date = getLocalISODate(new Date(event.created_at));
+          // GitHub removed commits array from public events API payload in late 2025.
+          // We fall back to counting each PushEvent as at least 1 commit.
+          const commitCount = event.payload?.commits?.length || 1;
+          newCommitsByDate[date] = (newCommitsByDate[date] || 0) + commitCount;
+        });
+        success = true;
+      } else {
+        console.warn("GitHub Events API error status:", res.status);
+      }
+    } catch (e) {
+      console.error("GitHub Events API sync failed:", e);
+    }
+  }
+  
+  if (success) {
+    // Check for new commits today and award XP
+    if (newCommitsByDate[todayIso]) {
+      const currentStored = S.githubCommits[todayIso] || 0;
+      const fetchedCount = newCommitsByDate[todayIso];
+      if (fetchedCount > currentStored) {
+        const delta = fetchedCount - currentStored;
+        const currentRewarded = Math.min(25, currentStored * 5);
+        const maxPossibleNewReward = Math.max(0, 25 - currentRewarded);
+        const earnedXP = Math.min(maxPossibleNewReward, delta * 5);
+        
+        if (earnedXP > 0) {
+          S.xp.total = (S.xp.total || 0) + earnedXP;
+          S.xp.today = (S.xp.today || 0) + earnedXP;
+          updateHeatmap(earnedXP);
+          showToast(`🐙 Pushed ${delta} commit(s)! +${earnedXP} XP!`);
+        }
+      }
+    }
+    
+    // Update local storage commits counts
+    Object.keys(newCommitsByDate).forEach(date => {
+      S.githubCommits[date] = newCommitsByDate[date];
+      const count = newCommitsByDate[date];
+      if (!S.heatmap[date]) S.heatmap[date] = 0;
+      S.heatmap[date] = Math.max(S.heatmap[date], count * 5);
+    });
+    
+    S.lastGithubSync = Date.now();
+    save();
+    updateStats();
+    renderSidebar();
+    renderHeatmap();
   }
 }
+
 
 // ─── VISUAL GITHUB PROFILE CARD ──────────────────────────
 async function syncGithubProfile() {
