@@ -4571,12 +4571,12 @@ function checkStreakRisk() {
   const banner=document.getElementById('streak-risk-banner');
   if (!banner) return;
   const hour=new Date().getHours();
-  const dismissed=localStorage.getItem('srDismissed')===new Date().toDateString();
+  const dismissed=localStorage.getItem('srDismissed')===getLocalISODate();
   if (hour>=20 && (S.xp.today||0)===0 && !dismissed) banner.classList.add('show');
   else if ((S.xp.today||0)>0||dismissed) banner.classList.remove('show');
 }
 function dismissStreakBanner() {
-  localStorage.setItem('srDismissed',new Date().toDateString());
+  localStorage.setItem('srDismissed',getLocalISODate());
   const b=document.getElementById('streak-risk-banner'); if(b) b.classList.remove('show');
 }
 
@@ -4887,7 +4887,7 @@ function init(){
 function updateClock(){
   const n=new Date();
   document.getElementById('clock').textContent=n.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  const today = n.toDateString();
+  const today = getLocalISODate(n);
   if (S.streak.last && S.streak.last !== today) {
     checkDailyReset();
     checkStreak();
@@ -4965,7 +4965,7 @@ function recalculateStreak() {
 }
 
 function checkDailyReset(){
-  const today = new Date().toDateString();
+  const today = getLocalISODate();
   if(S.streak.last && S.streak.last !== today){
     showCarryOverWarning();
     
