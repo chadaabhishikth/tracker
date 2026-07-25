@@ -4901,15 +4901,60 @@ function updateDate(){
 }
 
 function checkStreak(){
-  const today=new Date().toDateString();
-  if(S.streak.last!==today){
-    const yesterday=new Date(Date.now()-86400000).toDateString();
-    if(S.streak.last===yesterday){S.streak.count++;}
-    else if(S.streak.last!==today){S.streak.count=0;}
-    S.streak.last=today;save();
+  recalculateStreak();
+}
+
+function recalculateStreak() {
+  if (!S.streak) S.streak = { count: 0, last: '', prevDate: '' };
+  
+  let currentStreak = 0;
+  let checkDate = new Date();
+  const todayIso = getLocalISODate(checkDate);
+  
+  // Set to local midnight to avoid timezone shifting issues during calculations
+  checkDate.setHours(0,0,0,0);
+  
+  while (true) {
+    const iso = getLocalISODate(checkDate);
+    
+    // Calculate tasks completed on this date
+    let doneCount = 0;
+    
+    // If checking today, inspect live tasks in S.tasks
+    if (iso === todayIso) {
+      doneCount = Object.keys(S.tasks || {}).filter(k => S.tasks[k]).length;
+    }
+    
+    // Add count of retroactive tasks logged for this date
+    const retroCount = (S.pastDoneTasks || []).filter(t => t.date === iso).length;
+    doneCount += retroCount;
+    
+    // Consider day complete if tasks done >= 3 OR daily XP in heatmap >= 45
+    const hasHeatmapXp = (S.heatmap && S.heatmap[iso] && S.heatmap[iso] >= 45);
+    
+    if (doneCount >= 3 || hasHeatmapXp) {
+      currentStreak++;
+      // Move back 1 day
+      checkDate.setDate(checkDate.getDate() - 1);
+    } else {
+      // If we are evaluating today and it isn't completed yet, don't break the streak immediately; check yesterday.
+      if (iso === todayIso) {
+        checkDate.setDate(checkDate.getDate() - 1);
+        continue;
+      }
+      break; // Streak broken
+    }
   }
-  document.getElementById('streak-val').textContent=S.streak.count;
-  document.getElementById('stat-streak').textContent=S.streak.count;
+  
+  S.streak.count = currentStreak;
+  S.streak.last = todayIso;
+  
+  const valEl = document.getElementById('streak-val');
+  const statEl = document.getElementById('stat-streak');
+  if (valEl) valEl.textContent = S.streak.count;
+  if (statEl) statEl.textContent = S.streak.count;
+  
+  save(true); // Save state without triggering a sync push loop
 }
 
 function checkDailyReset(){
@@ -5399,6 +5444,7 @@ function addPastDoneTask() {
   renderHeatmap();
   renderXPChart();
   renderPomoAnalytics();
+  updateStreak();
 }
 
 function deletePastDoneTask(id) {
@@ -5430,6 +5476,7 @@ function deletePastDoneTask(id) {
   renderHeatmap();
   renderXPChart();
   renderPomoAnalytics();
+  updateStreak();
 }
 
 
@@ -5458,19 +5505,7 @@ function toggleTask(id,xp,btn){
 }
 
 function updateStreak(){
-  const today=new Date().toDateString();
-  S.streak.last=today;
-  const taskable=Object.keys(S.tasks).filter(k=>S.tasks[k]);
-  if(taskable.length>=3&&S.streak.last===today){
-    const prev=S.streak.prevDate;
-    if(prev!==today){
-      S.streak.count=(S.streak.count||0)+1;
-      S.streak.prevDate=today;
-      document.getElementById('streak-val').textContent=S.streak.count;
-      document.getElementById('stat-streak').textContent=S.streak.count;
-    }
-  }
-  save();
+  recalculateStreak();
 }
 
 function renderQuests(){
