@@ -4684,14 +4684,21 @@ function initInactivityListeners() {
 
 // ─── TASK CARRY-OVER WARNING ─────────────────────────────
 function showCarryOverWarning() {
-  const yesterday=new Date(); yesterday.setDate(yesterday.getDate()-1);
-  const yday=DAYS[yesterday.getDay()];
-  const sched=S.schedule[yday]||[];
-  const undone=sched.filter(b=>b.xp>=15&&!S.tasks[b.id]);
-  if (undone.length>0) {
-    const names=undone.slice(0,2).map(b=>b.n).join(', ');
-    const extra=undone.length>2?` +${undone.length-2} more`:'';
-    setTimeout(()=>showToast(`⚠️ Yesterday: ${names}${extra} incomplete`), 1200);
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayIso = getLocalISODate(yesterday);
+  const yday = DAYS[yesterday.getDay()];
+  const sched = S.schedule[yday] || [];
+  
+  const undone = sched.filter(b => {
+    const wasDoneLive = !!S.tasks[b.id];
+    const wasDoneRetro = (S.pastDoneTasks || []).some(t => t.date === yesterdayIso && t.name.toLowerCase().trim() === b.n.toLowerCase().trim());
+    return b.xp >= 15 && !wasDoneLive && !wasDoneRetro;
+  });
+  
+  if (undone.length > 0) {
+    const names = undone.slice(0, 2).map(b => b.n).join(', ');
+    const extra = undone.length > 2 ? ` +${undone.length - 2} more` : '';
+    setTimeout(() => showToast(`⚠️ Yesterday: ${names}${extra} incomplete`), 1200);
   }
 }
 
@@ -7447,7 +7454,7 @@ function openSettings() {
       <div style="border: 1px solid var(--line2); padding: 14px; border-radius: 8px; background: var(--bg2);">
         <h4 style="font-size: 13px; font-weight:600; color:var(--text); margin-bottom: 6px; font-family: var(--font-mono); text-transform: uppercase;">5. Accent Theme Color</h4>
         <p style="font-size: 11px; color: var(--sub); margin-bottom: 10px;">Select your dashboard highlight color accent.</p>
-        <select id="settings-accent-color" class="modal-form-input" style="padding:6px 8px; font-size:12px; background:var(--bg1); border-color:var(--line2); color:var(--text);">
+        <select id="settings-accent-color" class="modal-form-input" style="padding:6px 8px; font-size:12px; background:var(--bg1); border-color:var(--line2); color:var(--text); width: 100%;">
           <option value="blue" ${S.accentColor === 'blue' ? 'selected' : ''}>Blue (Default)</option>
           <option value="lavender" ${S.accentColor === 'lavender' ? 'selected' : ''}>Lavender</option>
           <option value="green" ${S.accentColor === 'green' ? 'selected' : ''}>Green</option>
@@ -7455,6 +7462,19 @@ function openSettings() {
           <option value="mauve" ${S.accentColor === 'mauve' ? 'selected' : ''}>Mauve</option>
           <option value="red" ${S.accentColor === 'red' ? 'selected' : ''}>Red</option>
         </select>
+      </div>
+
+      <div style="border: 1px solid var(--line2); padding: 14px; border-radius: 8px; background: var(--bg2);">
+        <h4 style="font-size: 13px; font-weight:600; color:var(--text); margin-bottom: 6px; font-family: var(--font-mono); text-transform: uppercase;">6. Daily Notifications (9 PM)</h4>
+        <p style="font-size: 11px; color: var(--sub); margin-bottom: 10px;">Enable reminders at 9 PM to alert you on laptop and mobile if you haven't logged any XP today.</p>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px;">
+            <span style="color:var(--sub);">Permission Status:</span>
+            <span id="settings-notification-status" style="font-family:var(--font-mono); font-weight:600; color:var(--lavender);">${Notification.permission}</span>
+          </div>
+          <button class="btn-secondary" onclick="requestNotificationPermissionFromSettings()" style="width:100%; font-size:11px; padding: 6px; background:var(--blue); border-color:var(--blue); color:var(--bg);">Request Permission</button>
+          <button class="btn-secondary" onclick="testNotificationFromSettings()" style="width:100%; font-size:11px; padding: 6px; background:transparent; border-color:var(--line2); color:var(--text);">Send Test Notification ⚡</button>
+        </div>
       </div>
     </div>
   `;
@@ -7483,6 +7503,32 @@ function openSettings() {
     showToast('Sync settings saved!');
     return true; 
   });
+}
+
+function requestNotificationPermissionFromSettings() {
+  if (!('Notification' in window)) {
+    showToast('Notifications are not supported by this browser.', true);
+    return;
+  }
+  Notification.requestPermission().then(permission => {
+    const statusEl = document.getElementById('settings-notification-status');
+    if (statusEl) statusEl.textContent = permission;
+    if (permission === 'granted') {
+      showToast('Notifications enabled! 🔔');
+      sendBrowserNotification('OS Dashboard', 'Notifications successfully enabled! 🚀');
+    } else {
+      showToast('Notification permission: ' + permission, true);
+    }
+  });
+}
+
+function testNotificationFromSettings() {
+  if (Notification.permission !== 'granted') {
+    showToast('Please enable permissions first!', true);
+    return;
+  }
+  sendBrowserNotification('Test Notification ⚡', 'Testing 9 PM everyday notifications integration!');
+  showToast('Test notification sent!');
 }
 
 function triggerJSONUpload() {
