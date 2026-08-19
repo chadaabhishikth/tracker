@@ -467,18 +467,56 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
 
 /* ─── TARGETS PAGE ────────────────────────────────────── */
 .targets-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
-.target-card{background:var(--bg1);border:1px solid var(--line);border-radius:var(--r);padding:20px;}
-.tc-tier{font-family:var(--font-mono);font-size:9px;letter-spacing:2px;margin-bottom:8px;text-transform:uppercase;}
-.tc-name{font-size:15px;font-weight:600;margin-bottom:6px;}
-.tc-desc{font-size:12px;color:var(--sub);line-height:1.5;margin-bottom:14px;}
-.tc-ctc{font-family:var(--font-mono);font-size:16px;font-weight:700;}
-.reach .tc-tier{color:var(--yellow);}
-.reach .tc-ctc{color:var(--yellow);}
-.tgt .tc-tier{color:var(--green);}
-.tgt .tc-ctc{color:var(--green);}
-.flr .tc-tier{color:var(--blue);}
-.flr .tc-ctc{color:var(--blue);}
-
+.targets-brief{
+  background:color-mix(in srgb, var(--yellow) 5%, transparent);
+  border:1px solid color-mix(in srgb, var(--yellow) 18%, transparent);
+  border-radius:var(--r); padding:18px 20px; margin-bottom:16px;
+}
+.targets-brief-grid{display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:16px;}
+.tb-kicker{font-family:var(--font-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--yellow);margin-bottom:6px;}
+.tb-body{font-size:12px;color:var(--sub);line-height:1.65;}
+.tb-body strong{color:var(--text);font-weight:600;}
+.targets-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+.tf-btn{
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.6px;text-transform:uppercase;
+  padding:6px 12px;border-radius:5px;border:1px solid var(--line2);background:var(--bg1);
+  color:var(--sub);cursor:pointer;transition:all .15s;
+}
+.tf-btn:hover{color:var(--text);}
+.tf-btn.active{background:color-mix(in srgb, var(--blue) 12%, transparent);border-color:color-mix(in srgb, var(--blue) 30%, transparent);color:var(--blue);box-shadow:var(--glow);}
+.tf-btn.active.reach{color:var(--yellow);border-color:color-mix(in srgb, var(--yellow) 35%, transparent);background:color-mix(in srgb, var(--yellow) 10%, transparent);}
+.tf-btn.active.tgt{color:var(--green);border-color:color-mix(in srgb, var(--green) 35%, transparent);background:color-mix(in srgb, var(--green) 10%, transparent);}
+.tf-btn.active.india{color:var(--mauve);border-color:color-mix(in srgb, var(--mauve) 35%, transparent);background:color-mix(in srgb, var(--mauve) 10%, transparent);}
+.tf-btn.active.flr{color:var(--blue);border-color:color-mix(in srgb, var(--blue) 35%, transparent);background:color-mix(in srgb, var(--blue) 10%, transparent);}
+.targets-tier-block{margin-bottom:22px;}
+.targets-tier-hdr{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap;}
+.targets-tier-title{font-family:var(--font-mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:700;}
+.targets-tier-blurb{font-size:11px;color:var(--muted);flex:1;min-width:180px;}
+.targets-tier-count{font-family:var(--font-mono);font-size:10px;color:var(--sub);}
+.targets-firm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;}
+.target-card{background:var(--bg1);border:1px solid var(--line);border-radius:var(--r);padding:18px 18px 16px;display:flex;flex-direction:column;}
+.target-card.reach{border-color:color-mix(in srgb, var(--yellow) 28%, var(--line));}
+.target-card.tgt{border-color:color-mix(in srgb, var(--green) 28%, var(--line));}
+.target-card.india{border-color:color-mix(in srgb, var(--mauve) 32%, var(--line));}
+.target-card.flr{border-color:color-mix(in srgb, var(--blue) 28%, var(--line));}
+.tc-tier{font-family:var(--font-mono);font-size:9px;letter-spacing:2px;margin-bottom:8px;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;}
+.tc-name{font-size:16px;font-weight:600;margin-bottom:4px;letter-spacing:-0.02em;}
+.tc-office{font-size:10px;color:var(--muted);margin-bottom:3px;font-family:var(--font-mono);line-height:1.4;}
+.tc-roles{font-size:11px;color:var(--sub);margin-bottom:10px;}
+.tc-desc{font-size:12px;color:var(--sub);line-height:1.55;margin-bottom:12px;}
+.tc-ctc{font-family:var(--font-mono);font-size:15px;font-weight:700;letter-spacing:-0.02em;}
+.tc-ctc-sub{font-size:10px;color:var(--muted);font-family:var(--font-mono);line-height:1.45;margin:4px 0 12px;}
+.tc-req-label{font-family:var(--font-mono);font-size:8px;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.tc-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;}
+.tc-chip{font-size:10px;padding:3px 7px;border-radius:4px;background:var(--bg2);border:1px solid var(--line2);color:var(--sub);line-height:1.4;}
+.tc-note{font-size:11px;color:var(--muted);line-height:1.5;border-top:1px solid var(--line);padding-top:10px;margin-top:auto;}
+.reach .tc-tier,.reach .tc-ctc,.targets-tier-title.reach{color:var(--yellow);}
+.tgt .tc-tier,.tgt .tc-ctc,.targets-tier-title.tgt{color:var(--green);}
+.india .tc-tier,.india .tc-ctc,.targets-tier-title.india{color:var(--mauve);}
+.flr .tc-tier,.flr .tc-ctc,.targets-tier-title.flr{color:var(--blue);}
+@media(max-width:1100px){
+  .targets-brief-grid{grid-template-columns:1fr;}
+}
 /* ─── GAMING PAGE ─────────────────────────────────────── */
 .gaming-hero{background:color-mix(in srgb, var(--yellow) 4%, transparent);border:1px solid color-mix(in srgb, var(--yellow) 15%, transparent);border-radius:var(--r);padding:24px;margin-bottom:20px;display:flex;gap:20px;align-items:flex-start;}
 .gaming-emoji{font-size:40px;flex-shrink:0;}
@@ -2151,6 +2189,9 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 }
 
 /* Audit / targets / trips collapse on tablet */
+@media(max-width:1280px){
+  #page-targets #competency-tracker-container{grid-template-columns:1fr 1fr !important;}
+}
 @media(max-width:1100px){
   #page-audit > div{grid-template-columns:1fr !important;}
   #page-targets #targets-have-container{grid-template-columns:1fr !important;}
@@ -3273,10 +3314,12 @@ html.skin-mental #page-mental .glass-card{
   <!-- TARGETS -->
   <div id="page-targets" class="content">
     <div class="section-hdr" style="display:flex; justify-content:space-between; align-items:center;">
-      <span>PLACEMENT TARGETS — JULY 2028</span>
+      <span>PLACEMENT TARGETS — QUANT FUNNEL · JULY 2028</span>
       <button class="btn-primary" onclick="addNewTarget()" style="padding: 4px 10px; font-size: 11px; font-family: var(--font-mono);">+ ADD TARGET</button>
     </div>
-    <div class="targets-grid" id="targets-grid-container"></div>
+    <div id="targets-brief"></div>
+    <div class="targets-filters" id="targets-filters"></div>
+    <div id="targets-grid-container"></div>
     <div class="section-hdr" style="margin-top:20px; display:flex; justify-content:space-between; align-items:center;">
       <span>WHAT YOU ALREADY HAVE</span>
       <button class="btn-primary" onclick="editTargetsHave()" style="padding: 4px 10px; font-size: 11px; font-family: var(--font-mono);">⚙️ EDIT LISTS</button>
@@ -4052,14 +4095,190 @@ const DEFAULT_PROJECTS = [
   }
 ];
 const DEFAULT_TARGETS = [
-  { tier: 'Reach', name: 'AlphaGrep / Tower Research / Optiver', desc: 'Lethal C++ STL, Cache/Memory mastery, OS Internals, Custom Order Engine.', ctc: '₹40 - ₹80+ LPA', type: 'reach' },
-  { tier: 'Target', name: 'Goldman Sachs / JPMC / Uber', desc: 'Hard Leetcode DSA, Advanced CN/OS fundamentals, Strong Concurrent Portfolio.', ctc: '₹20 - ₹35 LPA', type: 'tgt' },
-  { tier: 'Floor', name: 'Top Product Startups / Flipkart', desc: 'Solid Medium-Hard DSA, Edge-AI deployment, robust backend design.', ctc: '₹12 - ₹20 LPA', type: 'flr' }
+  {
+    tier: 'Dream / Reach', type: 'reach', name: 'Jane Street',
+    office: 'NYC · London · HK · Mumbai / Bengaluru (tiny)',
+    roles: 'Quant Trader · Quant Researcher · Software Engineer',
+    ctc: '₹2.5–5.8 Cr global',
+    ctcDetail: 'US Y1 ~$300–700k (QT at the top, SWE ~$300–500k). An India seat, if one opens, is still ₹80L–2 Cr+. Not an Amrita campus pipeline.',
+    desc: 'The prestige name. They hire probability and decision-making, not LeetCode volume. SWE is still olympiad-adjacent.',
+    required: ['IOI / ICPC or Codeforces ~2000+', 'Probability + expected value under time pressure', 'C++ or OCaml/Python (SWE); trading games (QT)', 'Referral or contest win — not a campus slot'],
+    note: 'India office exists. Headcount is tiny and almost entirely reserved for olympiad-caliber CPs or strong referrals.'
+  },
+  {
+    tier: 'Dream / Reach', type: 'reach', name: 'Citadel / Citadel Securities',
+    office: 'NYC · Chicago · London · Hong Kong — no India campus channel',
+    roles: 'QR (Citadel HF) · QT / Core SWE (Citadel Securities)',
+    ctc: '₹2.3–5.8 Cr US Y1',
+    ctcDetail: 'HF QR ~$275–475k Y1. CitSec QT ~$400–700k. SWE ~$300–550k. Zero meaningful India-campus hiring.',
+    desc: 'Two firms, one brand. Securities is HFT market-making; the hedge fund is research + PM track. Both are closed loops from India.',
+    required: ['CF 1900+ or equivalent olympiad', 'Probability, stats, brainteasers (QR/QT)', 'Deep C++ systems / kernel / networking (CitSec SWE)', 'US/UK/HK visa path or a later lateral'],
+    note: 'Do not weight this as a 2028 campus outcome. Use it as the skill ceiling you train against.'
+  },
+  {
+    tier: 'Dream / Reach', type: 'reach', name: 'Optiver',
+    office: 'Amsterdam · Chicago · Sydney · Mumbai (tiny)',
+    roles: 'Market Maker / QT · Quant Researcher · Quant Developer',
+    ctc: '₹2.1–3.3 Cr global',
+    ctcDetail: 'US/EU Y1 ~$250–400k. Occasional IIT international packages reported ~₹2–2.5 Cr. India office headcount is tiny.',
+    desc: 'Options-native market maker. Mental math and market intuition are first-class, not a side quest.',
+    required: ['Fast mental math + options intuition', 'Probability / combinatorics on a whiteboard', 'C++17+ for quant-dev (STL, memory, latency)', 'CF 1800+ or a brutal OA + trader games'],
+    note: 'India office exists. Same story as Jane Street: reserved for IOI/ICPC-caliber or referrals.'
+  },
+  {
+    tier: 'Dream / Reach', type: 'reach', name: 'Two Sigma',
+    office: 'NYC · London — no India campus channel',
+    roles: 'Quant Researcher · Quant SWE · Data Scientist',
+    ctc: '₹2.1–3.3 Cr US Y1',
+    ctcDetail: 'US new-grad ~$250–400k. Research-heavier than pure HFT. No India-campus pipeline.',
+    desc: 'Systematic hedge fund. Stats, ML, and research taste matter more than raw matching-engine latency.',
+    required: ['Probability, stats, ML fundamentals', 'Python + C++ (research + production)', 'CF 1800+ or a strong research / Kaggle signal', 'Papers or non-trivial modeling projects help'],
+    note: 'Treat as a later off-campus / intern-return shot, not a July 2028 campus card.'
+  },
+  {
+    tier: 'Dream / Reach', type: 'reach', name: 'Hudson River Trading (HRT)',
+    office: 'NYC · Chicago · London — no India campus channel',
+    roles: 'Algorithm Developer · Core SWE · Quant Researcher',
+    ctc: '₹2.5–4.2 Cr US Y1',
+    ctcDetail: 'US SWE/algo-dev ~$300–500k Y1. One of the most C++-lethal bars on earth. No India campus.',
+    desc: 'If Jane Street is probability, HRT is machines. Cache lines, kernel bypass, and nanoseconds.',
+    required: ['Lethal C++: cache, SIMD, allocators, atomics', 'Linux internals, networking, lock-free queues', 'CF 1900+ (speed + correctness)', 'A public low-latency project that is not a tutorial clone'],
+    note: 'The C++ bar here is the training target even if the offer never comes from HRT itself.'
+  },
+  {
+    tier: 'Strong Target', type: 'tgt', name: 'Jump Trading',
+    office: 'Chicago · London · Singapore — rare India hire',
+    roles: 'Quant Dev · Algo Trader · Researcher',
+    ctc: '₹2.3–3.6 Cr US Y1',
+    ctcDetail: 'US new-grad ~$275–430k. India hiring is sporadic and referral-driven.',
+    desc: 'Same universe as HRT/CitSec. Slightly more reachable via internships than Jane Street, still a dream from Amrita.',
+    required: ['C++ systems + probability (both, not either)', 'CF 1800–2000', 'OS / networking depth', 'Internship or contest signal that a Jump engineer will vouch for'],
+    note: 'Keep on the list as a skill north star. Do not build the 2028 plan around a Jump campus drive.'
+  },
+  {
+    tier: 'Strong Target', type: 'tgt', name: 'D. E. Shaw',
+    office: 'Hyderabad (real India office) · NYC · London',
+    roles: 'SWE · QR · Systems / Platform',
+    ctc: '₹35–80 LPA India · ₹2.3–3.3 Cr US',
+    ctcDetail: 'Hyderabad campus/off-campus new-grad typically ₹35–80 LPA depending on role. US QR/SWE ~$280–390k. Most realistic "global quant brand" with an actual India funnel.',
+    required: ['Hard DSA (more LeetCode-shaped than HFT, still brutal)', 'OS + CN + concurrency', 'C++ or Python at production depth', 'Strong CGPA + a systems or research project'],
+    note: 'Weight this above glamour HFT names. Hyderabad is a real office with real India hiring.'
+  },
+  {
+    tier: 'Strong Target', type: 'tgt', name: 'IMC Trading',
+    office: 'Amsterdam · Chicago · Sydney — limited India',
+    roles: 'Trader · Quant Researcher · Quant Developer',
+    ctc: '₹2.4–3.3 Cr global',
+    ctcDetail: 'US/EU Y1 ~$290–400k. Comp grows fast after year 1. India presence is not a campus pipeline.',
+    desc: 'Market maker with a heavy trader-game process. Dev track is C++ and low-latency.',
+    required: ['Trading games + probability', 'Mental math / market making intuition', 'C++ for quant-dev', 'CF 1700+ and a clean OA'],
+    note: 'Apply off-campus / intern. Do not wait for an Amrita drive that will not come.'
+  },
+  {
+    tier: 'Strong Target', type: 'tgt', name: 'Akuna Capital',
+    office: 'Chicago · Sydney — no India campus',
+    roles: 'Trader · Quant · Software Engineer',
+    ctc: '₹1.5–2.5 Cr US/AU',
+    ctcDetail: 'US new-grad roughly $180–300k. Slightly more accessible than T1, still closed from India campus.',
+    desc: 'Options-heavy prop shop. A notch below Optiver/IMC on brand, same skill family.',
+    required: ['Options / vol intuition', 'Probability + coding OA', 'C++ or Python', 'CF 1600+ as a floor'],
+    note: 'Useful practice target for Optiver-style interviews. Not a 2028 campus bet.'
+  },
+  {
+    tier: 'Strong Target', type: 'tgt', name: 'SIG (Susquehanna)',
+    office: 'Philadelphia · occasional India / remote research',
+    roles: 'Trader · QR · Quant Dev',
+    ctc: '₹1.7–2.5 Cr US',
+    ctcDetail: 'US trader/QR Y1 ~$200–300k. Decision-theory interviews. Occasional research touchpoints into India.',
+    desc: 'Game theory and making good decisions with incomplete information. Less "nanosecond C++" than HRT.',
+    required: ['Game theory + probability + EV', 'Decision-making interviews, not just DSA', 'Python / C++', 'Poker / strategy games are a real signal here'],
+    note: 'Interview style is unique. Prep specifically; do not reuse a pure-HFT C++ loop and hope.'
+  },
+  {
+    tier: 'Strong Target', type: 'tgt', name: 'Tower Research Capital',
+    office: 'NYC · Gurgaon · Mumbai',
+    roles: 'Core Dev · Quant Dev · Quant Researcher',
+    ctc: '₹50–90 LPA India typical · ₹1–2 Cr top',
+    ctcDetail: 'India new-grad commonly ₹50–90 LPA; top CSE/IIT outliers ₹1–2 Cr. US ~$265–370k. The Gurgaon/Mumbai office is a real apply target.',
+    desc: 'Global HFT with an actual India engineering office. C++ + OS internals + an order-book project is the language they speak.',
+    required: ['Deep C++ (STL internals, cache, memory)', 'OS internals + networking', 'CF 1800+ preferred', 'Public order-matching / market-data engine'],
+    note: 'Listed again under India-entry because the India office is the realistic door. Same firm, weight the Gurgaon path.'
+  },
+  {
+    tier: 'India Entry', type: 'india', name: 'Graviton Research Capital',
+    office: 'Gurgaon (India-based, quant-dev heavy)',
+    roles: 'Quant Dev · Quant Researcher · Core SWE',
+    ctc: '₹80 LPA – ₹1.2 Cr',
+    ctcDetail: 'India new-grad TC typically ₹80L–1.2 Cr (base + Y1 bonus). IIT intern stipends have hit ₹25L+/month. Off-campus is possible with CF + C++.',
+    desc: 'Your most important near-term name. India HFT that pays T1 money without requiring a US visa. Quant-dev heavy.',
+    required: ['C++ that is actually systems C++, not DSA-in-C++', 'Codeforces 1800+ (2000+ makes you visible)', 'OS, cache, lock-free, sockets', 'Math puzzles + probability in later rounds'],
+    note: 'Most realistic high-pay entry from an Indian engineering college. Weight this heavier than Jane Street.'
+  },
+  {
+    tier: 'India Entry', type: 'india', name: 'WorldQuant',
+    office: 'Mumbai / Hyderabad research + global platform',
+    roles: 'QR · Research Consultant · Quant Dev',
+    ctc: '₹20–50 LPA India entry',
+    ctcDetail: 'Full-time India QR/dev often ₹20–50 LPA to start, scales with alpha. Research Consultant path via WorldQuant BRAIN is the open door.',
+    desc: 'The most accessible "quant" brand. Less CF-obsessed, more stats + research + the BRAIN platform.',
+    required: ['Stats, regression, time series', 'Python (NumPy/pandas) + some C++', 'WorldQuant BRAIN alphas — start now', 'Ability to write and defend a research idea'],
+    note: 'Most realistic near-term quant entry from Amrita. Start BRAIN this semester. Weight this.'
+  },
+  {
+    tier: 'India Entry', type: 'india', name: 'Tower Research — India office',
+    office: 'Gurgaon / Mumbai',
+    roles: 'Core Dev · Quant Dev',
+    ctc: '₹50–90 LPA typical · ₹1 Cr+ outliers',
+    ctcDetail: 'Same firm as the T2 card. This row exists so the India office is weighted as an apply target, not a poster on the wall.',
+    desc: 'Apply here, not to NYC. Same C++/OS bar, India comp, India interviews.',
+    required: ['C++ STL + memory + concurrency', 'Linux, epoll, shared memory', 'CF 1700–1900', 'Matching engine or UDP market-data handler on GitHub'],
+    note: 'Treat as a primary 2027–28 application, not a reach fantasy.'
+  },
+  {
+    tier: 'India Entry', type: 'india', name: 'Millennium',
+    office: 'Mumbai / Bengaluru (India presence growing)',
+    roles: 'Quant Dev · Platform SWE · QR',
+    ctc: '₹40–80 LPA India',
+    ctcDetail: 'India tech/quant-dev typically ₹40–80 LPA as the office scales. US PM/QR is a different universe ($300k+).',
+    desc: 'Multi-manager pod shop, not classic HFT. More platform + research engineering than nanosecond matching.',
+    required: ['C++ and/or Python at production depth', 'Data systems, not just DSA', 'Stats literacy for QR-adjacent roles', 'Internships / referrals matter more than CF here'],
+    note: 'Growing India presence. Watch 2027–28 headcount. A strong second-wave target after Graviton/Tower.'
+  },
+  {
+    tier: 'India Entry', type: 'india', name: 'QuadEye',
+    office: 'Gurgaon',
+    roles: 'Quant Strategist · Quant Dev · Core SWE',
+    ctc: '₹75 LPA – ₹1.2 Cr',
+    ctcDetail: 'Careers page has advertised intern conversion at min ₹93 LPA (no upper cap). Typical new-grad band ~₹75L–1.2 Cr.',
+    desc: 'Indian HFT in the same Gurgaon cluster as Graviton. Pays like a T1 if you clear the bar.',
+    required: ['C++ + CP (CF 1800+)', 'Probability / math puzzles', 'Low-latency instincts', 'IIT-shaped process — off-campus needs a loud GitHub + CF'],
+    note: 'Realistic if the CF rating and C++ project are real. Same bucket as Graviton. Weight it.'
+  },
+  {
+    tier: 'Floor / Fallback', type: 'flr', name: 'Flipkart / Swiggy-tier product SWE',
+    office: 'Bengaluru · Hyderabad (low-latency / infra teams)',
+    roles: 'SDE-1 · Backend / Infra · Platform',
+    ctc: '₹18–40 LPA',
+    ctcDetail: 'Top product new-grad typically ₹18–40 LPA (Flipkart/Swiggy/better startups). Infra / low-latency teams sit at the top of that band.',
+    desc: 'The employability floor. Same systems muscle (C++, OS, backend) still wins. Keeps 2028 safe if quant does not convert.',
+    required: ['Solid medium-hard DSA (this is the LeetCode lane)', 'Backend + OS + networks', 'One production-shaped project', 'Edge-AI (AeroSynapse) is a plus, not the pitch'],
+    note: 'Do not abandon this lane. Quant is a funnel. This is the job if the funnel does not convert.'
+  },
+  {
+    tier: 'Floor / Fallback', type: 'flr', name: 'Fintech infra (PhonePe / Razorpay / Cred / Groww)',
+    office: 'Bengaluru · Pune · Hyderabad',
+    roles: 'Backend · Payments infra · Data / reliability',
+    ctc: '₹18–35 LPA',
+    ctcDetail: 'New-grad typically ₹18–35 LPA. Closer to markets than food-delivery SWE, still not HFT.',
+    desc: 'If you want to stay near money without clearing an HFT OA. Payments, ledgers, exactly-once, reliability.',
+    required: ['DSA + system design basics', 'Databases, queues, consistency', 'Java/Go/C++ — language less sacred than HFT', 'Internship on a real backend'],
+    note: 'Fallback that still compounds. Better than a random service-company safety net.'
+  }
 ];
 const DEFAULT_TARGETS_HAVE = [
-  { title: 'Portfolio breadth', items: ['Computer vision (AeroSynapse)', 'Mobile product (System: Engineer)', 'Web + backend (Satyam News)'] },
-  { title: 'Technical depth', items: ['TensorRT + DeepStream at 150+ FPS', 'Flutter + Riverpod + Drift architecture', 'PostgreSQL production backend'] },
-  { title: 'Add by Sem 6', items: ['Low-Latency C++ Order Matching Engine', 'Custom HTTP/1.1 Web Server in C++', 'System design fundamentals (DDIA)'] }
+  { title: 'Already in the stack', items: ['Computer vision (AeroSynapse) — keep, do not lead with it', 'Mobile product (System: Engineer)', 'Web + backend (Satyam News)', 'TensorRT + DeepStream at 150+ FPS'] },
+  { title: 'The actual quant bar', items: ['C++: deep — memory model, cache, lock-free. Not DSA-in-C++', 'Codeforces rating matters more here than LeetCode grinding', 'Probability / stats / combinatorics under a clock', 'Market microstructure: order book, latency, maker-taker'] },
+  { title: 'Close by Sem 6', items: ['Low-latency C++ order matching engine on GitHub', 'CF Specialist 1600+ now, 1800+ by Sem 6', 'Custom HTTP/1.1 or UDP market-data handler in C++', 'Heard on the Street + Fifty Challenging Problems in Probability'] }
 ];
 const DEFAULT_GAMING = {
   verdict: "4 hours/week is 2.4% of your waking hours. That's not a threat to your goals — it's basic mental maintenance. The people who land top placements aren't the ones who studied every waking hour. They're the ones who studied consistently for 2 years without burning out. Sustainability beats intensity over an 18-month horizon every time.",
@@ -4122,7 +4341,13 @@ if(!S.noteTabs) S.noteTabs = JSON.parse(JSON.stringify(DEFAULT_NOTE_TABS));
 if (S.targets && S.targets.length > 0 && S.targets[0].name.includes('Goldman Sachs')) {
   S.targets = JSON.parse(JSON.stringify(DEFAULT_TARGETS));
   S.targetsHave = JSON.parse(JSON.stringify(DEFAULT_TARGETS_HAVE));
+  S.targetsVersion = 2;
   localStorage.setItem('abhi_os', JSON.stringify(S));
+}
+if (!S.targetsVersion || S.targetsVersion < 2) {
+  S.targets = JSON.parse(JSON.stringify(DEFAULT_TARGETS));
+  S.targetsHave = JSON.parse(JSON.stringify(DEFAULT_TARGETS_HAVE));
+  S.targetsVersion = 2;
 }
 if(!S.phases || !S.phases[0] || S.phases[0].title.includes('Classical AI') || !S.phases[0].learn.some(l => l.includes('CS50'))) {
   S.phases = JSON.parse(JSON.stringify(DEFAULT_PHASES));
@@ -6973,9 +7198,11 @@ function renderPhaseProgress(){
   const mastery=S.competencyMastery||{};
   const osList=(typeof DEFAULT_COMPETENCY_LIST!=='undefined' && DEFAULT_COMPETENCY_LIST.osRoles) ? DEFAULT_COMPETENCY_LIST.osRoles : [];
   const aiList=(typeof DEFAULT_COMPETENCY_LIST!=='undefined' && DEFAULT_COMPETENCY_LIST.aiArch) ? DEFAULT_COMPETENCY_LIST.aiArch : [];
+  const quantList=(typeof DEFAULT_COMPETENCY_LIST!=='undefined' && DEFAULT_COMPETENCY_LIST.quantBar) ? DEFAULT_COMPETENCY_LIST.quantBar : [];
   const osPct = osList.length ? Math.round(osList.filter(x=>mastery[x.id]).length / osList.length * 100) : 0;
-  const allComp = osList.length + aiList.length;
-  const phasePct = allComp ? Math.round([...osList,...aiList].filter(x=>mastery[x.id]).length / allComp * 100) : 0;
+  const quantPct = quantList.length ? Math.round(quantList.filter(x=>mastery[x.id]).length / quantList.length * 100) : 0;
+  const allComp = osList.length + aiList.length + quantList.length;
+  const phasePct = allComp ? Math.round([...osList,...aiList,...quantList].filter(x=>mastery[x.id]).length / allComp * 100) : 0;
   const activeDays = Object.keys(S.heatmap||{}).filter(k => (S.heatmap[k]||0) > 0).length;
   const items=[
     {name:(S.phases[0]&&S.phases[0].title)||'Phase 1',pct:phasePct,color:'var(--mauve)'},
@@ -7107,6 +7334,14 @@ const DEFAULT_COMPETENCY_LIST = {
     { id: 'c_deepstream', name: 'DeepStream Pipeline', desc: 'Video processing pipelines & GStreamer layout' },
     { id: 'c_sahi', name: 'SAHI Tiling', desc: 'Sliced inference for small targets in 4K' },
     { id: 'c_quant', name: 'Model Quantization', desc: 'FP32 to INT8 weights scaling & post-training compression' }
+  ],
+  quantBar: [
+    { id: 'c_cpp_mm', name: 'C++ Memory Model', desc: 'atomics, acquire/release, false sharing — not DSA-in-C++' },
+    { id: 'c_stl_int', name: 'STL Internals', desc: 'vector growth, unordered_map hashing, allocator behavior' },
+    { id: 'c_cf', name: 'Codeforces Rating', desc: 'Specialist 1600+ now; 1800+ by Sem 6; 2000+ for T1' },
+    { id: 'c_prob', name: 'Probability Under Time', desc: 'EV, Bayes, combinatorics, Heard on the Street style' },
+    { id: 'c_micro', name: 'Market Microstructure', desc: 'LOB, maker/taker, latency, colocation, tick data' },
+    { id: 'c_ome', name: 'Order Matching Engine', desc: 'Price-time priority, preallocated pools, O(1) cancel' }
   ]
 };
 
@@ -7117,15 +7352,18 @@ function renderCompetencyTracker() {
   const extras = S.customCompetencies || [];
   const comp = {
     osRoles: DEFAULT_COMPETENCY_LIST.osRoles.concat(extras.filter(x => x.category === 'os')),
-    aiArch: DEFAULT_COMPETENCY_LIST.aiArch.concat(extras.filter(x => x.category === 'ai'))
+    aiArch: DEFAULT_COMPETENCY_LIST.aiArch.concat(extras.filter(x => x.category === 'ai')),
+    quantBar: (DEFAULT_COMPETENCY_LIST.quantBar || []).concat(extras.filter(x => x.category === 'quant'))
   };
   const mastery = S.competencyMastery || {};
-  
+  const catTitle = { os: 'OS Core Competencies', ai: 'AI Architectures & Edge', quant: 'Quant / HFT Bar' };
+  const catColor = { os: 'var(--blue)', ai: 'var(--mauve)', quant: 'var(--yellow)' };
+
   const getListHTML = (items, category) => {
     let total = items.length;
     let done = items.filter(x => mastery[x.id]).length;
     let pct = Math.round((done / total) * 100) || 0;
-    
+
     let listHTML = items.map(item => {
       const isDone = !!mastery[item.id];
       return `
@@ -7138,15 +7376,15 @@ function renderCompetencyTracker() {
         </div>
       `;
     }).join('');
-    
+
     return `
       <div class="glass-card" style="padding: 16px; border-radius: var(--r);">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-          <div style="font-family:var(--font-mono); font-size:10px; font-weight:700; color:var(--mauve); text-transform:uppercase;">${category === 'os' ? 'OS Core Competencies' : 'AI Architectures & Edge'}</div>
+          <div style="font-family:var(--font-mono); font-size:10px; font-weight:700; color:${catColor[category] || 'var(--mauve)'}; text-transform:uppercase;">${catTitle[category] || category}</div>
           <span style="font-family:var(--font-mono); font-size:11px; color:var(--green); font-weight:700;">${pct}%</span>
         </div>
         <div class="prog-track" style="height:4px; margin-bottom:16px;">
-          <div class="prog-fill" style="width:${pct}%; background:var(--green);"></div>
+          <div class="prog-fill" style="width:${pct}%; background:${catColor[category] || 'var(--green)'};"></div>
         </div>
         <div style="display:flex; flex-direction:column; gap:6px;">
           ${listHTML}
@@ -7154,9 +7392,9 @@ function renderCompetencyTracker() {
       </div>
     `;
   };
-  
-  container.innerHTML = getListHTML(comp.osRoles, 'os') + getListHTML(comp.aiArch, 'ai')
-    + `<button class="btn-secondary" style="margin-top:12px;width:100%;" onclick="addCustomCompetency()">+ Add competency</button>`;
+
+  container.innerHTML = getListHTML(comp.osRoles, 'os') + getListHTML(comp.aiArch, 'ai') + getListHTML(comp.quantBar, 'quant')
+    + `<button class="btn-secondary" style="margin-top:12px;width:100%;grid-column:1/-1;" onclick="addCustomCompetency()">+ Add competency</button>`;
 }
 
 function toggleCompetency(id, category) {
@@ -9925,8 +10163,9 @@ function editApplication(id) {
       <div>
         <label class="modal-form-label">Tier</label>
         <select class="modal-form-select" id="edit-app-tier">
-          <option value="Reach" ${app.tier==='Reach'?'selected':''}>Reach</option>
-          <option value="Target" ${app.tier==='Target'?'selected':''}>Target</option>
+          <option value="Reach" ${app.tier==='Reach'?'selected':''}>Dream / Reach</option>
+          <option value="Target" ${app.tier==='Target'?'selected':''}>Strong Target</option>
+          <option value="India Entry" ${app.tier==='India Entry'?'selected':''}>India Entry</option>
           <option value="Floor" ${app.tier==='Floor'?'selected':''}>Floor</option>
           <option value="Other" ${app.tier==='Other'?'selected':''}>Other</option>
         </select>
@@ -10345,7 +10584,7 @@ function editExpense(idx) {
 function addCustomCompetency() {
   const html = `
     <div class="modal-form-group"><label class="modal-form-label">Track</label>
-      <select class="modal-form-select" id="cc-cat"><option value="os">OS Core</option><option value="ai">AI / Edge</option></select></div>
+      <select class="modal-form-select" id="cc-cat"><option value="os">OS Core</option><option value="ai">AI / Edge</option><option value="quant">Quant / HFT</option></select></div>
     <div class="modal-form-group"><label class="modal-form-label">Name</label>
       <input class="modal-form-input" id="cc-name" placeholder="e.g. io_uring"></div>
     <div class="modal-form-group"><label class="modal-form-label">Notes</label>
@@ -11351,7 +11590,7 @@ function renderAcademicCalendar() {
 const ACADEMIC_RECOMMENDATIONS = [
   { details: 'LeetCode DP & Graph Grinds', type: 'exam-prep', xp: 25, badge: 'Placement' },
   { details: 'OS Processes & IPC Revision', type: 'exam-prep', xp: 25, badge: 'Academic' },
-  { details: 'Goldman Sachs Mock OA Practice', type: 'milestone', xp: 30, badge: 'Placement' },
+  { details: 'Graviton / QuadEye Mock OA + CF contest', type: 'milestone', xp: 30, badge: 'Placement' },
   { details: 'Draft System Design Architecture', type: 'milestone', xp: 30, badge: 'Projects' },
   { details: 'Review Coursera OS Audit Lab', type: 'task', xp: 15, badge: 'Academic' },
   { details: 'Resume HQ Updates & Refinement', type: 'task', xp: 15, badge: 'Placement' }
@@ -11875,6 +12114,182 @@ document.addEventListener('keydown', (e) => {
 requestAnimationFrame(() => document.body.classList.remove('booting'));
 if (window.__osLocked) { showLockScreen(); }
 else { init(); initCinematicHud(); }
+</script>
+</body>
+</html>
+/html>
+
+ction", action: () => { gotoPage('budget'); setTimeout(() => document.getElementById('exp-name')?.focus(), 150); } },
+  { label: "Show Weekly Report Card", type: "action", action: () => showWeeklyReport() },
+  { label: "Undo last XP / check action", type: "action", action: () => undoLastAction() },
+  { label: "Open scratchpad", type: "action", action: () => toggleScratchpad() },
+  { label: "Add Mission Task...", type: "action", action: () => { gotoPage('tasks'); setTimeout(() => {
+    // Open task adding modal or highlight input if it exists
+    const addBtn = document.querySelector('.btn-primary[onclick*="Mission"], .btn-primary[onclick*="Task"]');
+    if (addBtn) addBtn.click();
+  }, 150); } },
+  
+  // Ambient Sound Toggles
+  { label: "Ambient Mixer: Toggle Rain Sound", type: "sound", action: () => toggleFocusSound('rain') },
+  { label: "Ambient Mixer: Toggle Brown Noise", type: "sound", action: () => toggleFocusSound('brown') },
+  { label: "Ambient Mixer: Toggle Binaural Focus Drone", type: "sound", action: () => toggleFocusSound('drone') },
+  { label: "Ambient Mixer: Mute all Focus Audio", type: "sound", action: () => {
+    stopSingleFocusSound('rain'); stopSingleFocusSound('brown'); stopSingleFocusSound('drone');
+    showToast('Focus ambient muted');
+  } },
+
+  // System Controls
+  { label: "System: Toggle Theme (Dark / Light)", type: "system", action: () => toggleTheme() },
+  { label: "System: Toggle Sidebar Collapse", type: "system", action: () => toggleSidebar() },
+  { label: "System: Open System Settings", type: "system", action: () => openSettings() },
+  { label: "System: Start / Pause Pomodoro Timer", type: "system", action: () => togglePomo() },
+  { label: "System: Reset Pomodoro Timer", type: "system", action: () => resetPomo() },
+  { label: "System: Download Data Backup (JSON)", type: "system", action: () => exportDataJSON() },
+  { label: "System: Download Expense Sheet (CSV)", type: "system", action: () => downloadExpensesCSV() },
+  { label: "System: Print Expense Statement (PDF)", type: "system", action: () => printExpensesPDF() },
+  { label: "System: Restore Data from Backup (JSON)", type: "system", action: () => triggerJSONUpload() },
+  { label: "System: Request Browser Notifications permission", type: "system", action: () => requestNotificationPermission() }
+];
+
+function openCommandPalette() {
+  playClickSound();
+  const backdrop = document.getElementById('palette-backdrop');
+  const input = document.getElementById('palette-input');
+  if (!backdrop || !input) return;
+  
+  // Request notifications permission proactively
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+  
+  backdrop.classList.add('show');
+  input.value = "";
+  isPaletteOpen = true;
+  activePaletteIndex = 0;
+  onPaletteInput("");
+  
+  setTimeout(() => input.focus(), 50);
+}
+
+function closeCommandPalette() {
+  const backdrop = document.getElementById('palette-backdrop');
+  if (backdrop) backdrop.classList.remove('show');
+  isPaletteOpen = false;
+}
+
+function onPaletteInput(query) {
+  const q = query.toLowerCase().trim();
+  if (!q) {
+    filteredCommands = [...paletteCommands];
+  } else {
+    filteredCommands = paletteCommands.filter(cmd => cmd.label.toLowerCase().includes(q));
+  }
+  activePaletteIndex = Math.min(activePaletteIndex, Math.max(0, filteredCommands.length - 1));
+  renderPaletteList();
+}
+
+function renderPaletteList() {
+  const listEl = document.getElementById('palette-list');
+  if (!listEl) return;
+  
+  if (filteredCommands.length === 0) {
+    listEl.innerHTML = `<div class="empty-state" style="padding: 20px;">No matching commands found.</div>`;
+    return;
+  }
+  
+  listEl.innerHTML = filteredCommands.map((cmd, idx) => {
+    const activeClass = idx === activePaletteIndex ? 'active' : '';
+    const icon = cmd.type === 'nav' ? '🗺️' : cmd.type === 'sound' ? '🎵' : cmd.type === 'action' ? '⚡' : '⚙️';
+    return `
+      <div class="palette-item ${activeClass}" onclick="executePaletteItem(${idx})">
+        <span class="palette-item-icon">${icon}</span>
+        <span>${cmd.label}</span>
+        <span class="palette-item-details">${cmd.type.toUpperCase()}</span>
+      </div>
+    `;
+  }).join('');
+  
+  // Scroll active item into view
+  const activeEl = listEl.querySelector('.palette-item.active');
+  if (activeEl) {
+    activeEl.scrollIntoView({ block: 'nearest' });
+  }
+}
+
+function onPaletteKeyDown(e) {
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    activePaletteIndex = (activePaletteIndex + 1) % filteredCommands.length;
+    renderPaletteList();
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    activePaletteIndex = (activePaletteIndex - 1 + filteredCommands.length) % filteredCommands.length;
+    renderPaletteList();
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    executePaletteItem(activePaletteIndex);
+  } else if (e.key === 'Escape') {
+    e.preventDefault();
+    closeCommandPalette();
+  }
+}
+
+function executePaletteItem(index) {
+  const cmd = filteredCommands[index];
+  if (cmd && cmd.action) {
+    closeCommandPalette();
+    cmd.action();
+  }
+}
+
+// Key listeners for global command palette trigger
+document.addEventListener('keydown', (e) => {
+  const tag = (e.target && e.target.tagName) || '';
+  const typing = tag === 'INPUT' || tag === 'TEXTAREA' || (e.target && e.target.isContentEditable);
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'Z') && !e.shiftKey && !typing) {
+    e.preventDefault();
+    undoLastAction();
+    return;
+  }
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K' || e.key === 'p' || e.key === 'P')) {
+    e.preventDefault();
+    if (isPaletteOpen) {
+      closeCommandPalette();
+    } else {
+      openCommandPalette();
+    }
+  }
+});
+
+// Restore theme and sidebar state on load
+(function applyStoredPrefs() {
+  const theme = localStorage.getItem('abhi_theme');
+  if (theme === 'light') {
+    document.documentElement.classList.add('light');
+    const icon = document.getElementById('theme-icon');
+    const label = document.getElementById('theme-label');
+    if (icon) icon.textContent = '☀️';
+    if (label) label.textContent = 'Light';
+  }
+  syncThemeChrome();
+  const sidebar = localStorage.getItem('abhi_sidebar');
+  if (sidebar === 'collapsed') {
+    const layout = document.querySelector('.layout');
+    const btn = document.getElementById('sidebar-toggle-btn');
+    if (layout) layout.classList.add('sidebar-collapsed');
+    if (btn) { btn.textContent = '›'; btn.style.left = '44px'; }
+  }
+})();
+
+requestAnimationFrame(() => document.body.classList.remove('booting'));
+if (window.__osLocked) { showLockScreen(); }
+else { init(); initCinematicHud(); }
+</script>
+</body>
+</html>
+/html>
+
+initCinematicHud(); }
 </script>
 </body>
 </html>
