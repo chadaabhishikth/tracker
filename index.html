@@ -2040,6 +2040,60 @@ html.light .glass-card:hover {
   white-space: pre-line;
 }
 
+/* ─── BUTTONS (were used everywhere, never defined) ─── */
+.btn-primary{
+  background:var(--blue);color:var(--bg);border:none;border-radius:6px;
+  padding:8px 12px;font-size:12px;font-weight:600;cursor:pointer;
+  font-family:var(--font-body);transition:opacity .15s,transform .1s;
+}
+.btn-primary:hover{opacity:.88;}
+.btn-primary:active{transform:scale(.98);}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;}
+.btn-secondary{
+  background:var(--bg2);color:var(--text);border:1px solid var(--line2);
+  border-radius:6px;padding:8px 12px;font-size:12px;cursor:pointer;
+  font-family:var(--font-body);transition:border-color .15s,color .15s;
+}
+.btn-secondary:hover{border-color:var(--blue);color:var(--blue);}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:2px solid var(--blue);outline-offset:2px;
+}
+
+/* Desktop ticker clearance */
+@media(min-width:901px){
+  .main{padding-bottom:28px;}
+  .content.active{padding-bottom:36px;}
+}
+
+/* Audit / targets / trips collapse on tablet */
+@media(max-width:1100px){
+  #page-audit > div{grid-template-columns:1fr !important;}
+  #page-targets #targets-have-container{grid-template-columns:1fr !important;}
+  #page-targets #competency-tracker-container{grid-template-columns:1fr !important;}
+  .trips-grid{grid-template-columns:1fr !important;}
+}
+
+/* DSA toolbar */
+.dsa-toolbar{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;}
+.dsa-toolbar .form-input,.dsa-toolbar .form-select{margin:0;}
+
+/* Budget month switcher */
+.budget-month-nav{display:inline-flex;align-items:center;gap:8px;}
+.budget-month-nav button{
+  background:var(--bg2);border:1px solid var(--line2);color:var(--text);
+  width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:14px;
+}
+.budget-month-nav button:hover{border-color:var(--blue);color:var(--blue);}
+
+/* Kanban drag */
+.kanban-card[draggable="true"]{cursor:grab;}
+.kanban-card.dragging{opacity:.45;}
+.kanban-col.drop-target{border-color:var(--blue);box-shadow:inset 0 0 0 1px var(--blue);}
+
+/* Undo toast extra */
+.toast.undo{pointer-events:auto;display:flex;align-items:center;gap:12px;color:var(--text);}
+.toast.undo button{background:none;border:1px solid var(--line2);color:var(--blue);border-radius:4px;padding:3px 8px;cursor:pointer;font-family:var(--font-mono);font-size:10px;}
+
 /* ─── PRINT MEDIA QUERY ────────────────────────────── */
 @media print {
   body {
@@ -2542,7 +2596,16 @@ html.light .glass-card:hover {
         </div>
       </div>
       <div>
-        <div class="section-hdr">PROBLEM LOG</div>
+        <div class="section-hdr">PROBLEM LOG <span id="dsa-log-count" style="margin-left:auto;font-size:10px;color:var(--sub);"></span></div>
+        <div class="dsa-toolbar">
+          <input class="form-input" id="dsa-search" placeholder="Search name, topic, notes…" oninput="renderDSALog()" style="flex:1;min-width:160px;">
+          <select class="form-select" id="dsa-filter-diff" onchange="renderDSALog()" style="width:130px;">
+            <option value="">All diffs</option>
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
         <div class="problem-log" id="problem-log">
           <div class="empty-state">No problems logged yet.<br>Start grinding 💪</div>
         </div>
@@ -2642,7 +2705,7 @@ html.light .glass-card:hover {
 
         <!-- Tab 1: Editor View -->
         <div id="notes-editor-view">
-          <textarea class="notes-area" id="notes-area" placeholder="Write your notes here... They're saved automatically in your browser."></textarea>
+          <textarea class="notes-area" id="notes-area" placeholder="Write your notes here… autosaves to this browser as you type. Ctrl/Cmd+S also works."></textarea>
           <button class="notes-save" id="notes-save-btn" onclick="saveNote()">Save note</button>
         </div>
 
@@ -2706,7 +2769,11 @@ html.light .glass-card:hover {
   <!-- BUDGET TRACKER -->
   <div id="page-budget" class="content">
     <div class="section-hdr" style="display:flex;justify-content:space-between;align-items:center;">
-      <span>EXPENSE TRACKER — <span id="budget-month-label"></span></span>
+      <span class="budget-month-nav">
+        <button type="button" onclick="shiftBudgetMonth(-1)" title="Previous month">‹</button>
+        <span>EXPENSE TRACKER — <span id="budget-month-label"></span></span>
+        <button type="button" onclick="shiftBudgetMonth(1)" title="Next month">›</button>
+      </span>
       <div style="display:flex;gap:8px;">
         <button class="btn-primary" onclick="downloadExpensesCSV()" style="padding:4px 10px;font-size:11px;font-family:var(--font-mono);">📥 DOWNLOAD CSV</button>
         <button class="btn-primary" onclick="printExpensesPDF()" style="padding:4px 10px;font-size:11px;font-family:var(--font-mono);">🖨️ PRINT PDF</button>
@@ -2989,6 +3056,7 @@ html.light .glass-card:hover {
 </div>
 
 <div class="toast" id="toast"></div>
+<input type="file" id="json-file-input" style="display:none" accept=".json" onchange="importDataJSON(this)">
 
 <!-- MOBILE BOTTOM TAB BAR -->
 <div class="mobile-tab-bar" id="mobile-tab-bar">
@@ -3022,6 +3090,7 @@ html.light .glass-card:hover {
       <div class="mobile-drawer-item" onclick="gotoMobilePage('schedule')"><span class="mobile-drawer-icon">⏰</span>Daily Matrix</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('audit')"><span class="mobile-drawer-icon">📊</span>Weekly Audit</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('roadmap')"><span class="mobile-drawer-icon">🗺</span>Systems Roadmap</div>
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('calendar')"><span class="mobile-drawer-icon">📅</span>Calendar</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('semester')"><span class="mobile-drawer-icon">📚</span>Sem 3</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('dsa')"><span class="mobile-drawer-icon">🧩</span>DSA Track</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('projects')"><span class="mobile-drawer-icon">🛠</span>Projects</div>
@@ -3340,7 +3409,16 @@ const DEFAULT_NOTE_TABS = [
 ];
 // END_DEFAULTS
 
-let S = JSON.parse(localStorage.getItem('abhi_os') || '{}');
+let S = {};
+try {
+  const _raw = localStorage.getItem('abhi_os');
+  S = _raw ? JSON.parse(_raw) : {};
+  if (!S || typeof S !== 'object' || Array.isArray(S)) S = {};
+} catch (e) {
+  console.warn('Corrupt abhi_os state — starting from defaults', e);
+  S = {};
+  try { localStorage.setItem('abhi_os_corrupt_backup', localStorage.getItem('abhi_os') || ''); } catch (_) {}
+}
 if(!S.profile) S.profile = Object.assign({}, DEFAULT_PROFILE);
 if(!S.schedule) S.schedule = JSON.parse(JSON.stringify(DEFAULT_SCHEDULE));
 if(!S.questsList) S.questsList = JSON.parse(JSON.stringify(DEFAULT_QUESTS));
@@ -3395,7 +3473,7 @@ if(!S.streak) S.streak = {count:0,last:'',prevDate:''};
 if(!S.xp) S.xp = {total:340,today:0};
 if(!S.notes) S.notes = {};
 if(!S.heatmap) S.heatmap = {};
-if(!S.srs) S.srs = {};
+if(!S.srs || typeof S.srs !== 'object' || Array.isArray(S.srs)) S.srs = {};
 
 if(!S.applications) S.applications = [];
 if(!S.pomoLog) S.pomoLog = {};
@@ -3408,7 +3486,18 @@ if(!S.lastGithubSync) S.lastGithubSync = 0;
 if(!S.githubProfile) S.githubProfile = null;
 if(S.scratchpadText === undefined) S.scratchpadText = '';
 if(!S.accentColor) S.accentColor = 'blue';
-if(!S.srs || !S.srs.cards) S.srs = { cards: [] };
+if (!S.srs.reviews || typeof S.srs.reviews !== 'object') {
+  const reviews = {};
+  Object.keys(S.srs).forEach(k => {
+    if (k === 'cards' || k === 'reviews') return;
+    const v = S.srs[k];
+    if (v && typeof v === 'object' && !Array.isArray(v) && (v.lastReview || v.interval || v.easeFactor || v.score != null)) {
+      reviews[k] = v;
+    }
+  });
+  S.srs.reviews = reviews;
+}
+if (!Array.isArray(S.srs.cards)) S.srs.cards = [];
 if(!S.trips) S.trips = [];
 if(!S.activeTripId) S.activeTripId = '';
 if(!S.budget) S.budget = { monthly: { Food: 4000, Transport: 1000, Entertainment: 1000, Study: 2000, Trips: 5000, Outings: 2000, Monthly: 10000, Misc: 1000 }, log: [] };
@@ -3425,7 +3514,13 @@ function save(skipPush){
   if (!skipPush) {
     S.lastUpdated = Date.now();
   }
-  localStorage.setItem('abhi_os',JSON.stringify(S));
+  try {
+    localStorage.setItem('abhi_os',JSON.stringify(S));
+  } catch (err) {
+    console.error('localStorage write failed', err);
+    try { showToast('Storage is full — export a JSON backup now!', true); } catch(_){}
+    return;
+  }
   if (skipPush) return;
   const cfg = getSyncConfig();
   if (cfg.auto && cfg.token) {
@@ -3441,6 +3536,135 @@ function getLocalISODate(date = new Date()) {
   const d = String(date.getDate()).padStart(2, '0');
   return `${y}-${m}-${d}`;
 }
+
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str).replace(/[&<>"'`]/g, ch => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'
+  }[ch]));
+}
+
+function getWeekKey(date = new Date()) {
+  const d = new Date(date);
+  d.setHours(0,0,0,0);
+  const day = d.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setDate(d.getDate() + diff);
+  return getLocalISODate(d);
+}
+
+function applyXP(delta, opts = {}) {
+  if (!delta) return 0;
+  const today = getLocalISODate();
+  const hmDate = opts.date || today;
+  const touchToday = !opts.date || opts.date === today;
+  if (touchToday) {
+    S.xp.today = Math.max(0, (S.xp.today || 0) + delta);
+  }
+  S.xp.total = Math.max(0, (S.xp.total || 0) + delta);
+  if (opts.heatmap !== false) {
+    if (!S.heatmap) S.heatmap = {};
+    S.heatmap[hmDate] = Math.max(0, (S.heatmap[hmDate] || 0) + delta);
+    if (S.heatmap[hmDate] === 0) delete S.heatmap[hmDate];
+  }
+  return delta;
+}
+
+function grantXP(base, opts = {}) {
+  const xp = opts.multiply === false ? Math.round(base) : getXPWithMultiplier(base);
+  applyXP(xp, opts);
+  return xp;
+}
+
+function parseTimeRange(t) {
+  if (!t) return null;
+  const parts = String(t).split(/[\u2013\u2014-]/);
+  if (parts.length < 2) return null;
+  const sm = toMins(parts[0].trim());
+  const em = toMins(parts[1].trim());
+  if (Number.isNaN(sm) || Number.isNaN(em)) return null;
+  return [sm, em];
+}
+
+function getSRSStore() {
+  if (!S.srs || typeof S.srs !== 'object') S.srs = { cards: [], reviews: {} };
+  if (!S.srs.reviews || typeof S.srs.reviews !== 'object') S.srs.reviews = {};
+  if (!Array.isArray(S.srs.cards)) S.srs.cards = [];
+  return S.srs;
+}
+
+function getProblemReview(name) {
+  const s = getSRSStore();
+  if (s.reviews[name]) return s.reviews[name];
+  if (name && s[name] && typeof s[name] === 'object' && !Array.isArray(s[name])) return s[name];
+  return {};
+}
+
+function setProblemReview(name, data) {
+  const s = getSRSStore();
+  s.reviews[name] = data;
+}
+
+function getLCXP(diff) {
+  return diff === 'hard' ? 35 : diff === 'easy' ? 10 : 20;
+}
+
+function logLeetCodeProblem({ name, diff, topic, notes }) {
+  const clean = (name || '').trim();
+  if (!clean) { showToast('Problem name is required!'); return null; }
+  const validDiff = ['easy','medium','hard'].includes(diff) ? diff : 'medium';
+  if (!S.lc) S.lc = { easy:0, medium:0, hard:0, log:[] };
+  if (!S.lc.log) S.lc.log = [];
+  S.lc[validDiff] = (S.lc[validDiff] || 0) + 1;
+  const id = 'lc_' + Date.now() + '_' + Math.random().toString(36).substr(2, 7);
+  const entry = {
+    id,
+    name: clean,
+    diff: validDiff,
+    topic: topic || 'General',
+    notes: notes || '',
+    date: new Date().toLocaleDateString('en-IN')
+  };
+  S.lc.log.unshift(entry);
+  const alreadyQuest = !!S.quests['q-lc'];
+  S.quests['q-lc'] = true;
+  const xp = grantXP(getLCXP(validDiff));
+  if (!alreadyQuest) {
+    const q = (S.questsList || []).find(x => x.id === 'q-lc');
+    if (q) grantXP(parseInt(q.xp) || 20);
+  }
+  recordLogActivity();
+  try { renderDSALog(); } catch(_){}
+  try { renderDSAPie(); } catch(_){}
+  try { renderSRSQueue(); } catch(_){}
+  try { renderQuests(); } catch(_){}
+  try { renderPhaseProgress(); } catch(_){}
+  try { renderHeatmap(); } catch(_){}
+  try { updateStats(); } catch(_){}
+  try { renderSidebar(); } catch(_){}
+  try { checkAchievements(); } catch(_){}
+  return { entry, xp };
+}
+
+let _lastClockDate = getLocalISODate();
+let budgetView = { y: new Date().getFullYear(), m: new Date().getMonth() };
+let _undo = null;
+
+function pushUndo(label, fn) {
+  _undo = { label, fn, t: Date.now() };
+}
+
+function undoLastAction() {
+  if (!_undo || Date.now() - _undo.t > 20000) {
+    showToast('Nothing to undo');
+    return;
+  }
+  const fn = _undo.fn;
+  _undo = null;
+  fn();
+  showToast('Undone');
+}
+
 const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
 // ─── ACHIEVEMENTS ────────────────────────────────────────
@@ -3748,13 +3972,10 @@ function toggleCustomCalendarTask(id, xp) {
   if (ce) {
     ce.done = !ce.done;
     if (ce.done) {
-      S.xp.total = (S.xp.total || 0) + xp;
-      S.xp.today = (S.xp.today || 0) + xp;
-      updateHeatmap(xp);
+      grantXP(xp, { multiply: false });
       showToast(`Task accomplished! +${xp} XP earned! 🏆`);
     } else {
-      S.xp.total = Math.max(0, (S.xp.total || 0) - xp);
-      S.xp.today = Math.max(0, (S.xp.today || 0) - xp);
+      applyXP(-xp);
       showToast('Task marked incomplete.');
     }
     save();
@@ -3861,7 +4082,10 @@ function executeTerminalCommand(cmdText) {
         <span style="color:var(--green)">/add [Food|Transport|Entertainment|Study|Misc] [amount] [desc]</span> - Log budget expense<br>
         <span style="color:var(--green)">/pomo [start|pause|reset]</span> - Control study timer<br>
         <span style="color:var(--green)">/theme</span> - Toggle light/dark theme<br>
-        <span style="color:var(--green)">/clear</span> - Factory reset local state (asks confirmation)
+        <span style="color:var(--green)">/clear</span> - Factory reset local state (asks confirmation)<br>
+        <span style="color:var(--green)">/undo</span> - Undo last check / XP action<br>
+        <span style="color:var(--green)">/goto [page]</span> - Jump to a page (today, dsa, budget…)<br>
+        <span style="color:var(--green)">/report</span> - Open this week's report card
       </div>
     `;
     openModal('Terminal Help', helpHtml, () => true);
@@ -3891,13 +4115,8 @@ function executeTerminalCommand(cmdText) {
     const validDiff = ['easy', 'medium', 'hard'].includes(diffInput) ? diffInput : 'medium';
     const name = tokens.slice(1, tokens.length - (['easy', 'medium', 'hard'].includes(diffInput) ? 1 : 0)).join(' ');
     
-    S.lc[validDiff] = (S.lc[validDiff] || 0) + 1;
-    const id = 'lc_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
-    S.lc.log.unshift({ id, name, diff: validDiff, date: new Date().toLocaleDateString('en-IN'), topic: 'General' });
-    S.quests['q-lc'] = true;
-    updateHeatmap(10);
-    recordLogActivity(); updateStats(); renderDSALog(); renderDSAPie(); checkAchievements();
-    showToast(`Logged LC: ${name} ✓`);
+    const res = logLeetCodeProblem({ name, diff: validDiff, topic: 'General' });
+    if (res) showToast(`Logged LC: ${name}  +${res.xp} XP ✓`);
   } 
   else if (cmd === '/add') {
     if (tokens.length < 4) { showToast('Use: /add [Category] [Amount] [Description]'); return; }
@@ -3910,8 +4129,10 @@ function executeTerminalCommand(cmdText) {
     const finalCat = validCats.find(c => c.toLowerCase() === cat.toLowerCase()) || 'Misc';
     
     if (!S.budget) S.budget = { monthly: {}, log: [] };
+    if (!S.budget.log) S.budget.log = [];
     S.budget.log.push({ description: desc, amount, category: finalCat, date: getLocalISODate() });
     recordLogActivity();
+    try { renderBudget(); } catch(_){}
     showToast(`Logged expense: ₹${amount} for ${finalCat}! 💳`);
     checkBudgetWarnings(amount, finalCat);
   } 
@@ -3946,7 +4167,21 @@ function executeTerminalCommand(cmdText) {
     if (confirm('Reset system defaults?')) {
       resetData();
     }
-  } 
+  }
+  else if (cmd === '/undo') {
+    undoLastAction();
+  }
+  else if (cmd === '/report') {
+    showWeeklyReport();
+  }
+  else if (cmd === '/goto') {
+    const page = (tokens[1] || '').toLowerCase();
+    if (!page || !document.getElementById('page-' + page)) {
+      showToast('Use: /goto today|dsa|budget|notes|…');
+      return;
+    }
+    gotoPage(page);
+  }
   else {
     showToast(`Unknown command: ${cmd}. Type /help`);
   }
@@ -4548,7 +4783,7 @@ function promptPomoNote(nextMode) {
   const html = `
     <div style="text-align:center;margin-bottom:16px;">
       <div style="font-size:36px;margin-bottom:8px;">⏱️</div>
-      <div style="font-family:var(--font-mono);font-size:11px;color:var(--green);">SESSION COMPLETE! +15 XP 🎉</div>
+      <div style="font-family:var(--font-mono);font-size:11px;color:var(--green);">SESSION COMPLETE! 🎉</div>
     </div>
     <div class="modal-form-group">
       <label class="modal-form-label">What did you accomplish this session?</label>
@@ -4571,7 +4806,7 @@ function promptPomoNote(nextMode) {
 function openSRSFlip(id) {
   const p = (S.lc.log||[]).find(x=>x.id===id);
   if (!p) { openSRSModal(id); return; }
-  const data=(S.srs||{})[p.name]||{interval:3,easeFactor:2.5};
+  const data=Object.assign({interval:3,easeFactor:2.5}, getProblemReview(p.name));
   const pI=data.interval||3; const ef=data.easeFactor||2.5;
   const efGot=Math.min(5.0,ef+0.15), niGot=Math.max(4,Math.round(pI*efGot));
   const efFuzzy=Math.max(1.3,ef-0.15), niFuzzy=Math.max(3,Math.round(pI*1.2));
@@ -4834,12 +5069,8 @@ function quickSheet_LC() {
     const name=prompt('Problem name:'); if(!name) return;
     const diff=prompt('Difficulty (easy/medium/hard):','medium')||'medium';
     const validDiff=['easy','medium','hard'].includes(diff.toLowerCase())?diff.toLowerCase():'medium';
-    S.lc[validDiff]=(S.lc[validDiff]||0)+1;
-    const id='lc_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
-    S.lc.log.unshift({id,name,diff:validDiff,date:new Date().toLocaleDateString('en-IN'),topic:'General'});
-    S.quests['q-lc']=true; updateHeatmap(10);
-    recordLogActivity(); updateStats(); renderDSALog(); renderDSAPie(); checkAchievements();
-    showToast(`Logged: ${name} ✓`);
+    const res = logLeetCodeProblem({ name, diff: validDiff, topic:'General' });
+    if (res) showToast(`Logged: ${name}  +${res.xp} XP ✓`);
   },300);
 }
 function quickSheet_Expense() {
@@ -4865,9 +5096,10 @@ function init(){
   const previousLog = S.lastLoggedTimestamp;
   S.lastVisitedTimestamp = Date.now();
   if (!S.lastLoggedTimestamp) S.lastLoggedTimestamp = Date.now();
-  save();
 
   precomputeCDs();
+  checkDailyReset();
+  checkStreak();
   updateClock();setInterval(updateClock,1000);
   updateDate();
   renderSidebar();
@@ -4879,12 +5111,14 @@ function init(){
   renderTargets();
   renderGaming();
   updateStats();
-  checkDailyReset();
-  checkStreak();
   setPomoMode('work');
+  restorePomo();
   renderNotesSidebar();
   renderKanban();
   updateAppBadge();
+  initNotesAutosave();
+  restorePageFromHash();
+  window.addEventListener('hashchange', restorePageFromHash);
   // ─── New feature initializations ───
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js')
@@ -4927,17 +5161,22 @@ function init(){
 
 function updateClock(){
   const n=new Date();
-  document.getElementById('clock').textContent=n.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const clockEl=document.getElementById('clock');
+  if (clockEl) clockEl.textContent=n.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   const today = getLocalISODate(n);
-  if (S.streak.last && S.streak.last !== today) {
+  if (_lastClockDate !== today) {
+    _lastClockDate = today;
     checkDailyReset();
     checkStreak();
     updateDate();
     renderToday();
     updateStats();
     initDailyChallenge();
+    checkStreakRisk();
+    renderDailyMatrix();
+  } else if (n.getMinutes() === 0 && n.getSeconds() === 0) {
+    checkStreakRisk();
   }
-  checkStreakRisk();
 }
 
 function updateDate(){
@@ -5019,7 +5258,9 @@ function checkDailyReset(){
       S.missions.daily.forEach(t => {
         t.delayed = true;
         t.delayCount = (t.delayCount || 0) + 1;
-        t.xp = Math.round((t.xp || 25) * 1.25);
+        const base = t.baseXp || t.xp || 25;
+        if (!t.baseXp) t.baseXp = base;
+        t.xp = Math.min(80, Math.round(t.baseXp * (1 + 0.25 * Math.min(t.delayCount, 4))));
       });
     }
     
@@ -5316,14 +5557,16 @@ function renderToday(){
     const done=!!S.tasks[b.id];
     const isGaming=!!b.gaming;
     let activeNow=false;
-    if(b.t&&b.t.includes('–')){
-      const [s,e]=b.t.split('–');
-      const sm=toMins(s),em=toMins(e);
-      if(nowMins>=sm&&nowMins<em)activeNow=true;
+    const range = parseTimeRange(b.t);
+    if (range) {
+      const [sm, em] = range;
+      if (nowMins >= sm && nowMins < em) activeNow = true;
     }
     const div=document.createElement('div');
     div.className='time-block'+(done?' done':'')+(activeNow?' active-now':'')+(isGaming?' gaming':'');
-    div.innerHTML=`<div class="tb-time">${b.t}</div><div class="tb-body"><div class="tb-name">${b.n}</div><div class="tb-desc">${b.d}</div><div class="tb-tags">${b.tags.map(t=>`<span class="tb-tag ${t}">${t==='blue'?'DSA':t==='red'?'OS':t==='green'?'Leetcode':t==='yellow'?'Math':t==='mauve'?'AI':''}</span>`).join('')}${b.xp?`<span class="tb-tag">+${b.xp} XP</span>`:''}</div></div><div class="tb-check"><button class="check-btn ${done?'checked':''}" onclick="toggleTask('${b.id}',${b.xp},this)">${done?'✓':''}</button></div>`;
+    const tags = Array.isArray(b.tags) ? b.tags : [];
+    const tagLabel = t => t==='blue'?'DSA':t==='red'?'OS':t==='green'?'Leetcode':t==='yellow'?'Math':t==='mauve'?'AI':escapeHtml(t);
+    div.innerHTML=`<div class="swipe-feedback"></div><div class="tb-time">${escapeHtml(b.t)}</div><div class="tb-body"><div class="tb-name">${escapeHtml(b.n)}</div><div class="tb-desc">${escapeHtml(b.d||'')}</div><div class="tb-tags">${tags.map(t=>`<span class="tb-tag ${escapeHtml(t)}">${tagLabel(t)}</span>`).join('')}${b.xp?`<span class="tb-tag">+${b.xp} XP</span>`:''}</div></div><div class="tb-check"><button class="check-btn ${done?'checked':''}" onclick="toggleTask('${escapeHtml(b.id)}',${Number(b.xp)||0},this)">${done?'✓':''}</button></div>`;
     list.appendChild(div);
   });
   renderQuests();
@@ -5472,11 +5715,7 @@ function addPastDoneTask() {
   };
   
   S.pastDoneTasks.push(newTask);
-  S.xp.total = (S.xp.total || 340) + xp;
-  
-  // Update heatmap for the specific past date
-  if (!S.heatmap) S.heatmap = {};
-  S.heatmap[selectedIso] = (S.heatmap[selectedIso] || 0) + xp;
+  applyXP(xp, { date: selectedIso });
   
   save();
   
@@ -5505,13 +5744,7 @@ function deletePastDoneTask(id) {
   const task = S.pastDoneTasks[idx];
   S.pastDoneTasks.splice(idx, 1);
   
-  S.xp.total = Math.max(0, (S.xp.total || 340) - task.xp);
-  
-  // Deduct from heatmap
-  if (S.heatmap && S.heatmap[task.date]) {
-    S.heatmap[task.date] = Math.max(0, S.heatmap[task.date] - task.xp);
-    if (S.heatmap[task.date] === 0) delete S.heatmap[task.date];
-  }
+  applyXP(-task.xp, { date: task.date });
   
   save();
   
@@ -5529,27 +5762,38 @@ function deletePastDoneTask(id) {
 
 
 function toMins(t){
-  const [h,m]=t.split(':').map(Number);return h*60+m;
+  if (!t) return NaN;
+  const parts = String(t).trim().split(':');
+  if (parts.length < 2) return NaN;
+  const h = Number(parts[0]), m = Number(parts[1]);
+  if (Number.isNaN(h) || Number.isNaN(m)) return NaN;
+  return h * 60 + m;
 }
 
 function toggleTask(id,xp,btn){
+  xp = Number(xp) || 0;
   if(S.tasks[id]){
     S.tasks[id]=false;
-    S.xp.today=Math.max(0,(S.xp.today||0)-xp);
-    S.xp.total=Math.max(0,(S.xp.total||340)-xp);
-    btn.classList.remove('checked');btn.textContent='';
-    btn.closest('.time-block').classList.remove('done');
+    applyXP(-xp);
+    if (btn) {
+      btn.classList.remove('checked');btn.textContent='';
+      const block = btn.closest('.time-block');
+      if (block) block.classList.remove('done');
+    }
+    pushUndo('Uncheck task', () => toggleTask(id, xp, btn));
   } else {
     S.tasks[id]=true;
-    S.xp.today=(S.xp.today||0)+xp;
-    S.xp.total=(S.xp.total||340)+xp;
-    btn.classList.add('checked');btn.textContent='✓';
-    btn.closest('.time-block').classList.add('done');
-    if(xp>0) updateHeatmap(xp);
-    showToast('+'+xp+' XP earned');
+    const earned = grantXP(xp, { multiply: false });
+    if (btn) {
+      btn.classList.add('checked');btn.textContent='✓';
+      const block = btn.closest('.time-block');
+      if (block) block.classList.add('done');
+    }
+    showToast('+'+earned+' XP earned');
     updateStreak();
+    pushUndo('Complete task', () => toggleTask(id, xp, btn));
   }
-  recordLogActivity();updateStats();renderSidebar();renderPomoAnalytics();
+  recordLogActivity();updateStats();renderSidebar();renderPomoAnalytics();renderHeatmap();
 }
 
 function updateStreak(){
@@ -5582,13 +5826,10 @@ function toggleQuest(id){
   const xp = q ? (parseInt(q.xp) || 0) : 0;
   S.quests[id]=!S.quests[id];
   if(S.quests[id]) {
-    S.xp.today = (S.xp.today || 0) + xp;
-    S.xp.total = (S.xp.total || 340) + xp;
-    updateHeatmap(xp);
+    grantXP(xp, { multiply: false });
     showToast('Quest complete! +' + xp + ' XP earned 🎯');
   } else {
-    S.xp.today = Math.max(0, (S.xp.today || 0) - xp);
-    S.xp.total = Math.max(0, (S.xp.total || 340) - xp);
+    applyXP(-xp);
   }
   recordLogActivity();
   renderQuests();
@@ -5677,27 +5918,31 @@ function deleteQuest(idx) {
 
 function renderPhaseProgress(){
   const el=document.getElementById('phase-progress');
+  if (!el) return;
+  const lcTotal=(S.lc.easy||0)+(S.lc.medium||0)+(S.lc.hard||0);
+  const mastery=S.competencyMastery||{};
+  const osList=(typeof DEFAULT_COMPETENCY_LIST!=='undefined' && DEFAULT_COMPETENCY_LIST.osRoles) ? DEFAULT_COMPETENCY_LIST.osRoles : [];
+  const aiList=(typeof DEFAULT_COMPETENCY_LIST!=='undefined' && DEFAULT_COMPETENCY_LIST.aiArch) ? DEFAULT_COMPETENCY_LIST.aiArch : [];
+  const osPct = osList.length ? Math.round(osList.filter(x=>mastery[x.id]).length / osList.length * 100) : 0;
+  const allComp = osList.length + aiList.length;
+  const phasePct = allComp ? Math.round([...osList,...aiList].filter(x=>mastery[x.id]).length / allComp * 100) : 0;
+  const activeDays = Object.keys(S.heatmap||{}).filter(k => (S.heatmap[k]||0) > 0).length;
   const items=[
-    {name:S.phases[0].title,pct:15,color:'var(--mauve)'},
-    {name:'DSA Foundation',pct:Math.min(100,Math.round(((S.lc.easy||0)+(S.lc.medium||0)+(S.lc.hard||0))/50*100)),color:'var(--red)'},
-    {name:'OS Fundamentals',pct:8,color:'var(--blue)'},
-    {name:'Sem 3 Subjects',pct:5,color:'var(--green)'},
+    {name:(S.phases[0]&&S.phases[0].title)||'Phase 1',pct:phasePct,color:'var(--mauve)'},
+    {name:'DSA Foundation (50 problems)',pct:Math.min(100,Math.round(lcTotal/50*100)),color:'var(--red)'},
+    {name:'OS Competencies',pct:osPct,color:'var(--blue)'},
+    {name:'Consistency (30 active days)',pct:Math.min(100,Math.round(activeDays/30*100)),color:'var(--green)'},
   ];
-  el.innerHTML=items.map(i=>`<div class="prog-item"><div class="prog-header"><span class="prog-name">${i.name}</span><span class="prog-pct" style="color:${i.color}">${i.pct}%</span></div><div class="prog-track"><div class="prog-fill" style="background:${i.color};width:${i.pct}%"></div></div></div>`).join('');
+  el.innerHTML=items.map(i=>`<div class="prog-item"><div class="prog-header"><span class="prog-name">${escapeHtml(i.name)}</span><span class="prog-pct" style="color:${i.color}">${i.pct}%</span></div><div class="prog-track"><div class="prog-fill" style="background:${i.color};width:${i.pct}%"></div></div></div>`).join('');
 }
 
 function quickLogLC(){
   const name=document.getElementById('lc-name-quick').value.trim();
   const diff=document.getElementById('lc-diff-quick').value;
-  if(!name)return;
-  S.lc[diff]=(S.lc[diff]||0)+1;
-  const newId = 'lc_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-  S.lc.log.unshift({id:newId,name,diff,date:new Date().toLocaleDateString('en-IN'),topic:'General'});
+  if(!name){ showToast('Enter a problem name'); return; }
+  const res = logLeetCodeProblem({ name, diff, topic:'General' });
   document.getElementById('lc-name-quick').value='';
-  S.quests['q-lc']=true;
-  updateHeatmap(10);
-  recordLogActivity();updateStats();renderQuests();renderDSALog();renderSRSQueue();renderHeatmap();
-  showToast('Logged: '+name+' ✓');
+  if (res) showToast(`Logged: ${name}  +${res.xp} XP ✓`);
 }
 
 
@@ -5731,28 +5976,31 @@ function renderMissions() {
 
 function toggleMission(type, idx) {
   const mission = S.missions[type][idx];
+  if (!mission) return;
   mission.done = !mission.done;
+  const xpReward = mission.xp || 25;
+  if(mission.done) {
+     grantXP(xpReward, { multiply: false });
+     showToast(`Mission accomplished! +${xpReward} XP`);
+  } else {
+     applyXP(-xpReward);
+  }
   recordLogActivity();
   renderMissions();
   if (typeof renderDelayedTasks === 'function') renderDelayedTasks();
-  
-  const xpReward = mission.xp || 25;
-  if(mission.done) {
-     S.xp.total += xpReward; S.xp.today = (S.xp.today || 0) + xpReward;
-     recordLogActivity(); updateStats(); renderSidebar();
-     showToast(`Mission accomplished! +${xpReward} XP`);
-  } else {
-     S.xp.total = Math.max(0, S.xp.total - xpReward);
-     S.xp.today = Math.max(0, S.xp.today - xpReward);
-     recordLogActivity(); updateStats(); renderSidebar();
-  }
+  updateStats(); renderSidebar(); renderHeatmap();
 }
 
 function deleteMission(type, idx) {
+  const mission = (S.missions[type] || [])[idx];
+  if (!mission) return;
+  if (!confirm('Delete this mission?')) return;
+  if (mission.done) applyXP(-(mission.xp || 25));
   S.missions[type].splice(idx, 1);
   save();
   renderMissions();
   if (typeof renderDelayedTasks === 'function') renderDelayedTasks();
+  updateStats(); renderSidebar();
 }
 
 function openMissionModal(type, idx = null) {
@@ -5767,7 +6015,7 @@ function openMissionModal(type, idx = null) {
     ${type === 'longTerm' ? `
     <div class="form-row">
       <label class="form-label">Deadline (Optional)</label>
-      <input type="text" id="mission-deadline" class="form-input" value="${m.deadline || ''}" placeholder="E.g., Dec 2026">
+      <input type="date" id="mission-deadline" class="form-input" value="${m.deadline || ''}" placeholder="YYYY-MM-DD">
     </div>
     ` : ''}
   `;
@@ -5861,14 +6109,16 @@ function toggleCompetency(id, category) {
   S.competencyMastery[id] = !S.competencyMastery[id];
   
   if (S.competencyMastery[id]) {
-    S.xp.total += 15;
-    S.xp.today = (S.xp.today || 0) + 15;
+    grantXP(15, { multiply: false });
     recordLogActivity();
     updateStats();
     renderSidebar();
     showToast('Competency mastered! +15 XP');
   } else {
+    applyXP(-15);
     save();
+    updateStats();
+    renderSidebar();
   }
   renderCompetencyTracker();
 }
@@ -5970,16 +6220,20 @@ function toggleMatrixBlock(blockId) {
   const idx = S.blockCompletions[dateStr].indexOf(blockId);
   if (idx > -1) {
     S.blockCompletions[dateStr].splice(idx, 1);
+    applyXP(-10);
     save();
     renderDailyMatrix();
+    updateStats();
+    renderSidebar();
+    renderHeatmap();
   } else {
     S.blockCompletions[dateStr].push(blockId);
-    S.xp.total += 10;
-    S.xp.today = (S.xp.today || 0) + 10;
+    grantXP(10, { multiply: false });
     recordLogActivity();
     updateStats();
     renderSidebar();
     renderDailyMatrix();
+    renderHeatmap();
     showToast('Block completed! +10 XP');
   }
 }
@@ -6044,9 +6298,14 @@ function submitWeeklyAudit() {
   const familyTime = document.getElementById('audit-family-time').checked;
   const noHype = document.getElementById('audit-no-hype').checked;
   
+  const weekKey = getWeekKey();
+  if ((S.weeklyAudits || []).some(a => a.weekKey === weekKey)) {
+    if (!confirm('You already logged an audit this week. Add another anyway?')) return;
+  }
   const weekEnding = new Date().toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' });
   
   const newAudit = {
+    weekKey,
     weekEnding,
     cpp5days,
     cppConcept,
@@ -6065,8 +6324,7 @@ function submitWeeklyAudit() {
   if (!S.weeklyAudits) S.weeklyAudits = [];
   S.weeklyAudits.push(newAudit);
   
-  S.xp.total += 50;
-  S.xp.today = (S.xp.today || 0) + 50;
+  grantXP(50, { multiply: false });
   
   recordLogActivity();
   updateStats();
@@ -6091,9 +6349,11 @@ function submitWeeklyAudit() {
 
 function deleteWeeklyAudit(idx) {
   if (confirm('Delete this audit record?')) {
-    S.weeklyAudits.splice(idx, 1);
+    const removed = S.weeklyAudits.splice(idx, 1)[0];
+    if (removed) applyXP(-50);
     save();
     renderWeeklyAudit();
+    updateStats(); renderSidebar();
     showToast('Audit record deleted.');
   }
 }
@@ -6739,29 +6999,36 @@ function logProblem(){
   const diff=document.getElementById('dsa-diff').value;
   const topic=document.getElementById('dsa-topic').value;
   const notes=document.getElementById('dsa-notes').value.trim();
-  if(!name)return;
-  S.lc[diff]=(S.lc[diff]||0)+1;
-  const newId = 'lc_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-  S.lc.log.unshift({id:newId,name,diff,topic,notes,date:new Date().toLocaleDateString('en-IN')});
+  if(!name){ showToast('Enter a problem name'); return; }
+  const res = logLeetCodeProblem({ name, diff, topic, notes });
   document.getElementById('dsa-name').value='';
   document.getElementById('dsa-notes').value='';
-  S.quests['q-lc']=true;
-  updateHeatmap(15);
-  recordLogActivity();updateStats();renderDSALog();renderQuests();renderPhaseProgress();renderSRSQueue();
-  showToast('Problem logged: '+name);
+  if (res) showToast(`Problem logged: ${name}  +${res.xp} XP`);
 }
 
 function renderDSALog(){
   const el=document.getElementById('problem-log');
-  if(!S.lc.log||S.lc.log.length===0){el.innerHTML='<div class="empty-state">No problems logged yet.<br>Start grinding 💪</div>';return;}
-  el.innerHTML=S.lc.log.slice(0,50).map(p=>`
+  if (!el) return;
+  const q = ((document.getElementById('dsa-search')||{}).value || '').toLowerCase().trim();
+  const fDiff = ((document.getElementById('dsa-filter-diff')||{}).value || '');
+  const log = S.lc.log || [];
+  const filtered = log.filter(p => {
+    if (fDiff && p.diff !== fDiff) return false;
+    if (!q) return true;
+    return [p.name, p.topic, p.notes, p.date].some(v => String(v||'').toLowerCase().includes(q));
+  });
+  const countEl = document.getElementById('dsa-log-count');
+  if (countEl) countEl.textContent = `${filtered.length}/${log.length}`;
+  if(log.length===0){el.innerHTML='<div class="empty-state">No problems logged yet.<br>Start grinding 💪</div>';return;}
+  if(filtered.length===0){el.innerHTML='<div class="empty-state">No problems match that filter.</div>';return;}
+  el.innerHTML=filtered.slice(0,80).map(p=>`
     <div class="pl-item" style="position: relative;">
-      <span class="pl-diff pl-${p.diff==='easy'?'easy':p.diff==='medium'?'med':'hard'}">${p.diff}</span>
+      <span class="pl-diff pl-${p.diff==='easy'?'easy':p.diff==='medium'?'med':'hard'}">${escapeHtml(p.diff)}</span>
       <div>
-        <div class="pl-name">${p.name} <button class="edit-btn" onclick="editDSALogProblem('${p.id}')">✏️</button></div>
-        <div class="pl-topic">${p.topic}${p.notes?' — '+p.notes:''}</div>
+        <div class="pl-name">${escapeHtml(p.name)} <button class="edit-btn" onclick="editDSALogProblem('${escapeHtml(p.id)}')">✏️</button></div>
+        <div class="pl-topic">${escapeHtml(p.topic||'')}${p.notes?' — '+escapeHtml(p.notes):''}</div>
       </div>
-      <div class="pl-date" style="margin-left: auto;">${p.date}</div>
+      <div class="pl-date" style="margin-left: auto;">${escapeHtml(p.date||'')}</div>
     </div>`).join('');
 }
 
@@ -6870,7 +7137,7 @@ function renderNotesSidebar() {
       <div class="note-tab ${isActive ? 'active' : ''}" onclick="swNote('${t.key}', this)">
         <div class="note-dot" style="background:${dotColor};"></div>
         ${t.title}
-        <button class="note-pin-btn ${isPinned?'pinned':''}" onclick="event.stopPropagation();togglePinNote('${t.key}',this)" title="Pin notebook">${isPinned?'📌':'📌'}</button>
+        <button class="note-pin-btn ${isPinned?'pinned':''}" onclick="event.stopPropagation();togglePinNote('${t.key}',this)" title="${isPinned?'Unpin':'Pin'} notebook">${isPinned?'📌':'📍'}</button>
       </div>
     `;
   }).join('');
@@ -7087,8 +7354,8 @@ function renderFlashcardList() {
   
   listContainer.innerHTML = activeCards.map(c => `
     <div class="fc-item">
-      <div class="fc-item-q" title="${c.q}">${c.q}</div>
-      <button class="edit-btn" onclick="deleteFlashcard('${c.id}')" style="color:var(--red); font-size:10px; margin:0; padding:0 4px;">✕</button>
+      <div class="fc-item-q" title="${escapeHtml(c.q)}">${escapeHtml(c.q)}</div>
+      <button class="edit-btn" onclick="deleteFlashcard('${escapeHtml(c.id)}')" style="color:var(--red); font-size:10px; margin:0; padding:0 4px;">✕</button>
     </div>
   `).join('');
 }
@@ -7168,11 +7435,7 @@ function rateFlashcard(score) {
     originalCard.dueDate = getLocalISODate(nextDate);
   }
   
-  // Award gamified recall XP
-  const earnedXP = 5;
-  S.xp.total = (S.xp.total || 0) + earnedXP;
-  S.xp.today = (S.xp.today || 0) + earnedXP;
-  updateHeatmap(earnedXP);
+  const earnedXP = grantXP(5, { multiply: false });
   
   save();
   updateStats();
@@ -7200,8 +7463,15 @@ function updateNotesDueBadge() {
 
 function saveNote(silent) {
   if (!currentNote) return;
-  S.notes[currentNote] = document.getElementById('notes-area').value;
+  const area = document.getElementById('notes-area');
+  if (!area) return;
+  S.notes[currentNote] = area.value;
   save();
+  if (silent) {
+    const btn = document.getElementById('notes-save-btn');
+    if (btn) { btn.classList.add('notes-saved'); btn.textContent = 'Saved ✓'; }
+    return;
+  }
   if (!silent) {
     const btn = document.getElementById('notes-save-btn');
     btn.classList.add('notes-saved');
@@ -7225,11 +7495,24 @@ const pageTitles={today:'Today',roadmap:'Systems Roadmap',semester:'Semester 3',
 
 function gotoPage(id,el){
   playClickSound();
+  const page = document.getElementById('page-'+id);
+  if (!page) { showToast('Unknown page: '+id, true); return; }
   document.querySelectorAll('.content').forEach(c=>c.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  el.classList.add('active');
-  document.getElementById('page-title').textContent=pageTitles[id];
+  page.classList.add('active');
+  if (el) el.classList.add('active');
+  else {
+    const nav = Array.from(document.querySelectorAll('.sidebar .nav-item')).find(item => {
+      const onclickAttr = item.getAttribute('onclick') || '';
+      return onclickAttr.includes(`'${id}'`);
+    });
+    if (nav) nav.classList.add('active');
+  }
+  const titleEl = document.getElementById('page-title');
+  if (titleEl) titleEl.textContent = pageTitles[id] || id;
+  if (location.hash !== '#' + id) {
+    try { history.replaceState(null, '', '#' + id); } catch(_){}
+  }
   if(id==='today'){renderToday();updateStats();}
   if(id==='schedule'){renderDailyMatrix();}
   if(id==='audit'){renderWeeklyAudit();}
@@ -7282,6 +7565,30 @@ function gotoMobilePage(id, el) {
   } else {
     syncMobileActiveTab(id);
   }
+}
+
+function restorePageFromHash() {
+  const id = (location.hash || '#today').replace('#','');
+  if (!id || id === 'today') return;
+  if (!document.getElementById('page-' + id)) return;
+  const nav = Array.from(document.querySelectorAll('.sidebar .nav-item')).find(item => {
+    const onclickAttr = item.getAttribute('onclick') || '';
+    return onclickAttr.includes(`'${id}'`);
+  });
+  gotoPage(id, nav || document.querySelector('.sidebar .nav-item'));
+}
+
+function initNotesAutosave() {
+  const area = document.getElementById('notes-area');
+  if (!area || area.dataset.autosaveBound) return;
+  area.dataset.autosaveBound = '1';
+  let t = null;
+  area.addEventListener('input', () => {
+    clearTimeout(t);
+    const btn = document.getElementById('notes-save-btn');
+    if (btn) { btn.textContent = 'Saving…'; btn.classList.remove('notes-saved'); }
+    t = setTimeout(() => saveNote(true), 500);
+  });
 }
 
 // ─── SETTINGS & PORTABILITY ──────────────────────────────
@@ -7483,7 +7790,6 @@ function openSettings() {
           <button class="btn-secondary" onclick="exportDataJSON()" style="flex:1; font-size:12px; padding: 8px; font-family: var(--font-body);">Backup Data (JSON)</button>
           <button class="btn-secondary" onclick="triggerJSONUpload()" style="flex:1; font-size:12px; padding: 8px; font-family: var(--font-body);">Restore Data (JSON)</button>
         </div>
-        <input type="file" id="json-file-input" style="display:none;" accept=".json" onchange="importDataJSON(this)">
       </div>
       
       <div style="border: 1px solid var(--line2); padding: 14px; border-radius: 8px; background: var(--bg2);">
@@ -7511,11 +7817,19 @@ function openSettings() {
         <div style="display:flex; flex-direction:column; gap:8px;">
           <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px;">
             <span style="color:var(--sub);">Permission Status:</span>
-            <span id="settings-notification-status" style="font-family:var(--font-mono); font-weight:600; color:var(--lavender);">${Notification.permission}</span>
+            <span id="settings-notification-status" style="font-family:var(--font-mono); font-weight:600; color:var(--lavender);">${('Notification' in window) ? Notification.permission : 'unsupported'}</span>
           </div>
           <button class="btn-secondary" onclick="requestNotificationPermissionFromSettings()" style="width:100%; font-size:11px; padding: 6px; background:var(--blue); border-color:var(--blue); color:var(--bg);">Request Permission</button>
           <button class="btn-secondary" onclick="testNotificationFromSettings()" style="width:100%; font-size:11px; padding: 6px; background:transparent; border-color:var(--line2); color:var(--text);">Send Test Notification ⚡</button>
         </div>
+      </div>
+
+      <div style="border: 1px solid var(--line2); padding: 14px; border-radius: 8px; background: var(--bg2);">
+        <h4 style="font-size: 13px; font-weight:600; color:var(--text); margin-bottom: 6px; font-family: var(--font-mono); text-transform: uppercase;">7. System Health</h4>
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--sub);line-height:1.7;">
+          ${getSystemHealthHtml()}
+        </div>
+        <button class="btn-secondary" onclick="showWeeklyReport()" style="width:100%;font-size:11px;padding:6px;margin-top:8px;">Open Weekly Report</button>
       </div>
     </div>
   `;
@@ -7573,7 +7887,10 @@ function testNotificationFromSettings() {
 }
 
 function triggerJSONUpload() {
-  document.getElementById('json-file-input').click();
+  const inp = document.getElementById('json-file-input');
+  if (!inp) { showToast('Restore control missing', true); return; }
+  inp.value = '';
+  inp.click();
 }
 
 function exportDataJSON() {
@@ -7584,6 +7901,7 @@ function exportDataJSON() {
   a.download = `abhi_os_backup_${new Date().toISOString().slice(0,10)}.json`;
   a.click();
   URL.revokeObjectURL(a.href);
+  try { localStorage.setItem('abhi_last_backup', getLocalISODate()); } catch(_){}
   showToast("JSON backup downloaded! 💾");
 }
 
@@ -7610,11 +7928,30 @@ function importDataJSON(input) {
     }
   };
   reader.readAsText(file);
+  input.value = '';
+}
+
+function getSystemHealthHtml() {
+  let bytes = 0;
+  try { bytes = (localStorage.getItem('abhi_os') || '').length; } catch(_){}
+  const lc = (S.lc && S.lc.log) ? S.lc.log.length : 0;
+  const cards = (S.srs && S.srs.cards) ? S.srs.cards.length : 0;
+  const reviews = (S.srs && S.srs.reviews) ? Object.keys(S.srs.reviews).length : 0;
+  const expenses = (S.budget && S.budget.log) ? S.budget.log.length : 0;
+  const lastBackup = localStorage.getItem('abhi_last_backup') || 'never';
+  return `Storage: ${(bytes/1024).toFixed(1)} KB<br>
+LC problems: ${lc} &nbsp;·&nbsp; Flashcards: ${cards} &nbsp;·&nbsp; Reviews: ${reviews}<br>
+Expenses: ${expenses} &nbsp;·&nbsp; Last JSON backup: ${escapeHtml(lastBackup)}`;
 }
 
 function resetData() {
   if (confirm("Are you sure you want to reset everything? This will clear localStorage and restore default settings from the HTML file. This cannot be undone!")) {
-    localStorage.removeItem('abhi_os');
+    const keepSync = confirm("Keep GitHub sync token / gist ID so you can pull your cloud backup after reset?");
+    const sync = keepSync ? localStorage.getItem('abhi_os_sync') : null;
+    ['abhi_os','abhi_os_resume','abhi_theme','abhi_sidebar','srDismissed','abhi_last_backup'].forEach(k => localStorage.removeItem(k));
+    if (!keepSync) localStorage.removeItem('abhi_os_sync');
+    else if (sync) localStorage.setItem('abhi_os_sync', sync);
+    try { sessionStorage.removeItem('abhi_pomo'); } catch(_){}
     alert("System reset successful. Reloading...");
     window.location.reload();
   }
@@ -7742,16 +8079,66 @@ function resetPomo() {
 }
 
 function updatePomoDisplay() {
-  const m = Math.floor(pomoSeconds / 60).toString().padStart(2, '0');
-  const s = (pomoSeconds % 60).toString().padStart(2, '0');
-  document.getElementById('pomo-time').textContent = `${m}:${s}`;
+  const m = Math.floor(Math.max(0, pomoSeconds) / 60).toString().padStart(2, '0');
+  const s = (Math.max(0, pomoSeconds) % 60).toString().padStart(2, '0');
+  const timeEl = document.getElementById('pomo-time');
+  if (timeEl) timeEl.textContent = `${m}:${s}`;
   
-  // Update progress bar width
   const fill = document.getElementById('pomo-progress-fill');
-  if (fill) {
-    const pct = pomoTotalDurationSeconds > 0 ? (pomoSeconds / pomoTotalDurationSeconds) * 100 : 100;
-    fill.style.width = pct + '%';
+  const pct = pomoTotalDurationSeconds > 0 ? (pomoSeconds / pomoTotalDurationSeconds) : 1;
+  if (fill) fill.style.width = (pct * 100) + '%';
+
+  const circle = document.getElementById('pomo-ring-circle');
+  if (circle) {
+    const C = 2 * Math.PI * 66;
+    circle.style.strokeDasharray = C.toFixed(2);
+    circle.style.strokeDashoffset = (C * (1 - Math.max(0, Math.min(1, pct)))).toFixed(2);
   }
+  persistPomo();
+}
+
+function persistPomo() {
+  try {
+    sessionStorage.setItem('abhi_pomo', JSON.stringify({
+      seconds: pomoSeconds,
+      mode: pomoMode,
+      endTime: pomoInterval ? pomoEndTime : null,
+      total: pomoTotalDurationSeconds,
+      running: !!pomoInterval
+    }));
+  } catch (_) {}
+}
+
+function restorePomo() {
+  try {
+    const p = JSON.parse(sessionStorage.getItem('abhi_pomo') || 'null');
+    if (!p) return;
+    pomoMode = p.mode || 'work';
+    pomoTotalDurationSeconds = p.total || pomoTotalDurationSeconds;
+    const workBtn = document.getElementById('pomo-mode-work');
+    const breakBtn = document.getElementById('pomo-mode-break');
+    if (workBtn) workBtn.classList.toggle('active', pomoMode === 'work');
+    if (breakBtn) breakBtn.classList.toggle('active', pomoMode === 'break');
+    if (p.running && p.endTime) {
+      const rem = Math.ceil((p.endTime - Date.now()) / 1000);
+      if (rem > 0) {
+        pomoSeconds = rem;
+        pomoEndTime = p.endTime;
+        if (pomoInterval) clearInterval(pomoInterval);
+        pomoInterval = setInterval(pomoTick, 1000);
+        const btn = document.getElementById('pomo-start-btn');
+        if (btn) btn.textContent = 'Pause';
+      } else {
+        pomoSeconds = 0;
+        pomoEndTime = Date.now();
+        pomoTick();
+        return;
+      }
+    } else if (typeof p.seconds === 'number') {
+      pomoSeconds = p.seconds;
+    }
+    updatePomoDisplay();
+  } catch (_) {}
 }
 
 function pomoTick() {
@@ -7771,9 +8158,7 @@ function pomoTick() {
       if(!S.pomoLog) S.pomoLog = {};
       if(!S.pomoLog[today]) S.pomoLog[today] = {studyMins:0, gamingMins:0};
       S.pomoLog[today].studyMins = (S.pomoLog[today].studyMins || 0) + workMins;
-      updateHeatmap(earnedXP);
-      S.xp.total += earnedXP;
-      S.xp.today = (S.xp.today || 0) + earnedXP;
+      applyXP(earnedXP);
       save();
       updateStats();
       renderSidebar();
@@ -7876,12 +8261,11 @@ function parseLogDate(dateStr) {
 
 function getSRSDueProblems() {
   const log = S.lc.log || [];
-  const srs = S.srs || {};
   const today = new Date(); today.setHours(0,0,0,0);
   const due = [];
   for (let i = 0; i < log.length; i++) {
     const p = log[i];
-    const data = srs[p.name] || {};
+    const data = getProblemReview(p.name);
     if (!data.lastReview) {
       const logDate = parseLogDate(p.date);
       if (!logDate) continue;
@@ -7924,7 +8308,7 @@ function renderSRSQueue() {
       <div class="srs-queue">
         ${due.map(({problem:p, id}) => {
           const diffCls = p.diff==='easy'?'pl-easy':p.diff==='medium'?'pl-med':'pl-hard';
-          const data = (S.srs||{})[p.name]||{};
+          const data = getProblemReview(p.name);
           const lbl = data.lastReview ? scoreLabels[Math.min((data.score||0)+1,3)] : scoreLabels[0];
           return `
             <div class="srs-item">
@@ -7946,7 +8330,9 @@ function openSRSModal(id) {
   const idx = S.lc.log.findIndex(x => x.id === id);
   const p = S.lc.log[idx];
   if (!p) return;
-  const data = (S.srs || {})[p.name] || { interval: 3, easeFactor: 2.5 };
+  const data = getProblemReview(p.name);
+  if (!data.interval) data.interval = 3;
+  if (!data.easeFactor) data.easeFactor = 2.5;
   const prevInterval = data.interval || 3;
   const ef = data.easeFactor || 2.5;
 
@@ -7984,13 +8370,12 @@ function submitSRSRating(id, rating, nextInterval, nextEaseFactor) {
   const idx = S.lc.log.findIndex(x => x.id === id);
   const p = S.lc.log[idx];
   if (!p) return;
-  if (!S.srs) S.srs = {};
-  S.srs[p.name] = { 
+  setProblemReview(p.name, { 
     lastReview: getLocalISODate(), 
     score: rating,
     interval: nextInterval,
     easeFactor: nextEaseFactor
-  };
+  });
   save();
   setTimeout(() => {
     const btn = document.getElementById('modal-save-btn');
@@ -8027,7 +8412,7 @@ function renderKanban() {
   board.innerHTML = KANBAN_COLS.map(col => {
     const cards = apps.filter(a => a.column === col.id);
     return `
-      <div class="kanban-col">
+      <div class="kanban-col" data-col="${col.id}" ondragover="kanbanAllowDrop(event)" ondrop="kanbanDrop(event,'${col.id}')" ondragleave="this.classList.remove('drop-target')">
         <div class="kanban-col-hdr">
           <span class="kanban-col-title" style="color:${col.color};">${col.label}</span>
           <span class="kanban-col-count">${cards.length}</span>
@@ -8037,9 +8422,9 @@ function renderKanban() {
           ${cards.map(app => {
             const tc = APP_TIER_COLORS[app.tier]||'var(--sub)';
             return `
-              <div class="kanban-card" onclick="editApplication('${app.id}')">
-                <div class="kc-company">${app.company}</div>
-                <div class="kc-role">${app.role||'Role TBD'}</div>
+              <div class="kanban-card" draggable="true" ondragstart="kanbanDrag(event,'${escapeHtml(app.id)}')" ondragend="kanbanDragEnd(event)" onclick="editApplication('${escapeHtml(app.id)}')">
+                <div class="kc-company">${escapeHtml(app.company)}</div>
+                <div class="kc-role">${escapeHtml(app.role||'Role TBD')}</div>
                 <div class="kc-footer">
                   <span style="font-family:var(--font-mono);font-size:9px;padding:2px 6px;border-radius:3px;background:rgba(255,255,255,0.05);color:${tc};">${app.tier||'Other'}</span>
                   <span class="kc-date">${app.date||''}</span>
@@ -8064,6 +8449,34 @@ function addAppToColumn(column) {
 }
 
 function addNewApplication() { addAppToColumn('drafting'); }
+
+let _dragAppId = null;
+function kanbanDrag(e, id) {
+  _dragAppId = id;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', id);
+  if (e.currentTarget) e.currentTarget.classList.add('dragging');
+}
+function kanbanDragEnd(e) {
+  if (e.currentTarget) e.currentTarget.classList.remove('dragging');
+  document.querySelectorAll('.kanban-col.drop-target').forEach(el => el.classList.remove('drop-target'));
+}
+function kanbanAllowDrop(e) {
+  e.preventDefault();
+  const col = e.currentTarget;
+  if (col) col.classList.add('drop-target');
+}
+function kanbanDrop(e, column) {
+  e.preventDefault();
+  if (e.currentTarget) e.currentTarget.classList.remove('drop-target');
+  const id = _dragAppId || e.dataTransfer.getData('text/plain');
+  const app = (S.applications || []).find(a => a.id === id);
+  if (!app || app.column === column) return;
+  app.column = column;
+  save();
+  renderKanban();
+  showToast(`Moved to ${column}`);
+}
 
 function editApplication(id) {
   const app = (S.applications||[]).find(a => a.id===id);
@@ -8144,7 +8557,12 @@ function renderPomoAnalytics() {
     weekStudyMins += mins;
     dailyData.push({ label: DAYS_SHORT[i], mins });
   }
-  const weekGamingMins = Object.values(pomoLog).reduce((a,v)=>a+(v.gamingMins||0),0);
+  let weekGamingMins = 0;
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(weekStart);
+    d.setDate(weekStart.getDate() + i);
+    weekGamingMins += ((pomoLog[getLocalISODate(d)] || {}).gamingMins || 0);
+  }
   const studyHrs = (weekStudyMins/60).toFixed(1);
   const gamingHrs = (weekGamingMins/60).toFixed(1);
   const total = weekStudyMins + GAMING_BUDGET_MINS;
@@ -8204,14 +8622,21 @@ function updateGamingLogDisplay() {
 // ─── BUDGET TRACKER ───────────────────────────────────────
 const BUDGET_COLORS = { Food:'#fab387', Transport:'#89dceb', Entertainment:'#cba6f7', Study:'#89b4fa', Trips:'#f38ba8', Outings:'#a6e3a1', Monthly:'#f9e2af', Misc:'#7f849c' };
 
+function shiftBudgetMonth(dir) {
+  budgetView.m += dir;
+  if (budgetView.m < 0) { budgetView.m = 11; budgetView.y--; }
+  if (budgetView.m > 11) { budgetView.m = 0; budgetView.y++; }
+  renderBudget();
+}
+
 function renderBudget() {
   if (!S.budget) S.budget = { monthly:{ Food:4000,Transport:1000,Entertainment:1000,Study:2000,Trips:5000,Outings:2000,Monthly:10000,Misc:1000 }, log:[] };
-  const now = new Date();
+  const now = new Date(budgetView.y, budgetView.m, 1);
   const monthLabel = now.toLocaleString('en-IN',{month:'long',year:'numeric'});
   const monthEl = document.getElementById('budget-month-label');
   if (monthEl) monthEl.textContent = monthLabel;
-  const monthStart = getLocalISODate(new Date(now.getFullYear(), now.getMonth(), 1));
-  const monthEnd = getLocalISODate(new Date(now.getFullYear(), now.getMonth()+1, 0));
+  const monthStart = getLocalISODate(new Date(budgetView.y, budgetView.m, 1));
+  const monthEnd = getLocalISODate(new Date(budgetView.y, budgetView.m+1, 0));
   const log = S.budget.log || [];
   const monthLog = log.filter(e => e.date >= monthStart && e.date <= monthEnd);
   const cats = Object.keys(S.budget.monthly);
@@ -8414,7 +8839,7 @@ function printExpensesPDF() {
         <div class="footer">
           Self-generated via OS Dashboard. Shared for parental accountability.
         </div>
-        \<script>
+        <script>
           window.onload = function() {
             window.print();
             setTimeout(function() { window.close(); }, 500);
@@ -9710,25 +10135,30 @@ let filteredCommands = [];
 
 const paletteCommands = [
   // Navigation
-  { label: "Go to Today Dashboard", type: "nav", action: () => { gotoPage('today', document.querySelector('.nav-item[onclick*=today]')); } },
-  { label: "Go to AI Roadmap", type: "nav", action: () => { gotoPage('roadmap', document.querySelector('.nav-item[onclick*=roadmap]')); } },
-  { label: "Go to Semester 3 Track", type: "nav", action: () => { gotoPage('semester', document.querySelector('.nav-item[onclick*=semester]')); } },
-  { label: "Go to DSA Track Page", type: "nav", action: () => { gotoPage('dsa', document.querySelector('.nav-item[onclick*=dsa]')); } },
-  { label: "Go to Missions (Tasks)", type: "nav", action: () => { gotoPage('tasks', document.querySelector('.nav-item[onclick*=tasks]')); } },
-  { label: "Go to Projects", type: "nav", action: () => { gotoPage('projects', document.querySelector('.nav-item[onclick*=projects]')); } },
-  { label: "Go to Target Companies", type: "nav", action: () => { gotoPage('targets', document.querySelector('.nav-item[onclick*=targets]')); } },
-  { label: "Go to Gaming Lounge", type: "nav", action: () => { gotoPage('gaming', document.querySelector('.nav-item[onclick*=gaming]')); } },
-  { label: "Go to Study Notes", type: "nav", action: () => { gotoPage('notes', document.querySelector('.nav-item[onclick*=notes]')); } },
-  { label: "Go to Job Applications", type: "nav", action: () => { gotoPage('applications', document.querySelector('.nav-item[onclick*=applications]')); } },
-  { label: "Go to Expense Tracker", type: "nav", action: () => { gotoPage('budget', document.querySelector('.nav-item[onclick*=budget]')); } },
-  { label: "Go to Trip Expense Planner", type: "nav", action: () => { gotoPage('trips', document.querySelector('.nav-item[onclick*=trips]')); } },
-  { label: "Go to Resume Builder", type: "nav", action: () => { gotoPage('resume', document.querySelector('.nav-item[onclick*=resume]')); } },
-  { label: "Go to Academic Calendar", type: "nav", action: () => { gotoPage('calendar', document.querySelector('.nav-item[onclick*=calendar]')); } },
+  { label: "Go to Today Dashboard", type: "nav", action: () => { gotoPage('today'); } },
+  { label: "Go to Daily Matrix", type: "nav", action: () => { gotoPage('schedule'); } },
+  { label: "Go to Weekly Audit", type: "nav", action: () => { gotoPage('audit'); } },
+  { label: "Go to AI Roadmap", type: "nav", action: () => { gotoPage('roadmap'); } },
+  { label: "Go to Semester 3 Track", type: "nav", action: () => { gotoPage('semester'); } },
+  { label: "Go to DSA Track Page", type: "nav", action: () => { gotoPage('dsa'); } },
+  { label: "Go to Missions (Tasks)", type: "nav", action: () => { gotoPage('tasks'); } },
+  { label: "Go to Projects", type: "nav", action: () => { gotoPage('projects'); } },
+  { label: "Go to Target Companies", type: "nav", action: () => { gotoPage('targets'); } },
+  { label: "Go to Gaming Lounge", type: "nav", action: () => { gotoPage('gaming'); } },
+  { label: "Go to Study Notes", type: "nav", action: () => { gotoPage('notes'); } },
+  { label: "Go to Job Applications", type: "nav", action: () => { gotoPage('applications'); } },
+  { label: "Go to Expense Tracker", type: "nav", action: () => { gotoPage('budget'); } },
+  { label: "Go to Trip Expense Planner", type: "nav", action: () => { gotoPage('trips'); } },
+  { label: "Go to Resume Builder", type: "nav", action: () => { gotoPage('resume'); } },
+  { label: "Go to Academic Calendar", type: "nav", action: () => { gotoPage('calendar'); } },
   
   // Quick Actions & Logging
-  { label: "Log Leetcode Solved Problem...", type: "action", action: () => { gotoPage('dsa', document.querySelector('.nav-item[onclick*=dsa]')); setTimeout(() => document.getElementById('lc-problem-name').focus(), 150); } },
-  { label: "Log New Budget Expense...", type: "action", action: () => { gotoPage('budget', document.querySelector('.nav-item[onclick*=budget]')); setTimeout(() => document.getElementById('exp-name').focus(), 150); } },
-  { label: "Add Mission Task...", type: "action", action: () => { gotoPage('tasks', document.querySelector('.nav-item[onclick*=tasks]')); setTimeout(() => {
+  { label: "Log Leetcode Solved Problem...", type: "action", action: () => { gotoPage('dsa'); setTimeout(() => (document.getElementById('dsa-name')||document.getElementById('lc-name-quick'))?.focus(), 150); } },
+  { label: "Log New Budget Expense...", type: "action", action: () => { gotoPage('budget'); setTimeout(() => document.getElementById('exp-name')?.focus(), 150); } },
+  { label: "Show Weekly Report Card", type: "action", action: () => showWeeklyReport() },
+  { label: "Undo last XP / check action", type: "action", action: () => undoLastAction() },
+  { label: "Open scratchpad", type: "action", action: () => toggleScratchpad() },
+  { label: "Add Mission Task...", type: "action", action: () => { gotoPage('tasks'); setTimeout(() => {
     // Open task adding modal or highlight input if it exists
     const addBtn = document.querySelector('.btn-primary[onclick*="Mission"], .btn-primary[onclick*="Task"]');
     if (addBtn) addBtn.click();
@@ -9849,6 +10279,13 @@ function executePaletteItem(index) {
 
 // Key listeners for global command palette trigger
 document.addEventListener('keydown', (e) => {
+  const tag = (e.target && e.target.tagName) || '';
+  const typing = tag === 'INPUT' || tag === 'TEXTAREA' || (e.target && e.target.isContentEditable);
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'Z') && !e.shiftKey && !typing) {
+    e.preventDefault();
+    undoLastAction();
+    return;
+  }
   if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K' || e.key === 'p' || e.key === 'P')) {
     e.preventDefault();
     if (isPaletteOpen) {

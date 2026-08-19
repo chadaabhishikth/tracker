@@ -1,4 +1,4 @@
-const CACHE_NAME = 'os-dashboard-v3';
+const CACHE_NAME = 'os-dashboard-v4';
 const ASSETS = [
   './',
   './index.html',
@@ -9,7 +9,11 @@ const ASSETS = [
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
+      return Promise.all(
+        ASSETS.map((url) => cache.add(url).catch((err) => {
+          console.warn('SW skip failed asset', url, err);
+        }))
+      );
     }).then(() => self.skipWaiting())
   );
 });
