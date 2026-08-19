@@ -33,6 +33,7 @@
   --sub:      #e8c4b0;
   --muted:    #c48a7a;
   --blue:     #7ea6ff;
+  --accent:   #7ea6ff;
   --lavender: #B7A3E3;
   --green:    #C2E2FA;
   --yellow:   #FFF1CB;
@@ -108,6 +109,7 @@ html.light {
   --sub:      #6b3535;
   --muted:    #9E2A3A;
   --blue:     #000080;
+  --accent:   #000080;
   --lavender: #B7A3E3;
   --green:    #000080;
   --yellow:   #9E2A3A;
@@ -2186,6 +2188,88 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 @media(max-width:900px){.install-banner{padding:8px 16px;}}
 
 
+
+/* ─── HUD UPGRADES ─────────────────────────────────────── */
+.cursor-glow{
+  position:fixed; top:0; left:0; width:80px; height:80px; margin:-40px 0 0 -40px;
+  border-radius:50%; pointer-events:none; z-index:9997; opacity:0;
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--blood) 38%, transparent), transparent 42%),
+    radial-gradient(circle, color-mix(in srgb, var(--navy) 32%, transparent) 20%, transparent 70%);
+  mix-blend-mode:screen; will-change:transform;
+}
+html.light .cursor-glow{ mix-blend-mode:multiply; opacity:0; }
+@media (hover:none), (pointer:coarse){ .cursor-glow{ display:none !important; } }
+@media (prefers-reduced-motion: reduce){ .cursor-glow{ display:none !important; } }
+
+.clock{ display:inline-flex; align-items:center; font-variant-numeric:tabular-nums; }
+.clock-ch{
+  display:inline-block; min-width:.62em; text-align:center;
+  transform-origin:50% 80%;
+}
+.clock-ch.flip{ animation:clockFlip .32s var(--ease); }
+@keyframes clockFlip{
+  0%{ transform:translateY(7px) scaleY(.4); opacity:0; filter:blur(2px); }
+  100%{ transform:none; opacity:1; filter:none; }
+}
+
+.hud-dock{
+  position:fixed; right:18px; bottom:34px; z-index:996;
+  display:flex; flex-direction:column; gap:8px;
+}
+.dock-btn{
+  width:42px; height:42px; border-radius:12px; cursor:pointer;
+  background: color-mix(in srgb, var(--bg1) 82%, transparent);
+  border:1px solid var(--line2); color:var(--text); font-size:16px;
+  backdrop-filter:blur(12px); box-shadow:var(--shadow);
+  transition: transform .2s var(--ease), border-color .2s, color .2s;
+}
+.dock-btn:hover{ transform:translateY(-2px); border-color:var(--accent); color:var(--accent); box-shadow:var(--glow); }
+.dock-btn.muted{ color:var(--red); border-color:var(--red); }
+.settings-fab, .floating-scratchpad-btn{ display:none !important; }
+.ticker-bar{ display:none; }
+.ticker-bar.show-ticker{ display:flex; }
+@media(max-width:900px){
+  .hud-dock{ bottom:calc(78px + env(safe-area-inset-bottom)); right:14px; }
+  .ticker-bar.show-ticker{ display:none !important; }
+}
+
+.nav-item.active{ color:var(--accent) !important; background: color-mix(in srgb, var(--accent) 12%, var(--bg3)); }
+.nav-item.active::before{ background:var(--accent); box-shadow:0 0 10px color-mix(in srgb, var(--accent) 70%, transparent); }
+.phase-pill{
+  color:var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 28%, transparent);
+}
+.xp-fill, .mobile-xp-fill{ background: linear-gradient(90deg, var(--blood), var(--accent), var(--lilac)); }
+
+.lock-screen{
+  position:fixed; inset:0; z-index:10000; display:none;
+  align-items:center; justify-content:center;
+  background:
+    radial-gradient(700px 420px at 20% 0%, color-mix(in srgb, var(--blood) 18%, transparent), transparent 55%),
+    radial-gradient(700px 420px at 90% 100%, color-mix(in srgb, var(--navy) 30%, transparent), transparent 50%),
+    var(--bg);
+  flex-direction:column; gap:16px; padding:28px;
+}
+.lock-screen.show{ display:flex; }
+.lock-card{
+  width:min(380px, 92vw); background: color-mix(in srgb, var(--bg1) 88%, transparent);
+  border:1px solid var(--line); border-radius:16px; padding:28px 24px;
+  box-shadow:var(--shadow-lg); text-align:center;
+}
+.lock-title{ font-family:var(--font-mono); letter-spacing:3px; font-size:11px; color:var(--salmon); text-transform:uppercase; margin-bottom:8px; }
+.lock-name{ font-size:22px; font-weight:700; margin-bottom:6px; }
+.lock-sub{ font-size:12px; color:var(--sub); margin-bottom:18px; }
+.lock-pin{
+  width:100%; text-align:center; letter-spacing:.4em; font-size:22px; font-family:var(--font-mono);
+  padding:12px; border-radius:10px; border:1px solid var(--line2); background:var(--bg2); color:var(--text);
+}
+.lock-err{ min-height:18px; font-size:11px; color:var(--red); font-family:var(--font-mono); margin-top:8px; }
+body.locked .layout, body.locked .hud-dock, body.locked .ticker-bar, body.locked .cursor-glow{ visibility:hidden !important; }
+
+.expense-item .edit-btn{ opacity:.55; }
+
 /* ─── PALETTE ATMOSPHERE ──────────────────────────────── */
 ::selection{ background: color-mix(in srgb, var(--blood) 55%, var(--navy)); color: var(--cream); }
 html.light ::selection{ background: color-mix(in srgb, var(--navy) 70%, var(--lilac)); color: var(--cream); }
@@ -2479,6 +2563,17 @@ body:not(.booting) .layout{animation:bootIn .55s var(--ease) both;}
 </style>
 </head>
 <body class="booting">
+<div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div>
+<div class="lock-screen" id="lock-screen" aria-modal="true">
+  <div class="lock-card">
+    <div class="lock-title">System Locked</div>
+    <div class="lock-name">Abhishikth OS</div>
+    <div class="lock-sub">Enter your 4–8 digit PIN to decrypt local state.</div>
+    <input class="lock-pin" id="lock-pin-input" type="password" inputmode="numeric" maxlength="8" placeholder="••••" autocomplete="off" onkeydown="if(event.key==='Enter')unlockWithPin()">
+    <button class="btn-primary" style="width:100%;margin-top:12px;" onclick="unlockWithPin()">Unlock</button>
+    <div class="lock-err" id="lock-err"></div>
+  </div>
+</div>
 
 <!-- Confetti + Level-up -->
 <div class="confetti-overlay" id="confetti-overlay"></div>
@@ -2574,7 +2669,7 @@ body:not(.booting) .layout{animation:bootIn .55s var(--ease) both;}
         <span class="theme-toggle-icon" id="theme-icon">🌙</span>
         <span id="theme-label">Dark</span>
       </button>
-      <span class="clock" id="clock"></span>
+      <span class="clock" id="clock" aria-live="polite"></span>
       <div class="offline-dot" id="offline-dot"><div class="offline-dot-circle"></div><span>Offline</span></div>
       <div class="mission-due-badge" id="mission-due-badge" onclick="gotoPage('tasks',document.querySelector('.nav-item[onclick*=tasks]'))">⚠️ <span id="mission-due-text">1 mission due</span></div>
       <button class="budget-quick-btn" onclick="toggleBudgetQuickAdd()">+₹</button>
@@ -2692,6 +2787,7 @@ body:not(.booting) .layout{animation:bootIn .55s var(--ease) both;}
           <div class="focus-sound-row" style="flex-direction:column; gap:8px; align-items:stretch;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <span class="fs-label" style="font-size:9px; letter-spacing:1px;">focus ambient mixer</span>
+              <button class="fs-btn" id="sfx-mute-mixer" type="button" onclick="toggleSfxMute()" title="Mute UI clicks">🔊 clicks</button>
               <input type="range" class="fs-volume" id="fs-volume-slider" min="0" max="1" step="0.05" value="0.5" oninput="changeFocusSoundVolume(this.value)" title="Master Volume" style="width:70px;">
             </div>
             <div style="display:flex; gap:4px; justify-content:space-between;">
@@ -2746,6 +2842,7 @@ body:not(.booting) .layout{animation:bootIn .55s var(--ease) both;}
           <button class="theme-toggle" onclick="toggleScheduleMode()" style="border-radius: 6px; padding: 6px 12px;">
             <span id="schedule-mode-btn-text">Switch to Class Day</span>
           </button>
+          <button class="theme-toggle" onclick="editDailyMatrix()" style="border-radius: 6px; padding: 6px 12px;" title="Edit blocks">Edit blocks</button>
         </div>
       </div>
       
@@ -3464,9 +3561,13 @@ body:not(.booting) .layout{animation:bootIn .55s var(--ease) both;}
 
 <!-- Floating Settings Button -->
 <button class="settings-fab" onclick="openSettings()" title="Settings & Portability">⚙️</button>
-
-<!-- Floating Scratchpad -->
 <button class="floating-scratchpad-btn" onclick="toggleScratchpad()" title="Quick Scratchpad (Ctrl+Shift+N)">📝</button>
+<div class="hud-dock" id="hud-dock">
+  <button class="dock-btn" type="button" onclick="toggleScratchpad()" title="Scratchpad">📝</button>
+  <button class="dock-btn" type="button" id="sfx-mute-btn" onclick="toggleSfxMute()" title="Mute click sounds">🔊</button>
+  <button class="dock-btn" type="button" onclick="openSettings()" title="Settings">⚙️</button>
+</div>
+
 <div class="scratchpad-drawer" id="scratchpad-drawer">
   <div class="scratchpad-hdr">
     <span>Quick Scratchpad</span>
@@ -3476,7 +3577,7 @@ body:not(.booting) .layout{animation:bootIn .55s var(--ease) both;}
 </div>
 
 <!-- Bottom News Ticker -->
-<div class="ticker-bar">
+<div class="ticker-bar" id="ticker-bar">
   <div class="ticker-wrapper">
     <div style="display:flex;align-items:center;">
       <span class="ticker-title">HUD News & Quotes</span>
@@ -3741,15 +3842,23 @@ const DEFAULT_NOTE_TABS = [
 // END_DEFAULTS
 
 let S = {};
+window.__osLocked = false;
+window.__osPinKey = null;
 try {
-  const _raw = localStorage.getItem('abhi_os');
-  S = _raw ? JSON.parse(_raw) : {};
-  if (!S || typeof S !== 'object' || Array.isArray(S)) S = {};
+  if (localStorage.getItem('abhi_os_enc')) {
+    window.__osLocked = true;
+    S = {};
+  } else {
+    const _raw = localStorage.getItem('abhi_os');
+    S = _raw ? JSON.parse(_raw) : {};
+    if (!S || typeof S !== 'object' || Array.isArray(S)) S = {};
+  }
 } catch (e) {
   console.warn('Corrupt abhi_os state — starting from defaults', e);
   S = {};
   try { localStorage.setItem('abhi_os_corrupt_backup', localStorage.getItem('abhi_os') || ''); } catch (_) {}
 }
+function hydrateState() {
 if(!S.profile) S.profile = Object.assign({}, DEFAULT_PROFILE);
 if(!S.schedule) S.schedule = JSON.parse(JSON.stringify(DEFAULT_SCHEDULE));
 if(!S.questsList) S.questsList = JSON.parse(JSON.stringify(DEFAULT_QUESTS));
@@ -3843,18 +3952,18 @@ if (S.budget && S.budget.monthly) {
 }
 if(!S.customCalendarEvents) S.customCalendarEvents = [];
 if(!S.pastDoneTasks) S.pastDoneTasks = [];
+if(S.sfxMuted === undefined) S.sfxMuted = false;
+if(S.showTicker === undefined) S.showTicker = false;
+if(!S.customCompetencies) S.customCompetencies = [];
+if(!S.terminalXpLog) S.terminalXpLog = {};
+}
+if (!window.__osLocked) hydrateState();
 let pushTimeout = null;
 function save(skipPush){
   if (!skipPush) {
     S.lastUpdated = Date.now();
   }
-  try {
-    localStorage.setItem('abhi_os',JSON.stringify(S));
-  } catch (err) {
-    console.error('localStorage write failed', err);
-    try { showToast('Storage is full — export a JSON backup now!', true); } catch(_){}
-    return;
-  }
+  persistStateBlob();
   writeNotifySnapshot();
   if (skipPush) return;
   const cfg = getSyncConfig();
@@ -3865,6 +3974,220 @@ function save(skipPush){
     }, 3000);
   }
 }
+function persistStateBlob() {
+  const json = JSON.stringify(S);
+  try {
+    if (window.__osPinKey) {
+      encryptStateToStorage(json);
+      try { localStorage.removeItem('abhi_os'); } catch(_){}
+    } else {
+      localStorage.setItem('abhi_os', json);
+    }
+  } catch (err) {
+    console.error('localStorage write failed', err);
+    try { showToast('Storage is full — export a JSON backup now!', true); } catch(_){}
+  }
+  idbPut('abhi_os', json);
+}
+
+function parseFlexibleDate(raw) {
+  if (raw == null || raw === '') return null;
+  const s = String(raw).trim();
+  if (!s) return null;
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
+    const d = new Date(s + (s.length === 10 ? 'T00:00:00' : ''));
+    return isNaN(d) ? null : d;
+  }
+  const months = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,sept:8,oct:9,nov:10,dec:11};
+  const m1 = s.match(/^([A-Za-z]+)\.?\s+(\d{1,2})(?:,?\s*(\d{4}))?$/);
+  if (m1) {
+    const mo = months[m1[1].slice(0,3).toLowerCase()];
+    if (mo != null) {
+      const today = new Date(); today.setHours(0,0,0,0);
+      const year = m1[3] ? parseInt(m1[3],10) : today.getFullYear();
+      const d = new Date(year, mo, parseInt(m1[2],10));
+      if (!m1[3] && d < today) d.setFullYear(d.getFullYear()+1);
+      return d;
+    }
+  }
+  const m2 = s.match(/^([A-Za-z]+)\.?\s+(\d{4})$/);
+  if (m2) {
+    const mo = months[m2[1].slice(0,3).toLowerCase()];
+    if (mo != null) return new Date(parseInt(m2[2],10), mo, 1);
+  }
+  const m3 = s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
+  if (m3) {
+    let day = parseInt(m3[1],10), mon = parseInt(m3[2],10), y = parseInt(m3[3],10);
+    if (y < 100) y += 2000;
+    return new Date(y, mon-1, day);
+  }
+  const fallback = new Date(s);
+  return isNaN(fallback) ? null : fallback;
+}
+
+function idbOpen() {
+  return new Promise((resolve, reject) => {
+    if (!window.indexedDB) { reject(new Error('no idb')); return; }
+    const req = indexedDB.open('abhi_os_db', 1);
+    req.onupgradeneeded = () => req.result.createObjectStore('kv');
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+function idbPut(key, value) {
+  idbOpen().then(db => {
+    const tx = db.transaction('kv', 'readwrite');
+    tx.objectStore('kv').put(value, key);
+  }).catch(() => {});
+}
+
+function b64ToBuf(b64) {
+  const bin = atob(b64);
+  const out = new Uint8Array(bin.length);
+  for (let i=0;i<bin.length;i++) out[i] = bin.charCodeAt(i);
+  return out.buffer;
+}
+function bufToB64(buf) {
+  const u = new Uint8Array(buf);
+  let s = '';
+  for (let i=0;i<u.length;i++) s += String.fromCharCode(u[i]);
+  return btoa(s);
+}
+async function pinToKey(pin, saltBuf) {
+  const enc = new TextEncoder();
+  const base = await crypto.subtle.importKey('raw', enc.encode(String(pin)), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name:'PBKDF2', salt: saltBuf, iterations: 140000, hash:'SHA-256' },
+    base,
+    { name:'AES-GCM', length:256 },
+    false,
+    ['encrypt','decrypt']
+  );
+}
+async function encryptStateToStorage(json) {
+  if (!window.__osPinKey || !window.__osPinSalt) return;
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({ name:'AES-GCM', iv }, window.__osPinKey, new TextEncoder().encode(json));
+  const blob = JSON.stringify({ v:1, salt: bufToB64(window.__osPinSalt), iv: bufToB64(iv), ct: bufToB64(ct) });
+  localStorage.setItem('abhi_os_enc', blob);
+}
+async function decryptStateFromStorage(pin) {
+  const raw = localStorage.getItem('abhi_os_enc');
+  if (!raw) throw new Error('No encrypted vault');
+  const pack = JSON.parse(raw);
+  const salt = b64ToBuf(pack.salt);
+  const iv = new Uint8Array(b64ToBuf(pack.iv));
+  const key = await pinToKey(pin, salt);
+  const pt = await crypto.subtle.decrypt({ name:'AES-GCM', iv }, key, b64ToBuf(pack.ct));
+  const json = new TextDecoder().decode(pt);
+  const state = JSON.parse(json);
+  window.__osPinKey = key;
+  window.__osPinSalt = salt;
+  return state;
+}
+function showLockScreen() {
+  document.body.classList.add('locked');
+  const el = document.getElementById('lock-screen');
+  if (el) el.classList.add('show');
+  const input = document.getElementById('lock-pin-input');
+  if (input) setTimeout(() => input.focus(), 60);
+}
+async function unlockWithPin() {
+  const input = document.getElementById('lock-pin-input');
+  const err = document.getElementById('lock-err');
+  const pin = (input && input.value || '').trim();
+  if (pin.length < 4) { if (err) err.textContent = 'PIN must be 4–8 digits.'; return; }
+  try {
+    const state = await decryptStateFromStorage(pin);
+    S = state;
+    window.__osLocked = false;
+    hydrateState();
+    const lock = document.getElementById('lock-screen');
+    if (lock) lock.classList.remove('show');
+    init();
+    initCinematicHud();
+  } catch (e) {
+    if (err) err.textContent = 'Wrong PIN or damaged vault.';
+  }
+}
+async function enablePinLock(pin) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  window.__osPinKey = await pinToKey(pin, salt);
+  window.__osPinSalt = salt;
+  await encryptStateToStorage(JSON.stringify(S));
+  try { localStorage.removeItem('abhi_os'); } catch(_){}
+  showToast('PIN lock armed. State is encrypted at rest.');
+}
+function disablePinLock() {
+  window.__osPinKey = null;
+  window.__osPinSalt = null;
+  try { localStorage.removeItem('abhi_os_enc'); } catch(_){}
+  persistStateBlob();
+  showToast('PIN lock removed. State is stored in plaintext again.');
+}
+
+function isSfxMuted() {
+  return !!(S && S.sfxMuted) || localStorage.getItem('abhi_sfx') === 'off';
+}
+function toggleSfxMute() {
+  if (!S) return;
+  S.sfxMuted = !S.sfxMuted;
+  localStorage.setItem('abhi_sfx', S.sfxMuted ? 'off' : 'on');
+  save(true);
+  syncSfxMuteBtn();
+  showToast(S.sfxMuted ? 'Click sounds muted' : 'Click sounds on');
+}
+function syncSfxMuteBtn() {
+  const muted = isSfxMuted();
+  const a = document.getElementById('sfx-mute-btn');
+  const b = document.getElementById('sfx-mute-mixer');
+  if (a) { a.textContent = muted ? '🔇' : '🔊'; a.classList.toggle('muted', muted); }
+  if (b) { b.textContent = muted ? '🔇 clicks' : '🔊 clicks'; b.classList.toggle('active', !muted); }
+}
+function applyTickerVisibility() {
+  const bar = document.getElementById('ticker-bar');
+  if (bar) bar.classList.toggle('show-ticker', !!(S && S.showTicker));
+}
+
+function renderClockDigits(el, str) {
+  if (!el) return;
+  if (!el.dataset.ready || (el.dataset.prev || '').length !== str.length) {
+    el.innerHTML = str.split('').map(ch => '<span class="clock-ch">' + ch + '</span>').join('');
+    el.dataset.ready = '1';
+    el.dataset.prev = str;
+    return;
+  }
+  const kids = el.children;
+  for (let i = 0; i < str.length; i++) {
+    if (kids[i] && kids[i].textContent !== str[i]) {
+      kids[i].classList.remove('flip');
+      void kids[i].offsetWidth;
+      kids[i].textContent = str[i];
+      kids[i].classList.add('flip');
+    }
+  }
+  el.dataset.prev = str;
+}
+
+function initCinematicHud() {
+  const glow = document.getElementById('cursor-glow');
+  const fine = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (glow && fine && !reduce) {
+    let x = innerWidth/2, y = innerHeight/2, rx = x, ry = y;
+    window.addEventListener('pointermove', (e) => { x = e.clientX; y = e.clientY; glow.style.opacity = '1'; }, { passive:true });
+    const tick = () => {
+      rx += (x - rx) * 0.2;
+      ry += (y - ry) * 0.2;
+      glow.style.transform = 'translate(' + rx + 'px,' + ry + 'px)';
+      requestAnimationFrame(tick);
+    };
+    tick();
+  }
+  applyTickerVisibility();
+  syncSfxMuteBtn();
+}
+
 function getLocalISODate(date = new Date()) {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -4086,10 +4409,7 @@ function completeDailyChallenge() {
   if (!S.dailyChallenge || S.dailyChallenge.done) return;
   const challenge = CHALLENGE_POOL[S.dailyChallenge.idx];
   S.dailyChallenge.done = true;
-  const xp = getXPWithMultiplier(challenge.xp);
-  S.xp.today = (S.xp.today||0) + xp;
-  S.xp.total = (S.xp.total||340) + xp;
-  updateHeatmap(xp);
+  const xp = grantXP(challenge.xp);
   save(); renderDailyChallenge(); updateStats(); renderSidebar(); checkAchievements();
   showToast(`Boss challenge done! +${xp} XP 🎯`);
 }
@@ -4435,14 +4755,17 @@ function executeTerminalCommand(cmdText) {
   const cmd = tokens[0].toLowerCase();
   
   if (cmd === '/xp') {
-    const num = parseInt(tokens[1]);
+    const num = parseInt(tokens[1], 10);
     if (isNaN(num)) { showToast('Invalid XP amount! Use: /xp 15'); return; }
-    const xp = getXPWithMultiplier(num);
-    S.xp.total = (S.xp.total || 0) + xp;
-    S.xp.today = (S.xp.today || 0) + xp;
-    updateHeatmap(xp);
+    if (num < 1 || num > 50) { showToast('Terminal XP is capped at 1–50 per command'); return; }
+    const day = getLocalISODate();
+    if (!S.terminalXpLog) S.terminalXpLog = {};
+    const used = S.terminalXpLog[day] || 0;
+    if (used + num > 150) { showToast('Daily terminal XP cap is 150'); return; }
+    S.terminalXpLog[day] = used + num;
+    const xp = grantXP(num);
     save(); updateStats(); renderSidebar();
-    showToast(`Logged: +${xp} XP via Terminal! ⚡`);
+    showToast(`Logged: +${xp} XP via Terminal (${S.terminalXpLog[day]}/150 today)`);
   } 
   else if (cmd === '/lc') {
     if (tokens.length < 3) { showToast('Use: /lc [name] [easy|medium|hard]'); return; }
@@ -4524,6 +4847,7 @@ function executeTerminalCommand(cmdText) {
 
 // ─── TACTILE MECHANICAL SOUND FX ────────────────────────
 function playClickSound() {
+  if (isSfxMuted()) return;
   try {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const osc = audioCtx.createOscillator();
@@ -4756,7 +5080,7 @@ function toggleScratchpad() {
 }
 function saveScratchpad(val) {
   S.scratchpadText = val;
-  save(true); // Save locally only
+  save();
 }
 
 // Register shortcut Ctrl+Shift+N for scratchpad
@@ -5202,8 +5526,8 @@ function checkMissionDueDates() {
   let count=0;
   missions.forEach(m=>{
     if (m.done||!m.deadline) return;
-    const d=new Date(m.deadline);
-    if (!isNaN(d)) { const diff=(d-today)/86400000; if(diff>=0&&diff<=7) count++; }
+    const d=parseFlexibleDate(m.deadline);
+    if (d) { const diff=(d-today)/86400000; if(diff>=0&&diff<=7) count++; }
   });
   if (count>0) { textEl.textContent=`${count} mission${count>1?'s':''} due soon`; badge.classList.add('show'); }
   else badge.classList.remove('show');
@@ -5216,8 +5540,8 @@ function countMissionsDueSoon() {
   let count = 0;
   missions.forEach(m => {
     if (m.done || !m.deadline) return;
-    const d = new Date(m.deadline);
-    if (!isNaN(d)) {
+    const d = parseFlexibleDate(m.deadline);
+    if (d) {
       const diff = (d - today) / 86400000;
       if (diff >= 0 && diff <= 7) count++;
     }
@@ -5631,7 +5955,7 @@ function init(){
 function updateClock(){
   const n=new Date();
   const clockEl=document.getElementById('clock');
-  if (clockEl) clockEl.textContent=n.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  if (clockEl) renderClockDigits(clockEl, n.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'}));
   const today = getLocalISODate(n);
   if (_lastClockDate !== today) {
     _lastClockDate = today;
@@ -6169,6 +6493,10 @@ function addPastDoneTask() {
     showToast('Please enter a valid XP value!', true);
     return;
   }
+  if (xp > 50) {
+    showToast('Retro XP is capped at 50 per log.', true);
+    return;
+  }
   
   const tasksForDate = (S.pastDoneTasks || []).filter(t => t.date === selectedIso);
   if (tasksForDate.length >= 3) {
@@ -6533,7 +6861,11 @@ function renderCompetencyTracker() {
   const container = document.getElementById('competency-tracker-container');
   if(!container) return;
   
-  const comp = DEFAULT_COMPETENCY_LIST;
+  const extras = S.customCompetencies || [];
+  const comp = {
+    osRoles: DEFAULT_COMPETENCY_LIST.osRoles.concat(extras.filter(x => x.category === 'os')),
+    aiArch: DEFAULT_COMPETENCY_LIST.aiArch.concat(extras.filter(x => x.category === 'ai'))
+  };
   const mastery = S.competencyMastery || {};
   
   const getListHTML = (items, category) => {
@@ -6570,7 +6902,8 @@ function renderCompetencyTracker() {
     `;
   };
   
-  container.innerHTML = getListHTML(comp.osRoles, 'os') + getListHTML(comp.aiArch, 'ai');
+  container.innerHTML = getListHTML(comp.osRoles, 'os') + getListHTML(comp.aiArch, 'ai')
+    + `<button class="btn-secondary" style="margin-top:12px;width:100%;" onclick="addCustomCompetency()">+ Add competency</button>`;
 }
 
 function toggleCompetency(id, category) {
@@ -6621,7 +6954,10 @@ function renderDailyMatrix() {
   const comps = S.blockCompletions[dateStr] || [];
   
   let html = '';
-  DAILY_MATRIX_BLOCKS.forEach((b) => {
+  if (!S.dailyMatrixBlocks || !S.dailyMatrixBlocks.length) {
+    S.dailyMatrixBlocks = JSON.parse(JSON.stringify(DAILY_MATRIX_BLOCKS));
+  }
+  S.dailyMatrixBlocks.forEach((b) => {
     let name = b.name;
     let desc = b.desc;
     let focus = b.focus;
@@ -7766,7 +8102,7 @@ function applyAccentColor() {
   const color = S.accentColor || 'blue';
   const pair = accents[color] || accents.blue;
   const hex = light ? pair.light : pair.dark;
-  document.documentElement.style.setProperty('--blue', hex);
+  document.documentElement.style.setProperty('--accent', hex);
   document.documentElement.style.setProperty(
     '--glow',
     '0 0 0 1px color-mix(in srgb, ' + hex + ' 28%, transparent), 0 10px 28px color-mix(in srgb, var(--blood) 16%, transparent)'
@@ -8093,11 +8429,27 @@ function initNotesAutosave() {
 // ─── SETTINGS & PORTABILITY ──────────────────────────────
 // ─── SETTINGS & PORTABILITY ──────────────────────────────
 function getSyncConfig() {
-  return JSON.parse(localStorage.getItem('abhi_os_sync') || '{"token":"","gistId":"","auto":false}');
+  let cfg = {};
+  try { cfg = JSON.parse(localStorage.getItem('abhi_os_sync') || '{}'); } catch(_) { cfg = {}; }
+  if (!cfg.token) {
+    try { cfg.token = sessionStorage.getItem('abhi_os_token') || ''; } catch(_){}
+  }
+  return { token: cfg.token || '', gistId: cfg.gistId || '', auto: !!cfg.auto, rememberToken: !!cfg.rememberToken };
 }
 
 function saveSyncConfig(cfg) {
-  localStorage.setItem('abhi_os_sync', JSON.stringify(cfg));
+  const remember = !!cfg.rememberToken;
+  const token = cfg.token || '';
+  localStorage.setItem('abhi_os_sync', JSON.stringify({
+    gistId: cfg.gistId || '',
+    auto: !!cfg.auto,
+    rememberToken: remember,
+    token: remember ? token : ''
+  }));
+  try {
+    if (token) sessionStorage.setItem('abhi_os_token', token);
+    else sessionStorage.removeItem('abhi_os_token');
+  } catch(_){}
 }
 
 let isSyncing = false;
@@ -8114,9 +8466,15 @@ async function pushToCloud() {
   
   try {
     const files = {
-      "state.json": {
-        "content": JSON.stringify(S)
-      }
+      "state.json": { "content": JSON.stringify(S) },
+      "resume.json": { "content": localStorage.getItem('abhi_os_resume') || '{}' },
+      "prefs.json": { "content": JSON.stringify({
+        theme: localStorage.getItem('abhi_theme') || 'dark',
+        sidebar: localStorage.getItem('abhi_sidebar') || 'expanded',
+        scratchpad: S.scratchpadText || '',
+        sfxMuted: !!S.sfxMuted,
+        showTicker: !!S.showTicker
+      })}
     };
     
     let url = 'https://api.github.com/gists';
@@ -8196,16 +8554,13 @@ async function pullFromCloud() {
           if (remoteState && typeof remoteState === 'object') {
             const remoteTime = remoteState.lastUpdated || 0;
             const localTime = S.lastUpdated || 0;
-            const hasLocalData = localStorage.getItem('abhi_os');
-            if (remoteTime > localTime || !hasLocalData) {
-              S = remoteState;
-              save(true);
-              showToast('State updated from cloud! Reloading...');
-              updateSyncStatusMsg('Synced!');
-              setTimeout(() => window.location.reload(), 1000);
-            } else if (remoteTime < localTime) {
-              updateSyncStatusMsg('Local state is newer. Syncing to cloud...');
-              pushToCloud();
+            const hasLocalData = localStorage.getItem('abhi_os') || localStorage.getItem('abhi_os_enc');
+            if (remoteTime < localTime && hasLocalData) {
+              const takeRemote = confirm('Local state is newer than the gist. Press OK to overwrite the cloud, or Cancel to load the older cloud copy.');
+              if (takeRemote) { updateSyncStatusMsg('Pushing local…'); pushToCloud(); }
+              else { applyRemoteBundle(remoteState, json.files); }
+            } else if (remoteTime > localTime || !hasLocalData) {
+              applyRemoteBundle(remoteState, json.files);
             } else {
               if (!localTime) {
                 S = remoteState;
@@ -8336,7 +8691,26 @@ function openSettings() {
       </div>
 
       <div style="border: 1px solid var(--line2); padding: 14px; border-radius: 8px; background: var(--bg2);">
-        <h4 style="font-size: 13px; font-weight:600; color:var(--text); margin-bottom: 6px; font-family: var(--font-mono); text-transform: uppercase;">7. System Health</h4>
+        <h4 style="font-size: 13px; font-weight:600; color:var(--text); margin-bottom: 6px; font-family: var(--font-mono); text-transform: uppercase;">7. Chrome & PIN</h4>
+        <label style="font-size:11px; color:var(--sub); display:flex; align-items:center; gap:6px; margin-bottom:8px;">
+          <input type="checkbox" id="settings-show-ticker" ${S.showTicker ? 'checked' : ''}> Show bottom ticker
+        </label>
+        <label style="font-size:11px; color:var(--sub); display:flex; align-items:center; gap:6px; margin-bottom:8px;">
+          <input type="checkbox" id="settings-sfx-muted" ${S.sfxMuted ? 'checked' : ''}> Mute click sounds
+        </label>
+        <label style="font-size:11px; color:var(--sub); display:flex; align-items:center; gap:6px; margin-bottom:10px;">
+          <input type="checkbox" id="settings-remember-token" ${cfg.rememberToken ? 'checked' : ''}> Remember GitHub token on this device (off = session only)
+        </label>
+        <p style="font-size:11px; color:var(--sub); margin-bottom:8px;">PIN encrypts <code>abhi_os</code> with AES-GCM. Leave blank to keep current lock state.</p>
+        <input type="password" class="modal-form-input" id="settings-new-pin" placeholder="New 4–8 digit PIN" inputmode="numeric" maxlength="8" style="padding:6px 8px; font-size:12px; margin-bottom:8px;">
+        <div style="display:flex; gap:8px;">
+          <button class="btn-secondary" type="button" onclick="settingsSetPin()" style="flex:1; font-size:11px; padding:6px;">Set / change PIN</button>
+          <button class="btn-secondary" type="button" onclick="disablePinLock()" style="flex:1; font-size:11px; padding:6px; color:var(--red); border-color:var(--red);">Remove PIN</button>
+        </div>
+      </div>
+
+      <div style="border: 1px solid var(--line2); padding: 14px; border-radius: 8px; background: var(--bg2);">
+        <h4 style="font-size: 13px; font-weight:600; color:var(--text); margin-bottom: 6px; font-family: var(--font-mono); text-transform: uppercase;">8. System Health</h4>
         <div style="font-family:var(--font-mono);font-size:10px;color:var(--sub);line-height:1.7;">
           ${getSystemHealthHtml()}
         </div>
@@ -8349,6 +8723,11 @@ function openSettings() {
     const token = document.getElementById('sync-token').value.trim();
     const gistId = document.getElementById('sync-gist').value.trim();
     const auto = document.getElementById('sync-auto').checked;
+    const rememberTokenEl = document.getElementById('settings-remember-token');
+    const showTickerEl = document.getElementById('settings-show-ticker');
+    const sfxEl = document.getElementById('settings-sfx-muted');
+    if (showTickerEl) S.showTicker = showTickerEl.checked;
+    if (sfxEl) { S.sfxMuted = sfxEl.checked; localStorage.setItem('abhi_sfx', S.sfxMuted ? 'off' : 'on'); }
     let ghInput = document.getElementById('sync-github-username').value.trim();
     const accentVal = document.getElementById('settings-accent-color').value;
     const notifyEn = document.getElementById('settings-notify-enabled');
@@ -8368,7 +8747,9 @@ function openSettings() {
       }
     }
     
-    saveSyncConfig({ token, gistId, auto });
+    saveSyncConfig({ token, gistId, auto, rememberToken: !!(rememberTokenEl && rememberTokenEl.checked) });
+    applyTickerVisibility();
+    syncSfxMuteBtn();
     S.githubUsername = ghInput;
     S.accentColor = accentVal;
     applyAccentColor();
@@ -8493,7 +8874,8 @@ function resetData() {
   if (confirm("Are you sure you want to reset everything? This will clear localStorage and restore default settings from the HTML file. This cannot be undone!")) {
     const keepSync = confirm("Keep GitHub sync token / gist ID so you can pull your cloud backup after reset?");
     const sync = keepSync ? localStorage.getItem('abhi_os_sync') : null;
-    ['abhi_os','abhi_os_resume','abhi_theme','abhi_sidebar','srDismissed','abhi_last_backup'].forEach(k => localStorage.removeItem(k));
+    ['abhi_os','abhi_os_enc','abhi_os_resume','abhi_theme','abhi_sidebar','srDismissed','abhi_last_backup','abhi_sfx'].forEach(k => localStorage.removeItem(k));
+    try { sessionStorage.removeItem('abhi_os_token'); } catch(_){}
     if (!keepSync) localStorage.removeItem('abhi_os_sync');
     else if (sync) localStorage.setItem('abhi_os_sync', sync);
     try { sessionStorage.removeItem('abhi_pomo'); } catch(_){}
@@ -9242,6 +9624,7 @@ function renderBudget() {
             <span style="font-family:var(--font-mono);font-size:9px;color:var(--sub);margin-right:6px;">${e.category}</span>
             <span style="font-family:var(--font-mono);font-size:12px;font-weight:600;color:${dot}">₹${e.amount}</span>
             <span style="font-family:var(--font-mono);font-size:9px;color:var(--muted);margin-left:6px;">${e.date.slice(5)}</span>
+            <button class="edit-btn" onclick="editExpense(${originalIdx})" style="margin:0;opacity:0.7;" title="Edit">✏️</button>
             <button class="edit-btn" onclick="deleteExpense(${originalIdx})" style="color:var(--red);margin:0;opacity:0.7;">🗑️</button>
           </div>
         `;
@@ -9271,9 +9654,9 @@ function logExpense() {
 
 function downloadExpensesCSV() {
   playClickSound();
-  const log = (S.budget && S.budget.log) || [];
+  const log = getBudgetMonthLog();
   if (log.length === 0) {
-    showToast('No expenses logged to download!', true);
+    showToast('No expenses this month to download!', true);
     return;
   }
   
@@ -9303,9 +9686,9 @@ function downloadExpensesCSV() {
 
 function printExpensesPDF() {
   playClickSound();
-  const log = (S.budget && S.budget.log) || [];
+  const log = getBudgetMonthLog();
   if (log.length === 0) {
-    showToast('No expenses logged to print!', true);
+    showToast('No expenses this month to print!', true);
     return;
   }
   
@@ -9394,6 +9777,108 @@ function printExpensesPDF() {
     </html>
   `);
   printWindow.document.close();
+}
+
+
+function applyRemoteBundle(remoteState, files) {
+  S = remoteState;
+  try {
+    if (files && files['resume.json'] && files['resume.json'].content) {
+      localStorage.setItem('abhi_os_resume', files['resume.json'].content);
+    }
+    if (files && files['prefs.json'] && files['prefs.json'].content) {
+      const p = JSON.parse(files['prefs.json'].content);
+      if (p.theme) localStorage.setItem('abhi_theme', p.theme);
+      if (p.sidebar) localStorage.setItem('abhi_sidebar', p.sidebar);
+      if (typeof p.scratchpad === 'string') S.scratchpadText = p.scratchpad;
+      if (typeof p.sfxMuted === 'boolean') S.sfxMuted = p.sfxMuted;
+      if (typeof p.showTicker === 'boolean') S.showTicker = p.showTicker;
+    }
+  } catch (e) { console.warn(e); }
+  save(true);
+  showToast('State updated from cloud! Reloading...');
+  updateSyncStatusMsg('Synced!');
+  setTimeout(() => window.location.reload(), 800);
+}
+
+function settingsSetPin() {
+  const el = document.getElementById('settings-new-pin');
+  const pin = (el && el.value || '').trim();
+  if (!/^\d{4,8}$/.test(pin)) { showToast('PIN must be 4–8 digits', true); return; }
+  enablePinLock(pin);
+}
+
+function getBudgetMonthLog() {
+  if (!S.budget) return [];
+  const monthStart = getLocalISODate(new Date(budgetView.y, budgetView.m, 1));
+  const monthEnd = getLocalISODate(new Date(budgetView.y, budgetView.m+1, 0));
+  return (S.budget.log || []).filter(e => e.date >= monthStart && e.date <= monthEnd);
+}
+
+function editExpense(idx) {
+  const e = (S.budget && S.budget.log || [])[idx];
+  if (!e) return;
+  const html = `
+    <div class="modal-form-group"><label class="modal-form-label">Description</label>
+      <input class="modal-form-input" id="edit-exp-name" value="${escapeHtml(e.description || '')}"></div>
+    <div class="modal-form-group"><label class="modal-form-label">Amount (₹)</label>
+      <input class="modal-form-input" id="edit-exp-amount" type="number" value="${e.amount}"></div>
+    <div class="modal-form-group"><label class="modal-form-label">Category</label>
+      <select class="modal-form-select" id="edit-exp-cat">${['Food','Transport','Entertainment','Study','Trips','Outings','Monthly','Misc'].map(c=>`<option ${e.category===c?'selected':''}>${c}</option>`).join('')}</select></div>
+    <div class="modal-form-group"><label class="modal-form-label">Date</label>
+      <input class="modal-form-input" id="edit-exp-date" type="date" value="${e.date || ''}"></div>`;
+  openModal('Edit Expense', html, () => {
+    const description = document.getElementById('edit-exp-name').value.trim();
+    const amount = parseFloat(document.getElementById('edit-exp-amount').value);
+    const category = document.getElementById('edit-exp-cat').value;
+    const date = document.getElementById('edit-exp-date').value;
+    if (!description || !amount || amount<=0 || !date) { showToast('Fill all fields'); return false; }
+    Object.assign(e, { description, amount, category, date });
+    save(); renderBudget(); showToast('Expense updated'); return true;
+  });
+}
+
+function addCustomCompetency() {
+  const html = `
+    <div class="modal-form-group"><label class="modal-form-label">Track</label>
+      <select class="modal-form-select" id="cc-cat"><option value="os">OS Core</option><option value="ai">AI / Edge</option></select></div>
+    <div class="modal-form-group"><label class="modal-form-label">Name</label>
+      <input class="modal-form-input" id="cc-name" placeholder="e.g. io_uring"></div>
+    <div class="modal-form-group"><label class="modal-form-label">Notes</label>
+      <input class="modal-form-input" id="cc-desc" placeholder="What mastery looks like"></div>`;
+  openModal('Add competency', html, () => {
+    const name = document.getElementById('cc-name').value.trim();
+    if (!name) return false;
+    if (!S.customCompetencies) S.customCompetencies = [];
+    S.customCompetencies.push({
+      id: 'c_custom_' + Date.now(),
+      category: document.getElementById('cc-cat').value,
+      name,
+      desc: document.getElementById('cc-desc').value.trim()
+    });
+    save(); renderCompetencyTracker(); showToast('Competency added'); return true;
+  });
+}
+
+function editDailyMatrix() {
+  if (!S.dailyMatrixBlocks || !S.dailyMatrixBlocks.length) {
+    S.dailyMatrixBlocks = JSON.parse(JSON.stringify(DAILY_MATRIX_BLOCKS));
+  }
+  const rows = S.dailyMatrixBlocks.map((b,i) => `
+    <div class="resume-entry-card" style="margin-bottom:8px;">
+      <div class="form-label">${b.id}</div>
+      <input class="form-input" data-k="time" data-i="${i}" value="${escapeHtml(b.time||'')}" style="margin-bottom:4px;">
+      <input class="form-input" data-k="name" data-i="${i}" value="${escapeHtml(b.name||'')}" style="margin-bottom:4px;">
+      <input class="form-input" data-k="desc" data-i="${i}" value="${escapeHtml(b.desc||'')}">
+    </div>`).join('');
+  openModal('Edit Daily Matrix', `<div style="max-height:50vh;overflow:auto;">${rows}</div>`, () => {
+    document.querySelectorAll('#modal-body [data-k]').forEach(inp => {
+      const i = parseInt(inp.getAttribute('data-i'),10);
+      const k = inp.getAttribute('data-k');
+      if (S.dailyMatrixBlocks[i]) S.dailyMatrixBlocks[i][k] = inp.value;
+    });
+    save(); renderDailyMatrix(); showToast('Daily Matrix saved'); return true;
+  });
 }
 
 function deleteExpense(idx) {
@@ -9620,10 +10105,14 @@ function addTripExpense() {
     if (amount <= 0) { showToast('Enter a valid amount!'); return false; }
     if (!date) { date = getLocalISODate(); }
     
-    trip.expenses.push({ description: desc, amount, date });
+    trip.expenses.push({ description: desc, amount, date, tripId: trip.id });
+    if (!S.budget) S.budget = { monthly:{}, log:[] };
+    if (!S.budget.log) S.budget.log = [];
+    S.budget.log.push({ description: trip.name + ': ' + desc, amount, category: 'Trips', date, tripId: trip.id });
     save();
     renderTrips();
-    showToast(`Logged ₹${amount} for ${trip.name}!`);
+    if (typeof renderBudget === 'function') renderBudget();
+    showToast(`Logged ₹${amount} for ${trip.name}! (counts toward Trips budget)`);
     return true;
   });
   
@@ -9637,9 +10126,15 @@ function deleteTripExpense(tripId, expIdx) {
   const trip = (S.trips || []).find(t => t.id === tripId);
   if (!trip) return;
   if (confirm('Delete this trip expense entry?')) {
+    const exp = trip.expenses[expIdx];
     trip.expenses.splice(expIdx, 1);
+    if (exp && S.budget && S.budget.log) {
+      const bi = S.budget.log.findIndex(e => e.tripId === trip.id && e.amount === exp.amount && e.date === exp.date);
+      if (bi >= 0) S.budget.log.splice(bi, 1);
+    }
     save();
     renderTrips();
+    if (typeof renderBudget === 'function') renderBudget();
     showToast('Trip expense deleted.');
   }
 }
@@ -9649,6 +10144,7 @@ function deleteTrip(tripId) {
   if (!trip) return;
   if (confirm(`Are you sure you want to delete the trip "${trip.name}" and all its logged expenses?`)) {
     S.trips = S.trips.filter(t => t.id !== tripId);
+    if (S.budget && S.budget.log) S.budget.log = S.budget.log.filter(e => e.tripId !== tripId);
     if (S.activeTripId === tripId) {
       S.activeTripId = S.trips.length > 0 ? S.trips[0].id : '';
     }
@@ -10867,7 +11363,9 @@ document.addEventListener('keydown', (e) => {
 })();
 
 requestAnimationFrame(() => document.body.classList.remove('booting'));
-init();
+if (window.__osLocked) { showLockScreen(); }
+else { init(); initCinematicHud(); }
 </script>
 </body>
 </html>
+/html>
