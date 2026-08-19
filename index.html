@@ -2560,6 +2560,45 @@ body:not(.booting) .layout{animation:bootIn .55s var(--ease) both;}
     min-height: auto !important;
   }
 }
+
+/* ─── HEALTH OS ─────────────────────────────────────────── */
+.nav-section.nav-fold{cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:space-between;}
+.nav-section.nav-fold .fold-chev{font-size:9px;opacity:.7;transition:transform .2s;}
+.nav-section.nav-fold.folded .fold-chev{transform:rotate(-90deg);}
+.nav-group.folded{display:none;}
+#health-rail{margin:8px 4px 10px;padding:8px;border:1px solid color-mix(in srgb, var(--line2) 70%, transparent);border-radius:8px;background:color-mix(in srgb, var(--bg2) 80%, transparent);}
+.health-rail-title{font-family:var(--font-mono);font-size:8px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+.health-rail-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--sub);padding:3px 0;cursor:pointer;}
+.health-rail-item input{accent-color:var(--accent);}
+.layout.sidebar-collapsed #health-rail{display:none;}
+.workout-arena{
+  --volt:#C8FF00; --blaze:#FF4D00; --plasma:#00F5FF;
+  background:
+    radial-gradient(500px 240px at 0% 0%, color-mix(in srgb, var(--blaze) 28%, transparent), transparent 60%),
+    radial-gradient(420px 220px at 100% 20%, color-mix(in srgb, var(--plasma) 22%, transparent), transparent 55%),
+    #0a0c08;
+  border:1px solid color-mix(in srgb, var(--volt) 45%, transparent);
+  border-radius:16px; padding:20px; color:#f4ffe0;
+  box-shadow:0 0 40px color-mix(in srgb, var(--blaze) 18%, transparent), inset 0 0 40px rgba(200,255,0,.04);
+  position:relative; overflow:hidden;
+}
+.workout-arena::after{
+  content:''; position:absolute; inset:-40%;
+  background:conic-gradient(from 90deg, transparent, color-mix(in srgb, var(--volt) 18%, transparent), transparent 40%);
+  animation:arenaSpin 8s linear infinite; pointer-events:none; opacity:.35;
+}
+@keyframes arenaSpin{to{transform:rotate(360deg);}}
+.workout-arena > *{position:relative;z-index:1;}
+.arena-title{font-family:var(--font-mono);letter-spacing:3px;font-size:11px;color:var(--volt);text-transform:uppercase;margin-bottom:12px;text-shadow:0 0 12px var(--volt);}
+.wo-card{background:rgba(8,10,6,.72);border:1px solid color-mix(in srgb, var(--plasma) 35%, transparent);border-radius:12px;padding:12px 14px;margin-bottom:10px;}
+.wo-card.done{opacity:.55;}
+.wo-name{font-weight:700;color:#fff;margin-bottom:4px;}
+.set-pips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.set-pip{width:28px;height:28px;border-radius:8px;border:1px solid var(--volt);background:transparent;color:var(--volt);cursor:pointer;font-family:var(--font-mono);font-size:11px;}
+.set-pip.on{background:var(--volt);color:#111;box-shadow:0 0 12px var(--volt);}
+.health-metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;}
+.health-check{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line);cursor:pointer;}
+
 </style>
 </head>
 <body class="booting">
@@ -2606,26 +2645,41 @@ body:not(.booting) .layout{animation:bootIn .55s var(--ease) both;}
   </div>
   <div class="sid-sep"></div>
   <nav class="sid-nav">
-    <div class="nav-section">HQ</div>
+    <div class="nav-section nav-fold" data-fold="hq" onclick="toggleNavFold('hq',event)">HQ <span class="fold-chev">▾</span></div>
+    <div class="nav-group" data-group="hq">
     <div class="nav-item active" onclick="gotoPage('today',this)"><span class="nav-icon">⚡</span>Today</div>
     <div class="nav-item" onclick="gotoPage('schedule',this)"><span class="nav-icon">⏰</span>Daily Matrix</div>
     <div class="nav-item" onclick="gotoPage('audit',this)"><span class="nav-icon">📊</span>Weekly Audit</div>
     <div class="nav-item" onclick="gotoPage('roadmap',this)"><span class="nav-icon">🗺</span>Systems Roadmap</div>
     <div class="nav-item" onclick="gotoPage('semester',this)"><span class="nav-icon">📚</span>Semester 3</div>
     <div class="nav-item" onclick="gotoPage('calendar',this)"><span class="nav-icon">📅</span>Academic Calendar</div>
-    <div class="nav-section">GRIND</div>
+    </div>
+    <div class="nav-section nav-fold" data-fold="grind" onclick="toggleNavFold('grind',event)">GRIND <span class="fold-chev">▾</span></div>
+    <div class="nav-group" data-group="grind">
     <div class="nav-item" onclick="gotoPage('dsa',this)"><span class="nav-icon">🧩</span>DSA Track<span class="nav-badge" id="dsa-badge">0</span></div>
     <div class="nav-item" onclick="gotoPage('projects',this)"><span class="nav-icon">🛠</span>Projects</div>
     <div class="nav-item" onclick="gotoPage('tasks',this)"><span class="nav-icon">⚔️</span>Missions</div>
-    <div class="nav-section">INTEL</div>
+    </div>
+    <div class="nav-section nav-fold" data-fold="intel" onclick="toggleNavFold('intel',event)">INTEL <span class="fold-chev">▾</span></div>
+    <div class="nav-group" data-group="intel">
     <div class="nav-item" onclick="gotoPage('targets',this)"><span class="nav-icon">🎯</span>Targets</div>
     <div class="nav-item" onclick="gotoPage('gaming',this)"><span class="nav-icon">🎮</span>Gaming</div>
     <div class="nav-item" onclick="gotoPage('notes',this)"><span class="nav-icon">📝</span>Notes</div>
-    <div class="nav-section">CAREER</div>
+    </div>
+    <div class="nav-section nav-fold" data-fold="career" onclick="toggleNavFold('career',event)">CAREER <span class="fold-chev">▾</span></div>
+    <div class="nav-group" data-group="career">
     <div class="nav-item" onclick="gotoPage('applications',this)"><span class="nav-icon">💼</span>Applications<span class="nav-badge green" id="app-badge">0</span></div>
     <div class="nav-item" onclick="gotoPage('budget',this)"><span class="nav-icon">💳</span>Budget</div>
     <div class="nav-item" onclick="gotoPage('trips',this)"><span class="nav-icon">✈️</span>Trips</div>
     <div class="nav-item" onclick="gotoPage('resume',this)"><span class="nav-icon">📄</span>Resume</div>
+    </div>
+    <div class="nav-section nav-fold" data-fold="health" onclick="toggleNavFold('health',event)">HEALTH <span class="fold-chev">▾</span></div>
+    <div class="nav-group" data-group="health">
+    <div class="nav-item" onclick="gotoPage('routine',this)"><span class="nav-icon">🤸</span>Daily Routine</div>
+    <div class="nav-item" onclick="gotoPage('physical',this)"><span class="nav-icon">🩺</span>Physical Metrics</div>
+    <div class="nav-item" onclick="gotoPage('mental',this)"><span class="nav-icon">🧠</span>Mental State</div>
+    </div>
+    <div id="health-rail"></div>
   </nav>
   <!-- HUD Terminal -->
   <div class="hud-terminal-wrap">
@@ -3398,6 +3452,30 @@ body:not(.booting) .layout{animation:bootIn .55s var(--ease) both;}
   </div>
 
   <!-- ACADEMIC CALENDAR -->
+
+  <div id="page-routine" class="content">
+    <div class="section-hdr">DAILY ROUTINE <button class="edit-btn" onclick="editHealthList('routine')">⚙️</button></div>
+    <div class="quest-card glass-card" id="routine-list"></div>
+    <div style="height:18px"></div>
+    <div class="workout-arena">
+      <div class="arena-title">Workout Arena</div>
+      <div id="workout-list"></div>
+      <button class="btn-primary" onclick="editHealthList('workouts')" style="margin-top:8px;background:#C8FF00;color:#111;">Edit movements</button>
+    </div>
+  </div>
+  <div id="page-physical" class="content">
+    <div class="section-hdr">PHYSICAL METRICS</div>
+    <div class="health-metric-grid" id="physical-metrics"></div>
+    <div class="section-hdr" style="margin-top:18px;">CHECKS</div>
+    <div class="quest-card glass-card" id="physical-checks"></div>
+  </div>
+  <div id="page-mental" class="content">
+    <div class="section-hdr">MENTAL STATE</div>
+    <div class="glass-card" style="padding:16px;" id="mental-metrics"></div>
+    <div class="section-hdr" style="margin-top:18px;">CHECKS</div>
+    <div class="quest-card glass-card" id="mental-checks"></div>
+  </div>
+
   <div id="page-calendar" class="content">
     <div class="calendar-view-toggles">
       <button class="calendar-toggle-btn active" id="btn-view-grid" onclick="switchCalendarView('grid')">Monthly Grid View</button>
@@ -3528,6 +3606,10 @@ body:not(.booting) .layout{animation:bootIn .55s var(--ease) both;}
       <div class="mobile-drawer-item" onclick="gotoMobilePage('applications')"><span class="mobile-drawer-icon">💼</span>Applications</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('trips')"><span class="mobile-drawer-icon">✈️</span>Trips</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('resume')"><span class="mobile-drawer-icon">📄</span>Resume</div>
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('routine')"><span class="mobile-drawer-icon">🤸</span>Routine</div>
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('physical')"><span class="mobile-drawer-icon">🩺</span>Physical</div>
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('mental')"><span class="mobile-drawer-icon">🧠</span>Mental</div>
+
       <div class="mobile-drawer-item" onclick="openSettings(); toggleMobileDrawer();"><span class="mobile-drawer-icon">⚙️</span>Settings</div>
     </div>
   </div>
@@ -3942,6 +4024,8 @@ if (!S.srs.reviews || typeof S.srs.reviews !== 'object') {
 }
 if (!Array.isArray(S.srs.cards)) S.srs.cards = [];
 if(!S.trips) S.trips = [];
+ensureHealthState();
+
 if(!S.activeTripId) S.activeTripId = '';
 if(!S.budget) S.budget = { monthly: { Food: 4000, Transport: 1000, Entertainment: 1000, Study: 2000, Trips: 5000, Outings: 2000, Monthly: 10000, Misc: 1000 }, log: [] };
 // Ensure existing users get the new categories as well if budget already exists
@@ -5895,7 +5979,9 @@ function init(){
   checkStreak();
   updateClock();setInterval(updateClock,1000);
   updateDate();
+  applyNavFolds();
   renderSidebar();
+  renderHealthPages();
   renderToday();
   renderRoadmap(1);
   renderSemester();
@@ -5967,6 +6053,7 @@ function updateClock(){
     initDailyChallenge();
     checkStreakRisk();
     renderDailyMatrix();
+    renderHealthPages();
   } else if (n.getMinutes() === 0 && n.getSeconds() === 0) {
     checkStreakRisk();
   }
@@ -6060,6 +6147,7 @@ function checkDailyReset(){
     S.tasks = {};
     S.quests = {};
     S.xp.today = 0;
+    resetHealthDay();
     save();
   }
 }
@@ -8322,8 +8410,231 @@ document.addEventListener('keydown', e => {
   }
 });
 
+
+function defaultHealth() {
+  return {
+    date: getLocalISODate(),
+    routine: [
+      {id:'h-run', name:'05:30 · 2.5 km run', done:false, xp:15},
+      {id:'h-water', name:'Drink 2.5L water', done:false, xp:10},
+      {id:'h-lights', name:'Lights out 22:30', done:false, xp:10},
+      {id:'h-scroll', name:'No doomscroll', done:false, xp:10}
+    ],
+    workouts: [
+      {id:'w-push', name:'Push-ups', sets:4, reps:'12', notes:'chest to floor', done:false, setDone:[]},
+      {id:'w-squat', name:'Squats', sets:4, reps:'15', notes:'full depth', done:false, setDone:[]},
+      {id:'w-plank', name:'Plank', sets:3, reps:'45s', notes:'ribs down', done:false, setDone:[]}
+    ],
+    physical: {
+      weight:'', sleepHrs:'', water:0, steps:'', energy:3,
+      checks:[
+        {id:'p-cardio', name:'Cardio session', done:false},
+        {id:'p-mob', name:'Mobility / stretch', done:false},
+        {id:'p-pro', name:'Hit protein target', done:false},
+        {id:'p-sleep', name:'7h sleep last night', done:false}
+      ]
+    },
+    mental: {
+      mood:3, stress:3, focus:3, journal:'',
+      checks:[
+        {id:'m-quiet', name:'10 min quiet', done:false},
+        {id:'m-journ', name:'3 journal lines', done:false},
+        {id:'m-fam', name:'Family time', done:false},
+        {id:'m-deep', name:'One protected deep-work block', done:false}
+      ]
+    }
+  };
+}
+function ensureHealthState() {
+  if (!S.health || typeof S.health !== 'object') S.health = defaultHealth();
+  const d = defaultHealth();
+  if (!Array.isArray(S.health.routine) || !S.health.routine.length) S.health.routine = d.routine;
+  if (!Array.isArray(S.health.workouts) || !S.health.workouts.length) S.health.workouts = d.workouts;
+  if (!S.health.physical) S.health.physical = d.physical;
+  if (!S.health.mental) S.health.mental = d.mental;
+  if (!Array.isArray(S.health.physical.checks)) S.health.physical.checks = d.physical.checks;
+  if (!Array.isArray(S.health.mental.checks)) S.health.mental.checks = d.mental.checks;
+  S.health.workouts.forEach(w => { if (!Array.isArray(w.setDone)) w.setDone = []; });
+  const today = getLocalISODate();
+  if (S.health.date !== today) resetHealthDay();
+}
+function resetHealthDay() {
+  if (!S.health || typeof S.health !== 'object') S.health = defaultHealth();
+  const clear = arr => (arr||[]).forEach(x => { x.done = false; if (x.setDone) x.setDone = []; });
+  clear(S.health.routine);
+  clear(S.health.workouts);
+  clear(S.health.physical.checks);
+  clear(S.health.mental.checks);
+  S.health.physical.water = 0;
+  S.health.date = getLocalISODate();
+}
+function toggleHealthItem(kind, id) {
+  ensureHealthState();
+  let item = null;
+  if (kind === 'routine') item = S.health.routine.find(x => x.id === id);
+  else if (kind === 'workout') item = S.health.workouts.find(x => x.id === id);
+  else if (kind === 'pcheck') item = S.health.physical.checks.find(x => x.id === id);
+  else if (kind === 'mcheck') item = S.health.mental.checks.find(x => x.id === id);
+  if (!item) return;
+  item.done = !item.done;
+  if (item.done) grantXP(item.xp || 8);
+  save();
+  renderHealthPages();
+  updateStats();
+  renderSidebar();
+}
+function toggleWorkoutSet(wid, si) {
+  ensureHealthState();
+  const w = S.health.workouts.find(x => x.id === wid);
+  if (!w) return;
+  if (!Array.isArray(w.setDone)) w.setDone = [];
+  const on = w.setDone.includes(si);
+  w.setDone = on ? w.setDone.filter(x => x !== si) : w.setDone.concat(si);
+  const all = w.setDone.length >= (w.sets || 0);
+  if (all && !w.done) { w.done = true; grantXP(12); }
+  if (!all) w.done = false;
+  save();
+  renderHealthPages();
+}
+function bumpWater(d) {
+  ensureHealthState();
+  S.health.physical.water = Math.max(0, Math.round(((S.health.physical.water||0)+d)*10)/10);
+  save(); renderHealthPages();
+}
+function setHealthField(path, val) {
+  ensureHealthState();
+  const [a,b] = path.split('.');
+  if (S.health[a]) S.health[a][b] = val;
+  save();
+}
+function renderHealthPages() {
+  ensureHealthState();
+  const H = S.health;
+  const list = (arr, kind) => (arr||[]).map(it => `
+    <div class="health-check ${it.done?'done-item':''}" onclick="toggleHealthItem('${kind}','${it.id}')">
+      <button class="check-btn ${it.done?'checked':''}">${it.done?'✓':''}</button>
+      <span class="quest-text">${escapeHtml(it.name)}</span>
+      ${it.xp?`<span class="quest-xp">+${it.xp}</span>`:''}
+    </div>`).join('') || '<div class="empty-state">Nothing here yet</div>';
+  const rl = document.getElementById('routine-list');
+  if (rl) rl.innerHTML = list(H.routine, 'routine');
+  const wl = document.getElementById('workout-list');
+  if (wl) {
+    wl.innerHTML = H.workouts.map(w => {
+      const pips = Array.from({length: w.sets||0}, (_,i) => {
+        const on = (w.setDone||[]).includes(i);
+        return `<button class="set-pip ${on?'on':''}" onclick="event.stopPropagation();toggleWorkoutSet('${w.id}',${i})">${i+1}</button>`;
+      }).join('');
+      return `<div class="wo-card ${w.done?'done':''}">
+        <div class="wo-name">${escapeHtml(w.name)} · ${w.sets}×${escapeHtml(w.reps||'')}</div>
+        <div style="font-size:11px;opacity:.75;">${escapeHtml(w.notes||'')}</div>
+        <div class="set-pips">${pips}</div>
+      </div>`;
+    }).join('');
+  }
+  const pm = document.getElementById('physical-metrics');
+  if (pm) {
+    const P = H.physical;
+    pm.innerHTML = `
+      <div class="stat glass-card"><div class="stat-label">Weight (kg)</div>
+        <input class="form-input" value="${escapeHtml(P.weight)}" onchange="setHealthField('physical.weight',this.value)"></div>
+      <div class="stat glass-card"><div class="stat-label">Sleep (hrs)</div>
+        <input class="form-input" type="number" step="0.5" value="${escapeHtml(P.sleepHrs)}" onchange="setHealthField('physical.sleepHrs',this.value)"></div>
+      <div class="stat glass-card"><div class="stat-label">Water (L)</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button class="btn-secondary" onclick="bumpWater(-0.25)">−</button>
+          <div class="stat-val">${P.water||0}</div>
+          <button class="btn-secondary" onclick="bumpWater(0.25)">+</button>
+        </div><div class="stat-sub">target 2.5L</div></div>
+      <div class="stat glass-card"><div class="stat-label">Steps</div>
+        <input class="form-input" type="number" value="${escapeHtml(P.steps)}" onchange="setHealthField('physical.steps',this.value)"></div>
+      <div class="stat glass-card"><div class="stat-label">Energy 1–5</div>
+        <input class="form-input" type="range" min="1" max="5" value="${P.energy||3}" oninput="setHealthField('physical.energy',this.value);document.getElementById('en-lab').textContent=this.value">
+        <div class="stat-sub" id="en-lab">${P.energy||3}</div></div>`;
+  }
+  const pc = document.getElementById('physical-checks');
+  if (pc) pc.innerHTML = list(H.physical.checks, 'pcheck');
+  const mm = document.getElementById('mental-metrics');
+  if (mm) {
+    const M = H.mental;
+    mm.innerHTML = `
+      <label class="form-label">Mood 1–5</label>
+      <input class="form-input" type="range" min="1" max="5" value="${M.mood||3}" oninput="setHealthField('mental.mood',this.value)">
+      <label class="form-label" style="margin-top:10px;">Stress</label>
+      <input class="form-input" type="range" min="1" max="5" value="${M.stress||3}" oninput="setHealthField('mental.stress',this.value)">
+      <label class="form-label" style="margin-top:10px;">Focus</label>
+      <input class="form-input" type="range" min="1" max="5" value="${M.focus||3}" oninput="setHealthField('mental.focus',this.value)">
+      <label class="form-label" style="margin-top:10px;">Journal (autosave)</label>
+      <textarea class="form-input" style="min-height:120px;" oninput="setHealthField('mental.journal',this.value)">${escapeHtml(M.journal||'')}</textarea>`;
+  }
+  const mc = document.getElementById('mental-checks');
+  if (mc) mc.innerHTML = list(H.mental.checks, 'mcheck');
+  const rail = document.getElementById('health-rail');
+  if (rail) {
+    const first = (H.routine||[]).slice(0,4);
+    rail.innerHTML = `<div class="health-rail-title">Today · habits</div>` + first.map(it => `
+      <label class="health-rail-item" onclick="event.stopPropagation()">
+        <input type="checkbox" ${it.done?'checked':''} onchange="toggleHealthItem('routine','${it.id}')">
+        <span>${escapeHtml(it.name)}</span>
+      </label>`).join('');
+  }
+}
+function editHealthList(kind) {
+  ensureHealthState();
+  const arr = kind === 'workouts' ? S.health.workouts : S.health.routine;
+  const rows = arr.map((it,i) => kind==='workouts' ? `
+    <div class="resume-entry-card" style="margin-bottom:8px;">
+      <input class="form-input" data-i="${i}" data-k="name" value="${escapeHtml(it.name)}" placeholder="Movement">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;">
+        <input class="form-input" data-i="${i}" data-k="sets" type="number" value="${it.sets||0}" placeholder="Sets">
+        <input class="form-input" data-i="${i}" data-k="reps" value="${escapeHtml(it.reps||'')}" placeholder="Reps / time">
+      </div>
+      <input class="form-input" data-i="${i}" data-k="notes" value="${escapeHtml(it.notes||'')}" placeholder="Cue" style="margin-top:4px;">
+      <button class="edit-btn" type="button" onclick="this.parentElement.remove()">🗑️</button>
+    </div>` : `
+    <div class="resume-entry-card" style="margin-bottom:8px;">
+      <input class="form-input" data-i="${i}" data-k="name" value="${escapeHtml(it.name)}">
+      <input class="form-input" data-i="${i}" data-k="xp" type="number" value="${it.xp||10}" style="margin-top:4px;">
+      <button class="edit-btn" type="button" onclick="this.parentElement.remove()">🗑️</button>
+    </div>`).join('');
+  openModal(kind==='workouts'?'Edit workout':'Edit routine', `
+    <div id="health-edit-wrap">${rows}</div>
+    <button class="checklist-add-btn" type="button" onclick="document.getElementById('health-edit-wrap').insertAdjacentHTML('beforeend', \`${kind==='workouts'?'<div class=resume-entry-card style=margin-bottom:8px><input class=form-input data-k=name placeholder=Movement><div style=display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px><input class=form-input data-k=sets type=number placeholder=Sets><input class=form-input data-k=reps placeholder=Reps></div><input class=form-input data-k=notes placeholder=Cue style=margin-top:4px></div>':'<div class=resume-entry-card style=margin-bottom:8px><input class=form-input data-k=name placeholder=Habit><input class=form-input data-k=xp type=number value=10 style=margin-top:4px></div>'}\`)">+ Add</button>
+  `, () => {
+    const cards = [...document.querySelectorAll('#health-edit-wrap .resume-entry-card')];
+    const next = cards.map((card,i) => {
+      const get = k => (card.querySelector('[data-k="'+k+'"]')||{}).value || '';
+      if (kind==='workouts') {
+        return {id:'w-'+Date.now()+'-'+i, name:get('name').trim()||'Movement', sets:parseInt(get('sets'),10)||0, reps:get('reps'), notes:get('notes'), done:false, setDone:[]};
+      }
+      return {id:'h-'+Date.now()+'-'+i, name:get('name').trim()||'Habit', done:false, xp:parseInt(get('xp'),10)||10};
+    }).filter(x => x.name);
+    if (kind==='workouts') S.health.workouts = next; else S.health.routine = next;
+    save(); renderHealthPages(); return true;
+  });
+}
+function getNavFolds() {
+  try { return JSON.parse(localStorage.getItem('abhi_nav_fold')||'{}'); } catch(_) { return {}; }
+}
+function toggleNavFold(key, ev) {
+  if (ev) ev.stopPropagation();
+  const folds = getNavFolds();
+  folds[key] = !folds[key];
+  localStorage.setItem('abhi_nav_fold', JSON.stringify(folds));
+  applyNavFolds();
+}
+function applyNavFolds() {
+  const folds = getNavFolds();
+  document.querySelectorAll('.nav-section[data-fold]').forEach(sec => {
+    const k = sec.getAttribute('data-fold');
+    sec.classList.toggle('folded', !!folds[k]);
+    const g = document.querySelector('.nav-group[data-group="'+k+'"]');
+    if (g) g.classList.toggle('folded', !!folds[k]);
+  });
+}
+
 // ─── NAVIGATION ───────────────────────────────────────────
-const pageTitles={today:'Today',roadmap:'Systems Roadmap',semester:'Semester 3',calendar:'Academic Calendar',dsa:'DSA Track',projects:'Projects',targets:'Targets',gaming:'Gaming',notes:'Notes',tasks:'Mission Board',applications:'Applications',budget:'Expense Tracker',trips:'Trip Planner',resume:'Resume HQ',schedule:'Daily Matrix',audit:'Weekly Audit'};
+const pageTitles={today:'Today',roadmap:'Systems Roadmap',semester:'Semester 3',calendar:'Academic Calendar',dsa:'DSA Track',projects:'Projects',targets:'Targets',gaming:'Gaming',notes:'Notes',tasks:'Mission Board',applications:'Applications',budget:'Expense Tracker',trips:'Trip Planner',resume:'Resume HQ',schedule:'Daily Matrix',audit:'Weekly Audit',routine:'Daily Routine',physical:'Physical Metrics',mental:'Mental State'};
 
 function gotoPage(id,el){
   playClickSound();
@@ -8358,6 +8669,7 @@ function gotoPage(id,el){
   if(id==='calendar'){renderAcademicCalendar();}
   if(id==='targets'){renderTargets(); renderCompetencyTracker();}
   if(id==='gaming'){renderGaming();updateGamingLogDisplay();}
+  if(id==='routine'||id==='physical'||id==='mental'){renderHealthPages();}
   if(id==='dsa'){renderSRSQueue();renderDSALog();}
   if(id==='applications'){renderKanban();}
   if(id==='budget'){renderBudget();}
@@ -11197,6 +11509,9 @@ const paletteCommands = [
   { label: "Go to Trip Expense Planner", type: "nav", action: () => { gotoPage('trips'); } },
   { label: "Go to Resume Builder", type: "nav", action: () => { gotoPage('resume'); } },
   { label: "Go to Academic Calendar", type: "nav", action: () => { gotoPage('calendar'); } },
+  { label: "Go to Daily Routine", type: "nav", action: () => { gotoPage('routine'); } },
+  { label: "Go to Physical Metrics", type: "nav", action: () => { gotoPage('physical'); } },
+  { label: "Go to Mental State", type: "nav", action: () => { gotoPage('mental'); } },
   
   // Quick Actions & Logging
   { label: "Log Leetcode Solved Problem...", type: "action", action: () => { gotoPage('dsa'); setTimeout(() => (document.getElementById('dsa-name')||document.getElementById('lc-name-quick'))?.focus(), 150); } },
