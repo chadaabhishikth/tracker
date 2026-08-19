@@ -2599,71 +2599,155 @@ body:not(.booting) .layout{animation:bootIn .55s var(--ease) both;}
 .health-metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;}
 .health-check{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line);cursor:pointer;}
 
-/* Four-band Health skin: navy → royal → ice → mint (Routine / Physical / Mental only) */
-html.health-skin{
-  --navy:#14286A; --blood:#3B6FE0; --wine:#3B6FE0; --umber:#0e1c4a;
-  --salmon:#8EC4E8; --cream:#E8F3EE; --ice:#8EC4E8; --lilac:#8EC4E8;
-  --bg:#0d1738; --bg1:#14286A; --bg2:#1c3a8a; --bg3:#2548a8;
-  --line:#3B6FE0; --line2:#2a4fb8;
-  --text:#E8F3EE; --sub:#c5e4ef; --muted:#8EC4E8;
-  --blue:#8EC4E8; --accent:#8EC4E8; --lavender:#8EC4E8;
-  --green:#E8F3EE; --yellow:#8EC4E8; --red:#5a8cff;
-  --peach:#8EC4E8; --mauve:#8EC4E8; --teal:#8EC4E8; --sky:#8EC4E8;
-  --ink:#E8F3EE; --paper:#14286A;
-  --shadow:0 12px 32px rgba(10,20,60,.5);
-  --glow:0 0 0 1px color-mix(in srgb,#8EC4E8 35%,transparent), 0 10px 28px color-mix(in srgb,#3B6FE0 30%,transparent);
-}
-html.health-skin.light{
-  --bg:#E8F3EE; --bg1:#dceff6; --bg2:#c8e4f2; --bg3:#b4d8ec;
-  --line:#3B6FE0; --line2:#8EC4E8;
-  --text:#14286A; --sub:#1c3a8a; --muted:#3B6FE0;
-  --blue:#14286A; --accent:#14286A; --green:#14286A; --yellow:#3B6FE0;
-  --ink:#14286A; --paper:#E8F3EE;
-}
-html.health-skin body::before{
-  background:
-    linear-gradient(180deg,#14286A 0%,#3B6FE0 38%,#8EC4E8 72%,#E8F3EE 100%),
-    radial-gradient(700px 360px at 12% -8%, color-mix(in srgb,#8EC4E8 40%,transparent), transparent 58%);
-  opacity:.55;
-  animation:healthPulse 7s ease-in-out infinite;
-}
-html.health-skin.light body::before{opacity:.38;}
-@keyframes healthPulse{
-  0%,100%{opacity:.48; filter:saturate(1);}
-  50%{opacity:.68; filter:saturate(1.18);}
-}
+/* ─── HEALTH OS — PER-SECTION PALETTES ───────────────────
+   Each health page gets its own color identity:
+     Routine  · skin-routine  → Sunrise Amber  (habit energy)
+     Physical · skin-physical → Vital Teal     (body & recovery)
+     Mental   · skin-mental   → Calm Violet    (mind & reflection)
+   Skins redefine the full token set for dark + light modes. */
+
+/* Shared hero + backdrop mechanics (token-driven, so each skin
+   automatically tints them via its own variables). */
 .health-hero{
-  background:linear-gradient(120deg,#14286A,#3B6FE0 45%,#8EC4E8 80%,#E8F3EE);
+  background:linear-gradient(120deg,
+    color-mix(in srgb, var(--bg) 82%, var(--accent)),
+    color-mix(in srgb, var(--bg) 55%, var(--accent)) 55%,
+    color-mix(in srgb, var(--bg) 28%, var(--accent)));
   border-radius:16px; padding:18px 20px; margin-bottom:16px;
-  color:#E8F3EE; position:relative; overflow:hidden;
+  color:var(--text); position:relative; overflow:hidden;
+  border:1px solid color-mix(in srgb, var(--accent) 35%, transparent);
   animation:healthHeroIn .6s var(--ease) both;
 }
 .health-hero::after{
   content:''; position:absolute; inset:-40% auto auto 40%; width:220px; height:220px;
-  background:radial-gradient(circle,#E8F3EE 0%,transparent 70%);
-  opacity:.25; animation:healthOrb 6s ease-in-out infinite;
+  background:radial-gradient(circle, color-mix(in srgb, var(--accent) 55%, transparent) 0%, transparent 70%);
+  opacity:.45; animation:healthOrb 6s ease-in-out infinite;
 }
 @keyframes healthHeroIn{from{opacity:0; transform:translateY(12px) scale(.98);}to{opacity:1;transform:none;}}
 @keyframes healthOrb{0%,100%{transform:translate(0,0);}50%{transform:translate(-18px,10px);}}
 .health-hero-kicker{font-family:var(--font-mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:.85;}
 .health-hero-title{font-size:20px;font-weight:700;margin:4px 0 2px;}
 .health-hero-sub{font-size:12px;opacity:.88;}
-html.health-skin .workout-arena{
-  --volt:#E8F3EE; --blaze:#3B6FE0; --plasma:#8EC4E8;
+html.skin-routine body::before,
+html.skin-physical body::before,
+html.skin-mental body::before{
   background:
-    radial-gradient(480px 220px at 0% 0%, color-mix(in srgb,#3B6FE0 40%,transparent), transparent 60%),
-    #0e1c4a;
-  border-color:color-mix(in srgb,#8EC4E8 50%,transparent);
-  color:#E8F3EE;
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--bg1) 88%, var(--accent)) 0%,
+      color-mix(in srgb, var(--bg) 70%, var(--line)) 42%,
+      var(--bg) 100%),
+    radial-gradient(700px 360px at 12% -8%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 58%);
+  opacity:.55;
+  animation:healthPulse 7s ease-in-out infinite;
 }
-html.health-skin .arena-title{color:#8EC4E8;text-shadow:0 0 12px #8EC4E8;}
-html.health-skin .set-pip{border-color:#8EC4E8;color:#8EC4E8;}
-html.health-skin .set-pip.on{background:#8EC4E8;color:#14286A;box-shadow:0 0 12px #8EC4E8;}
-html.health-skin #page-routine .quest-card,
-html.health-skin #page-physical .glass-card,
-html.health-skin #page-mental .glass-card{
+@keyframes healthPulse{
+  0%,100%{opacity:.48; filter:saturate(1);}
+  50%{opacity:.68; filter:saturate(1.18);}
+}
+
+/* ROUTINE — Sunrise Amber */
+html.skin-routine{
+  --navy:#2D1D0A; --blood:#C97E1E; --wine:#C97E1E; --umber:#1F1406;
+  --salmon:#FFC46B; --cream:#FFF3DC; --ice:#FFC46B; --lilac:#E8B77D;
+  --bg:#1F1406; --bg1:#2D1D0A; --bg2:#3D290F; --bg3:#503816;
+  --line:#C97E1E; --line2:#8A5A1A;
+  --text:#FFF3DC; --sub:#EBD3A4; --muted:#C79D5F;
+  --blue:#FFC46B; --accent:#FFC46B; --lavender:#E8B77D;
+  --green:#FFE9BE; --yellow:#FFD166; --red:#FF6B5E;
+  --peach:#FFB07C; --mauve:#D9A05B; --teal:#EBD3A4; --sky:#FFC46B;
+  --ink:#FFF3DC; --paper:#2D1D0A;
+  --shadow:0 12px 32px rgba(46,26,6,.55);
+  --glow:0 0 0 1px color-mix(in srgb,#FFC46B 35%,transparent), 0 10px 28px color-mix(in srgb,#C97E1E 28%,transparent);
+}
+html.skin-routine.light{
+  --bg:#FFF6E6; --bg1:#FFEFD2; --bg2:#FFE0B5; --bg3:#FFD094;
+  --line:#C97E1E; --line2:#E0A44F;
+  --text:#3A2408; --sub:#6B4514; --muted:#A2691F;
+  --blue:#9A6312; --accent:#9A6312; --lavender:#B26F14;
+  --green:#3A2408; --yellow:#B26F14; --red:#C0392B;
+  --peach:#C97E1E; --mauve:#A2691F; --teal:#6B4514; --sky:#B26F14;
+  --ink:#3A2408; --paper:#FFF6E6;
+}
+html.skin-routine .workout-arena{
+  --volt:#FFC46B; --blaze:#FF8C42; --plasma:#FFD166;
+  background:
+    radial-gradient(480px 220px at 0% 0%, color-mix(in srgb,#FF8C42 40%,transparent), transparent 60%),
+    radial-gradient(420px 220px at 100% 20%, color-mix(in srgb,#FFD166 18%,transparent), transparent 55%),
+    #241505;
+  border-color:color-mix(in srgb,#FFC46B 50%,transparent);
+  color:#FFF3DC;
+}
+html.skin-routine .arena-title{color:#FFC46B;text-shadow:0 0 12px #FFC46B;}
+html.skin-routine .set-pip{border-color:#FFC46B;color:#FFC46B;}
+html.skin-routine .set-pip.on{background:#FFC46B;color:#241505;box-shadow:0 0 12px #FFC46B;}
+
+/* PHYSICAL — Vital Teal */
+html.skin-physical{
+  --navy:#0A2E23; --blood:#1FBF8F; --wine:#1FBF8F; --umber:#062119;
+  --salmon:#7FE8C8; --cream:#E3FFF4; --ice:#7FE8C8; --lilac:#7FE8C8;
+  --bg:#062119; --bg1:#0A2E23; --bg2:#104031; --bg3:#165844;
+  --line:#1FBF8F; --line2:#157A5C;
+  --text:#E3FFF4; --sub:#BCEBDA; --muted:#7FD4B4;
+  --blue:#4DE6B4; --accent:#4DE6B4; --lavender:#7FE8C8;
+  --green:#C8F7E2; --yellow:#E9F58C; --red:#FF7A6B;
+  --peach:#7FE8C8; --mauve:#8BE0C8; --teal:#BCEBDA; --sky:#7FE8C8;
+  --ink:#E3FFF4; --paper:#0A2E23;
+  --shadow:0 12px 32px rgba(4,36,27,.55);
+  --glow:0 0 0 1px color-mix(in srgb,#4DE6B4 35%,transparent), 0 10px 28px color-mix(in srgb,#1FBF8F 28%,transparent);
+}
+html.skin-physical.light{
+  --bg:#E9FBF3; --bg1:#D9F6E8; --bg2:#BEEFDD; --bg3:#A3E5CC;
+  --line:#0F8A66; --line2:#7FD4B4;
+  --text:#063326; --sub:#0B4A38; --muted:#0F8A66;
+  --blue:#0B6E52; --accent:#0B6E52; --lavender:#0F8A66;
+  --green:#064634; --yellow:#0F8A66; --red:#C0392B;
+  --peach:#0F8A66; --mauve:#0B6E52; --teal:#0B4A38; --sky:#0F8A66;
+  --ink:#063326; --paper:#E9FBF3;
+}
+
+/* MENTAL — Calm Violet */
+html.skin-mental{
+  --navy:#1F1440; --blood:#8B6FF2; --wine:#8B6FF2; --umber:#150D29;
+  --salmon:#C0A8FF; --cream:#F0EAFF; --ice:#C0A8FF; --lilac:#C0A8FF;
+  --bg:#150D29; --bg1:#1F1440; --bg2:#2A1B55; --bg3:#382570;
+  --line:#8B6FF2; --line2:#5D47A8;
+  --text:#F0EAFF; --sub:#D4C7F5; --muted:#A996E0;
+  --blue:#C0A8FF; --accent:#C0A8FF; --lavender:#C0A8FF;
+  --green:#E2D9FF; --yellow:#EBD38B; --red:#FF7A9E;
+  --peach:#C0A8FF; --mauve:#B79BF5; --teal:#D4C7F5; --sky:#C0A8FF;
+  --ink:#F0EAFF; --paper:#1F1440;
+  --shadow:0 12px 32px rgba(21,13,41,.6);
+  --glow:0 0 0 1px color-mix(in srgb,#C0A8FF 35%,transparent), 0 10px 28px color-mix(in srgb,#8B6FF2 30%,transparent);
+}
+html.skin-mental.light{
+  --bg:#F2EDFF; --bg1:#E7DFFF; --bg2:#D6C8FA; --bg3:#C3B0F5;
+  --line:#6C4FD8; --line2:#B79BF5;
+  --text:#241447; --sub:#3A2668; --muted:#6C4FD8;
+  --blue:#5335B0; --accent:#5335B0; --lavender:#6C4FD8;
+  --green:#241447; --yellow:#6C4FD8; --red:#C0392B;
+  --peach:#6C4FD8; --mauve:#5335B0; --teal:#3A2668; --sky:#6C4FD8;
+  --ink:#241447; --paper:#F2EDFF;
+}
+
+/* Entry animations — only fire for the page matching its skin */
+html.skin-routine #page-routine .quest-card,
+html.skin-physical #page-physical .glass-card,
+html.skin-mental #page-mental .glass-card{
   animation:riseIn .55s var(--ease) both;
 }
+
+/* Sidebar palette dots — show each health section's color identity */
+.nav-item.nav-skin-routine::after,
+.nav-item.nav-skin-physical::after,
+.nav-item.nav-skin-mental::after{
+  content:''; width:7px; height:7px; border-radius:50%; margin-left:auto; flex-shrink:0;
+}
+.nav-item.nav-skin-routine::after{ background:#FFC46B; box-shadow:0 0 6px #FFC46B88; }
+.nav-item.nav-skin-physical::after{ background:#4DE6B4; box-shadow:0 0 6px #4DE6B488; }
+.nav-item.nav-skin-mental::after{ background:#C0A8FF; box-shadow:0 0 6px #C0A8FF88; }
+.layout.sidebar-collapsed .nav-item.nav-skin-routine::after,
+.layout.sidebar-collapsed .nav-item.nav-skin-physical::after,
+.layout.sidebar-collapsed .nav-item.nav-skin-mental::after{ display:none; }
 
 </style>
 </head>
@@ -3521,9 +3605,9 @@ html.health-skin #page-mental .glass-card{
 
   <div id="page-routine" class="content">
     <div class="health-hero">
-      <div class="health-hero-kicker">Health OS · four-band</div>
+      <div class="health-hero-kicker">Health OS · sunrise amber</div>
       <div class="health-hero-title">Daily Routine</div>
-      <div class="health-hero-sub">Navy → royal → ice → mint. Check the non-negotiables, then hit the arena.</div>
+      <div class="health-hero-sub">Warm amber palette for daily momentum — check the non-negotiables, then hit the arena.</div>
     </div>
     <div class="section-hdr">DAILY ROUTINE <button class="edit-btn" onclick="editHealthList('routine')">⚙️</button></div>
     <div class="quest-card glass-card" id="routine-list"></div>
@@ -3531,7 +3615,7 @@ html.health-skin #page-mental .glass-card{
     <div class="workout-arena">
       <div class="arena-title">Workout Arena</div>
       <div id="workout-list"></div>
-      <button class="btn-primary" onclick="editHealthList('workouts')" style="margin-top:8px;background:#C8FF00;color:#111;">Edit movements</button>
+      <button class="btn-primary" onclick="editHealthList('workouts')" style="margin-top:8px;background:var(--volt);color:#111;">Edit movements</button>
     </div>
   </div>
   <div id="page-physical" class="content">
@@ -3696,7 +3780,7 @@ html.health-skin #page-mental .glass-card{
   </div>
 </div>
 
-<!-- GLASSMORPHIC MODAL SYSTEM -->
+<!-- GLASSMORPHIC MODAL SYRPHIC MODAL SYSTEM -->
 <div class="modal-backdrop" id="modal-backdrop" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <div class="modal-hdr">
@@ -8717,10 +8801,31 @@ function applyNavFolds() {
 // ─── NAVIGATION ───────────────────────────────────────────
 const pageTitles={today:'Today',roadmap:'Systems Roadmap',semester:'Semester 3',calendar:'Academic Calendar',dsa:'DSA Track',projects:'Projects',targets:'Targets',gaming:'Gaming',notes:'Notes',tasks:'Mission Board',applications:'Applications',budget:'Expense Tracker',trips:'Trip Planner',resume:'Resume HQ',schedule:'Daily Matrix',audit:'Weekly Audit',routine:'Daily Routine',physical:'Physical Metrics',mental:'Mental State'};
 
+/* Per-section health palettes: each page gets its own skin class,
+   accent color, and browser chrome tint. */
+const HEALTH_SKINS = {
+  routine:  { cls:'skin-routine',  accent:{ dark:'#FFC46B', light:'#9A6312' }, chrome:{ dark:'#2D1D0A', light:'#FFEFD2' } },
+  physical: { cls:'skin-physical', accent:{ dark:'#4DE6B4', light:'#0B6E52' }, chrome:{ dark:'#0A2E23', light:'#D9F6E8' } },
+  mental:   { cls:'skin-mental',   accent:{ dark:'#C0A8FF', light:'#5335B0' }, chrome:{ dark:'#1F1440', light:'#E7DFFF' } }
+};
+
 function applyHealthSkin(id) {
-  const isHealthPage = id === 'routine' || id === 'physical' || id === 'mental';
-  document.documentElement.classList.toggle('health-skin', isHealthPage);
+  const root = document.documentElement;
+  root.classList.remove('health-skin', 'skin-routine', 'skin-physical', 'skin-mental');
+  const skin = HEALTH_SKINS[id];
+  if (!skin) { applyAccentColor(); return; } // leaving health pages → restore user accent
+  root.classList.add(skin.cls);
+  const light = root.classList.contains('light');
+  const hex = light ? skin.accent.light : skin.accent.dark;
+  // Inline accent so the section palette wins over the user's global accent choice
+  root.style.setProperty('--accent', hex);
+  root.style.setProperty('--glow', '0 0 0 1px color-mix(in srgb, ' + hex + ' 30%, transparent), 0 10px 28px color-mix(in srgb, ' + hex + ' 18%, transparent)');
+  const chromeHex = light ? skin.chrome.light : skin.chrome.dark;
+  const meta = document.getElementById('theme-color-meta');
+  if (meta) meta.setAttribute('content', chromeHex);
+  document.querySelectorAll('meta[name="theme-color"]').forEach(el => el.setAttribute('content', chromeHex));
 }
+
 
 function gotoPage(id,el){
   playClickSound();
@@ -11060,6 +11165,9 @@ function toggleTheme() {
   if (icon) icon.textContent = isLight ? '☀️' : '🌙';
   if (label) label.textContent = isLight ? 'Light' : 'Dark';
   applyAccentColor();
+  // If a health section is open, re-apply its palette for the new mode
+  const hp = (location.hash || '').replace('#', '');
+  if (HEALTH_SKINS[hp]) applyHealthSkin(hp);
   try { renderXPChart(); } catch(_){}
   try { renderDSAPie(); } catch(_){}
 }
@@ -11771,3 +11879,4 @@ else { init(); initCinematicHud(); }
 </body>
 </html>
 /html>
+
