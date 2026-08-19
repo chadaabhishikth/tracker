@@ -2632,22 +2632,22 @@ html.health-skin.light body::before{opacity:.38;}
   0%,100%{opacity:.48; filter:saturate(1);}
   50%{opacity:.68; filter:saturate(1.18);}
 }
-html.health-skin .health-hero{
+.health-hero{
   background:linear-gradient(120deg,#14286A,#3B6FE0 45%,#8EC4E8 80%,#E8F3EE);
   border-radius:16px; padding:18px 20px; margin-bottom:16px;
   color:#E8F3EE; position:relative; overflow:hidden;
   animation:healthHeroIn .6s var(--ease) both;
 }
-html.health-skin .health-hero::after{
+.health-hero::after{
   content:''; position:absolute; inset:-40% auto auto 40%; width:220px; height:220px;
   background:radial-gradient(circle,#E8F3EE 0%,transparent 70%);
   opacity:.25; animation:healthOrb 6s ease-in-out infinite;
 }
 @keyframes healthHeroIn{from{opacity:0; transform:translateY(12px) scale(.98);}to{opacity:1;transform:none;}}
 @keyframes healthOrb{0%,100%{transform:translate(0,0);}50%{transform:translate(-18px,10px);}}
-html.health-skin .health-hero-kicker{font-family:var(--font-mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:.85;}
-html.health-skin .health-hero-title{font-size:20px;font-weight:700;margin:4px 0 2px;}
-html.health-skin .health-hero-sub{font-size:12px;opacity:.88;}
+.health-hero-kicker{font-family:var(--font-mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:.85;}
+.health-hero-title{font-size:20px;font-weight:700;margin:4px 0 2px;}
+.health-hero-sub{font-size:12px;opacity:.88;}
 html.health-skin .workout-arena{
   --volt:#E8F3EE; --blaze:#3B6FE0; --plasma:#8EC4E8;
   background:
@@ -8716,6 +8716,11 @@ function applyNavFolds() {
 
 // ─── NAVIGATION ───────────────────────────────────────────
 const pageTitles={today:'Today',roadmap:'Systems Roadmap',semester:'Semester 3',calendar:'Academic Calendar',dsa:'DSA Track',projects:'Projects',targets:'Targets',gaming:'Gaming',notes:'Notes',tasks:'Mission Board',applications:'Applications',budget:'Expense Tracker',trips:'Trip Planner',resume:'Resume HQ',schedule:'Daily Matrix',audit:'Weekly Audit',routine:'Daily Routine',physical:'Physical Metrics',mental:'Mental State'};
+
+function applyHealthSkin(id) {
+  const isHealthPage = id === 'routine' || id === 'physical' || id === 'mental';
+  document.documentElement.classList.toggle('health-skin', isHealthPage);
+}
 
 function gotoPage(id,el){
   playClickSound();
