@@ -517,6 +517,20 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
 @media(max-width:1100px){
   .targets-brief-grid{grid-template-columns:1fr;}
 }
+.funnel-widget{padding:16px 18px;margin-bottom:16px;}
+.funnel-widget-hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+.funnel-kicker{font-family:var(--font-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--yellow);margin-bottom:4px;}
+.funnel-title{font-size:15px;font-weight:600;letter-spacing:-0.02em;}
+.funnel-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+.funnel-chip-card{background:var(--bg2);border:1px solid var(--line2);border-radius:8px;padding:10px 12px;cursor:pointer;text-align:left;transition:border-color .15s,transform .15s;}
+.funnel-chip-card:hover{border-color:var(--mauve);transform:translateY(-1px);}
+.funnel-chip-name{font-size:12px;font-weight:600;color:var(--text);}
+.funnel-chip-ctc{font-family:var(--font-mono);font-size:11px;color:var(--mauve);margin-top:3px;}
+.funnel-chip-req{font-size:10px;color:var(--muted);margin-top:5px;line-height:1.4;}
+.funnel-bar{font-size:12px;color:var(--sub);line-height:1.6;border-top:1px solid var(--line);padding-top:10px;}
+.funnel-bar strong{color:var(--text);}
+.tc-actions{display:flex;gap:4px;align-items:center;}
+@media(max-width:900px){.funnel-strip{grid-template-columns:1fr 1fr;}}
 /* ─── GAMING PAGE ─────────────────────────────────────── */
 .gaming-hero{background:color-mix(in srgb, var(--yellow) 4%, transparent);border:1px solid color-mix(in srgb, var(--yellow) 15%, transparent);border-radius:var(--r);padding:24px;margin-bottom:20px;display:flex;gap:20px;align-items:flex-start;}
 .gaming-emoji{font-size:40px;flex-shrink:0;}
@@ -2853,7 +2867,7 @@ html.skin-mental #page-mental .glass-card{
     </div>
     <div class="nav-section nav-fold" data-fold="intel" onclick="toggleNavFold('intel',event)">INTEL <span class="fold-chev">▾</span></div>
     <div class="nav-group" data-group="intel">
-    <div class="nav-item" onclick="gotoPage('targets',this)"><span class="nav-icon">🎯</span>Targets</div>
+    <div class="nav-item" onclick="gotoPage('targets',this)"><span class="nav-icon">🎯</span>Quant Funnel</div>
     <div class="nav-item" onclick="gotoPage('gaming',this)"><span class="nav-icon">🎮</span>Gaming</div>
     <div class="nav-item" onclick="gotoPage('notes',this)"><span class="nav-icon">📝</span>Notes</div>
     </div>
@@ -2946,6 +2960,7 @@ html.skin-mental #page-mental .glass-card{
 
   <!-- TODAY -->
   <div id="page-today" class="content active">
+    <div class="funnel-widget glass-card" id="funnel-widget"></div>
     <!-- XP History Chart -->
     <div class="xp-chart-card glass-card">
       <div class="xp-chart-header">
@@ -3808,7 +3823,7 @@ html.skin-mental #page-mental .glass-card{
       <div class="mobile-drawer-item" onclick="gotoMobilePage('semester')"><span class="mobile-drawer-icon">📚</span>Sem 3</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('dsa')"><span class="mobile-drawer-icon">🧩</span>DSA Track</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('projects')"><span class="mobile-drawer-icon">🛠</span>Projects</div>
-      <div class="mobile-drawer-item" onclick="gotoMobilePage('targets')"><span class="mobile-drawer-icon">🎯</span>Targets</div>
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('targets')"><span class="mobile-drawer-icon">🎯</span>Quant Funnel</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('gaming')"><span class="mobile-drawer-icon">🎮</span>Gaming</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('notes')"><span class="mobile-drawer-icon">📝</span>Notes</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('applications')"><span class="mobile-drawer-icon">💼</span>Applications</div>
@@ -3870,7 +3885,7 @@ html.skin-mental #page-mental .glass-card{
 <div class="ticker-bar" id="ticker-bar">
   <div class="ticker-wrapper">
     <div style="display:flex;align-items:center;">
-      <span class="ticker-title">HUD News & Quotes</span>
+      <span class="ticker-title">QUANT FUNNEL</span>
       <span class="ticker-content" id="ticker-text">Loading latest hacker news...</span>
     </div>
     <span style="font-size:8px;color:var(--muted)">v2.5 // SECURE</span>
@@ -3957,9 +3972,10 @@ const DEFAULT_SCHEDULE = {
 };
 const DEFAULT_QUESTS = [
   {id:'q-run',text:'Execute your 2.5 km run at 05:30 AM',xp:15},
+  {id:'q-cf',text:'Solve 1 Codeforces problem (not LeetCode)',xp:20},
   {id:'q-lc',text:'Log at least 1 Leetcode problem',xp:20},
   {id:'q-read',text:'Read textbook / watch lecture resource',xp:15},
-  {id:'q-build',text:'Write or run code today',xp:15},
+  {id:'q-build',text:'Write or run C++ / systems code today',xp:15},
   {id:'q-notes',text:'Write notes or recall summary',xp:10},
   {id:'q-review',text:'Review one concept from yesterday',xp:10},
 ];
@@ -4024,24 +4040,27 @@ const DEFAULT_PHASES = [
   },
   {
     n: 4,
-    title: 'Placement Strategy & FinTech Integration',
+    title: 'Quant Funnel Execution',
     period: 'Months 19+ · Sem 6',
     status: 'Elite layer',
     learn: [
-      'Interview optimization: C++ question banks, OS memory parsing, networking loops',
-      'Resume tailoring emphasizing Aerosynapse R&D, CMS, and custom matching engines',
-      'Placement execution: direct HFT outreach and on-campus placement tests'
+      'Graviton / QuadEye / Tower India OA loops: C++ + Codeforces + probability',
+      'WorldQuant BRAIN: ship alphas weekly — most open quant door from Amrita',
+      'Resume lead: matching engine first, AeroSynapse second',
+      'Keep the floor live: Flipkart/Swiggy infra + fintech if the funnel does not convert'
     ],
     res: [
-      'HFT developer prep guides, systems architecture mock interviews'
+      'Heard on the Street + Fifty Challenging Problems in Probability',
+      'Codeforces gym + Graviton/QuadEye mock OAs',
+      'WorldQuant BRAIN docs'
     ],
-    stack: ['C++', 'Python', 'IPC', 'WebSockets', 'Vol-Prediction'],
-    ms: 'Live End-to-End Algorithmic Trading Mock Pipeline (WebSocket Data Engine, Analytical Volatility Predictor, Shared-Memory IPC matching).'
+    stack: ['C++', 'Codeforces', 'Probability', 'Microstructure', 'Python'],
+    ms: 'Public low-latency C++ matching engine + 1800 CF + BRAIN alphas + India-entry applications filed.'
   }
 ];
 const DEFAULT_SUBJECTS = [
-  {name:'Data Structures & Algorithms 2',code:'22AIE203 — graphs, tries, hash functions, Merkle trees',pri:'Critical',pclass:'pri-c',res:'CLRS + MIT 6.006 on YouTube',res2:'Sync Leetcode problems to class topics weekly'},
-  {name:'Operating Systems',code:'22AIE202 — processes, scheduling, memory, synchronization',pri:'Critical',pclass:'pri-c',res:'Silberschatz (Dinosaur Book) + CodeVault YouTube',res2:'Trace scheduling algorithms on paper — JPMC/Goldman test this'},
+  {name:'Data Structures & Algorithms 2',code:'22AIE203 — graphs, tries, hash functions, Merkle trees',pri:'Critical',pclass:'pri-c',res:'CLRS + MIT 6.006 on YouTube',res2:'LeetCode for DE Shaw + floor. Codeforces is the HFT signal — rate over volume.'},
+  {name:'Operating Systems',code:'22AIE202 — processes, scheduling, memory, synchronization',pri:'Critical',pclass:'pri-c',res:'Silberschatz (Dinosaur Book) + CodeVault YouTube',res2:'Trace scheduling + memory on paper — Graviton / Tower / HRT test this'},
   {name:'Fundamentals of AI',code:'22AIE201 — search, adversarial games, CSPs, logic, planning',pri:'High',pclass:'pri-h',res:'AIMA — Russell & Norvig + CS50 AI',res2:'You\'re ahead here — go deeper than the syllabus'},
   {name:'Mathematics for Computing 3',code:'22MAT220 — convex optimization, KKT conditions, MDPs, Markov chains',pri:'High',pclass:'pri-h',res:'Boyd Convex Optimization (free PDF) + 3Blue1Brown',res2:'Feeds Phase 2 ML directly — KKT underpins SVMs'},
   {name:'Computer Networks',code:'22AIE204 — OSI stack, TCP/IP, routing, SDN, IoT',pri:'Medium',pclass:'pri-m',res:'Kurose & Ross (Top-Down Approach) + Hussein Nasser',res2:'Core CS fundamental tested at Goldman systems teams'},
@@ -4050,7 +4069,7 @@ const DEFAULT_SUBJECTS = [
   {name:'Strategic Lessons from Mahabharata',code:'22ADM201',pri:'Routine',pclass:'pri-l',res:'Class notes only',res2:'Attend and clear the exam'},
   {name:'CS50 AI with Python',code:'Self-Study Foundation — search, optimization, logic, machine learning',pri:'High',pclass:'pri-h',res:'CS50 AI — Harvard (online course)',res2:'Build classical AI search & logic paradigms to ground your mathematical foundation'},
 ];
-const DEFAULT_MISSIONS = { daily: [{id:"m1", text:"Complete 2 LeetCode problems", done:false, xp:25}, {id:"m2", text:"Read 1 chapter of OS", done:false, xp:25}], longTerm: [{id:"l1", text:"Build a Fullstack App", done:false, deadline:"Aug 30"}, {id:"l2", text:"Get an Internship", done:false, deadline:"Dec 2026"}] };
+const DEFAULT_MISSIONS = { daily: [{id:"m1", text:"Solve 1 Codeforces problem", done:false, xp:25}, {id:"m2", text:"Write C++ systems code (not DSA-in-C++)", done:false, xp:25}, {id:"m3", text:"Read 1 chapter of OS / probability", done:false, xp:20}], longTerm: [{id:"l1", text:"Ship a C++ order-matching engine on GitHub", done:false, deadline:"2026-12-31", xp:40}, {id:"l2", text:"Hit Codeforces Specialist (1600+)", done:false, deadline:"2027-06-01", xp:40}, {id:"l3", text:"Submit 10 WorldQuant BRAIN alphas", done:false, deadline:"2027-03-01", xp:30}, {id:"l4", text:"Internship at Graviton / Tower / QuadEye / WorldQuant", done:false, deadline:"2027-06-01", xp:50}] };
 const DEFAULT_PROJECTS = [
   {
     id: 'p-1',
@@ -4280,6 +4299,14 @@ const DEFAULT_TARGETS_HAVE = [
   { title: 'The actual quant bar', items: ['C++: deep — memory model, cache, lock-free. Not DSA-in-C++', 'Codeforces rating matters more here than LeetCode grinding', 'Probability / stats / combinatorics under a clock', 'Market microstructure: order book, latency, maker-taker'] },
   { title: 'Close by Sem 6', items: ['Low-latency C++ order matching engine on GitHub', 'CF Specialist 1600+ now, 1800+ by Sem 6', 'Custom HTTP/1.1 or UDP market-data handler in C++', 'Heard on the Street + Fifty Challenging Problems in Probability'] }
 ];
+const DEFAULT_APPLICATIONS = [
+  { id:'app-graviton', company:'Graviton Research Capital', role:'Quant Developer', tier:'India Entry', column:'drafting', date:'', notes:'₹80 LPA – ₹1.2 Cr · CF 1800+ · systems C++ · Gurgaon. Weight this.' },
+  { id:'app-wq', company:'WorldQuant', role:'Research Consultant / QR', tier:'India Entry', column:'drafting', date:'', notes:'₹20–50 LPA · start BRAIN this semester · stats + Python. Most open door.' },
+  { id:'app-tower-in', company:'Tower Research — India', role:'Core / Quant Dev', tier:'India Entry', column:'drafting', date:'', notes:'₹50–90 LPA typical · Gurgaon/Mumbai · matching engine on GitHub' },
+  { id:'app-quadeye', company:'QuadEye', role:'Quant Strategist / Dev', tier:'India Entry', column:'drafting', date:'', notes:'₹75 LPA – ₹1.2 Cr · CF 1800+ · Gurgaon HFT' },
+  { id:'app-deshaw', company:'D. E. Shaw', role:'SWE / Systems', tier:'Target', column:'drafting', date:'', notes:'₹35–80 LPA Hyderabad · hardest realistic global brand from India' },
+  { id:'app-millennium', company:'Millennium', role:'Quant Dev / Platform', tier:'India Entry', column:'drafting', date:'', notes:'₹40–80 LPA · India presence growing · 2027–28 watch' }
+];
 const DEFAULT_GAMING = {
   verdict: "4 hours/week is 2.4% of your waking hours. That's not a threat to your goals — it's basic mental maintenance. The people who land top placements aren't the ones who studied every waking hour. They're the ones who studied consistently for 2 years without burning out. Sustainability beats intensity over an 18-month horizon every time.",
   rules: [
@@ -4348,6 +4375,39 @@ if (!S.targetsVersion || S.targetsVersion < 2) {
   S.targets = JSON.parse(JSON.stringify(DEFAULT_TARGETS));
   S.targetsHave = JSON.parse(JSON.stringify(DEFAULT_TARGETS_HAVE));
   S.targetsVersion = 2;
+}
+if (S.questsList && !S.questsList.some(q => q.id === 'q-cf')) {
+  const i = S.questsList.findIndex(q => q.id === 'q-lc');
+  S.questsList.splice(i >= 0 ? i : 1, 0, {id:'q-cf',text:'Solve 1 Codeforces problem (not LeetCode)',xp:20});
+}
+if (S.missions && S.missions.longTerm && S.missions.longTerm.some(m => m.text === 'Build a Fullstack App')) {
+  S.missions.longTerm = JSON.parse(JSON.stringify(DEFAULT_MISSIONS.longTerm));
+}
+if (S.missions && S.missions.daily && S.missions.daily.some(m => m.text === 'Complete 2 LeetCode problems')) {
+  S.missions.daily = JSON.parse(JSON.stringify(DEFAULT_MISSIONS.daily));
+}
+if (S.phases && S.phases[3] && (S.phases[3].title || '').includes('FinTech')) {
+  S.phases[3] = JSON.parse(JSON.stringify(DEFAULT_PHASES[3]));
+}
+if (S.subjects) {
+  S.subjects.forEach(s => {
+    if (!s.res2) return;
+    if (s.name.indexOf('Operating Systems') === 0 && s.res2.indexOf('Goldman') >= 0) {
+      s.res2 = 'Trace scheduling + memory on paper — Graviton / Tower / HRT test this';
+    }
+    if (s.name.indexOf('Computer Networks') === 0 && s.res2.indexOf('Goldman') >= 0) {
+      s.res2 = 'TCP/UDP, epoll, kernel-bypass awareness — HFT systems interviews';
+    }
+    if (s.name.indexOf('Data Structures') === 0 && s.res2.indexOf('Leetcode') >= 0) {
+      s.res2 = 'LeetCode for DE Shaw + floor. Codeforces is the HFT signal — rate over volume.';
+    }
+    if (s.name.indexOf('Mathematics') === 0 && s.res2.indexOf('KKT') >= 0) {
+      s.res2 = 'Probability + EV + combinatorics — Heard on the Street. This is the quant interview language.';
+    }
+  });
+}
+if ((!S.applications || S.applications.length === 0) && typeof DEFAULT_APPLICATIONS !== 'undefined') {
+  S.applications = JSON.parse(JSON.stringify(DEFAULT_APPLICATIONS));
 }
 if(!S.phases || !S.phases[0] || S.phases[0].title.includes('Classical AI') || !S.phases[0].learn.some(l => l.includes('CS50'))) {
   S.phases = JSON.parse(JSON.stringify(DEFAULT_PHASES));
@@ -5726,6 +5786,10 @@ async function syncHackerNews() {
     "“Operating Systems: The core layer that connects logic to physical silicon.”"
   ];
   
+  if (Math.random() < 0.65) {
+    tickerText.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+    return;
+  }
   try {
     // Attempt to fetch top stories from public HackerNews API
     const res = await fetch('https://hacker-news.firebaseio.com/v0/topstories.json');
@@ -6373,6 +6437,7 @@ function init(){
   renderSidebar();
   renderHealthPages();
   renderToday();
+  renderFunnelWidget();
   renderRoadmap(1);
   renderSemester();
   renderDSALog();
@@ -6818,6 +6883,7 @@ function deleteSchedSlot(idx) {
 
 // ─── TODAY ────────────────────────────────────────────────
 function renderToday(){
+  try { renderFunnelWidget(); } catch(_){}
   const day=DAYS[new Date().getDay()];
   const sched=S.schedule[day]||[];
   const now=new Date();
@@ -7774,37 +7840,192 @@ function deleteSubject(idx) {
 }
 
 // ─── TARGETS ─────────────────────────────────────────────
+const TARGET_TIER_META = [
+  { type: 'reach', label: 'Tier 1 — Dream / Reach', blurb: 'Global HFT / quant. India campus almost never. Skill ceiling, not a 2028 plan.', symbol: '⬆' },
+  { type: 'tgt', label: 'Tier 2 — Strong Targets', blurb: 'Still elite. D.E. Shaw + Tower India are the swing names with real doors.', symbol: '◎' },
+  { type: 'india', label: 'Tier 3 — India-accessible entry', blurb: 'Weight these. This is the real 2028 funnel from an Indian engineering college.', symbol: '◆' },
+  { type: 'flr', label: 'Floor / Fallback', blurb: 'Stay employable if the quant funnel does not convert.', symbol: '▽' }
+];
+const TARGET_TYPE_DEFAULT_TIER = { reach: 'Dream / Reach', tgt: 'Strong Target', india: 'India Entry', flr: 'Floor / Fallback' };
+const APP_TIER_FROM_TYPE = { reach: 'Reach', tgt: 'Target', india: 'India Entry', flr: 'Floor' };
+let targetsFilter = 'all';
+
+function targetTypeClass(type) {
+  if (type === 'reach') return 'reach';
+  if (type === 'tgt') return 'tgt';
+  if (type === 'india') return 'india';
+  return 'flr';
+}
+
+function setTargetsFilter(f) {
+  targetsFilter = f;
+  renderTargets();
+}
+
+function openQuantFunnel(filter) {
+  if (filter) targetsFilter = filter;
+  gotoPage('targets');
+}
+
+function addTargetToApplications(idx) {
+  const t = (S.targets || [])[idx];
+  if (!t) return;
+  if (!S.applications) S.applications = [];
+  const exists = S.applications.some(a => (a.company || '').toLowerCase() === (t.name || '').toLowerCase());
+  if (exists) { showToast(t.name + ' is already on the board'); gotoPage('applications'); return; }
+  const req = Array.isArray(t.required) ? t.required.join(' · ') : '';
+  S.applications.push({
+    id: 'app-' + Date.now(),
+    company: t.name,
+    role: t.roles || 'Quant Dev',
+    tier: APP_TIER_FROM_TYPE[targetTypeClass(t.type)] || 'Target',
+    column: 'drafting',
+    date: new Date().toLocaleDateString('en-IN'),
+    notes: [t.ctc, req, t.note].filter(Boolean).join(' — ')
+  });
+  save();
+  renderKanban();
+  showToast(t.name + ' added to Applications');
+}
+
+function renderFunnelWidget() {
+  const el = document.getElementById('funnel-widget');
+  if (!el) return;
+  const targets = S.targets || DEFAULT_TARGETS || [];
+  const pick = ['Graviton', 'WorldQuant', 'Tower Research — India', 'QuadEye'];
+  const weighted = pick.map(name => targets.find(t => t.name === name)).filter(Boolean);
+  const cards = weighted.map(t => {
+    const req = (t.required && t.required[0]) ? t.required[0] : '';
+    return `<button class="funnel-chip-card" type="button" onclick="openQuantFunnel('india')">
+      <div class="funnel-chip-name">${escapeHtml(t.name)}</div>
+      <div class="funnel-chip-ctc">${escapeHtml(t.ctc || '')}</div>
+      <div class="funnel-chip-req">${escapeHtml(req)}</div>
+    </button>`;
+  }).join('');
+  el.innerHTML = `
+    <div class="funnel-widget-hdr">
+      <div>
+        <div class="funnel-kicker">July 2028 · Quant-first</div>
+        <div class="funnel-title">Weight these. Jane Street is the ceiling, not the plan.</div>
+      </div>
+      <button class="btn-secondary" type="button" onclick="openQuantFunnel('all')" style="font-size:11px;padding:6px 10px;">Open full funnel →</button>
+    </div>
+    <div class="funnel-strip">${cards}</div>
+    <div class="funnel-bar"><strong>The bar:</strong> systems C++ (not DSA-in-C++) · Codeforces &gt; LeetCode · probability under a clock · market microstructure. Floor stays live at Flipkart/Swiggy-infra and fintech if this does not convert.</div>
+  `;
+}
+
 function renderTargets() {
   const grid = document.getElementById('targets-grid-container');
   const haveContainer = document.getElementById('targets-have-container');
+  const brief = document.getElementById('targets-brief');
+  const filters = document.getElementById('targets-filters');
   if(!grid || !haveContainer) return;
-  
+
   const targets = S.targets || [];
-  grid.innerHTML = targets.map((t, idx) => {
-    const typeClass = t.type === 'reach' ? 'reach' : t.type === 'tgt' ? 'tgt' : 'flr';
-    const symbol = t.type === 'reach' ? '⬆' : t.type === 'tgt' ? '◎' : '▽';
-    const tierText = t.tier || (t.type === 'reach' ? 'Reach' : t.type === 'tgt' ? 'Target' : 'Floor');
-    
-    return `
-      <div class="target-card ${typeClass}">
-        <div class="tc-tier">
-          ${symbol} ${tierText}
-          <button class="edit-btn" onclick="editTarget(${idx})">✏️</button>
+  const counts = { all: targets.length, reach: 0, tgt: 0, india: 0, flr: 0 };
+  targets.forEach(t => {
+    const k = targetTypeClass(t.type);
+    counts[k] = (counts[k] || 0) + 1;
+  });
+
+  if (brief) {
+    brief.innerHTML = `
+      <div class="targets-brief glass-card">
+        <div class="targets-brief-grid">
+          <div>
+            <div class="tb-kicker">The actual bar</div>
+            <div class="tb-body">
+              <strong>C++</strong> that is deep — memory model, cache, lock-free — not DSA-in-C++.
+              <strong>Probability / stats</strong> under a clock.
+              <strong>Market microstructure</strong> basics (order book, latency, maker-taker).
+              <strong>Codeforces rating matters more here than LeetCode grinding.</strong>
+            </div>
+          </div>
+          <div>
+            <div class="tb-kicker">India reality</div>
+            <div class="tb-body">
+              Tier 1 barely hire from India-campus channels. Jane Street and Optiver have India offices — headcount is tiny and almost entirely reserved for IOI/ICPC-caliber CPs or strong referrals.
+              <strong>Graviton, WorldQuant, Tower India, QuadEye</strong> are the names to weight.
+            </div>
+          </div>
+          <div>
+            <div class="tb-kicker">How to read LPA</div>
+            <div class="tb-body">
+              Figures are <strong>2025–26 market signals</strong> for new-grad total comp (base + year-1 bonus), not offers.
+              Global names shown in Cr at ~₹83/USD. Ranges swing with desk, year, and competing offers.
+            </div>
+          </div>
         </div>
-        <div class="tc-name">${t.name}</div>
-        <div class="tc-desc">${t.desc}</div>
-        <div class="tc-ctc">${t.ctc}</div>
       </div>
     `;
-  }).join('');
-  
+  }
+
+  if (filters) {
+    const pills = [
+      { id: 'all', label: 'All ' + counts.all, cls: '' },
+      { id: 'reach', label: 'Dream ' + counts.reach, cls: 'reach' },
+      { id: 'tgt', label: 'Strong ' + counts.tgt, cls: 'tgt' },
+      { id: 'india', label: 'India ' + counts.india, cls: 'india' },
+      { id: 'flr', label: 'Floor ' + counts.flr, cls: 'flr' }
+    ];
+    filters.innerHTML = pills.map(p =>
+      `<button class="tf-btn ${p.cls} ${targetsFilter === p.id ? 'active' : ''}" onclick="setTargetsFilter('${p.id}')">${p.label}</button>`
+    ).join('');
+  }
+
+  const visibleTiers = TARGET_TIER_META.filter(meta => targetsFilter === 'all' || targetsFilter === meta.type);
+  grid.innerHTML = visibleTiers.map(meta => {
+    const rows = targets
+      .map((t, idx) => ({ t, idx }))
+      .filter(({ t }) => targetTypeClass(t.type) === meta.type);
+    if (!rows.length) return '';
+    const cards = rows.map(({ t, idx }) => {
+      const typeClass = targetTypeClass(t.type);
+      const tierText = t.tier || TARGET_TYPE_DEFAULT_TIER[typeClass] || 'Target';
+      const required = Array.isArray(t.required) ? t.required : [];
+      const chips = required.length
+        ? `<div class="tc-req-label">Required</div><div class="tc-chips">${required.map(r => `<span class="tc-chip">${escapeHtml(r)}</span>`).join('')}</div>`
+        : '';
+      return `
+        <div class="target-card ${typeClass}">
+          <div class="tc-tier">
+            <span>${meta.symbol} ${escapeHtml(tierText)}</span>
+            <div class="tc-actions">
+              <button class="edit-btn" title="Add to Applications" onclick="addTargetToApplications(${idx})">＋</button>
+              <button class="edit-btn" onclick="editTarget(${idx})">✏️</button>
+            </div>
+          </div>
+          <div class="tc-name">${escapeHtml(t.name || '')}</div>
+          ${t.office ? `<div class="tc-office">${escapeHtml(t.office)}</div>` : ''}
+          ${t.roles ? `<div class="tc-roles">${escapeHtml(t.roles)}</div>` : ''}
+          ${t.desc ? `<div class="tc-desc">${escapeHtml(t.desc)}</div>` : ''}
+          <div class="tc-ctc">${escapeHtml(t.ctc || '')}</div>
+          ${t.ctcDetail ? `<div class="tc-ctc-sub">${escapeHtml(t.ctcDetail)}</div>` : ''}
+          ${chips}
+          ${t.note ? `<div class="tc-note">${escapeHtml(t.note)}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+    return `
+      <div class="targets-tier-block">
+        <div class="targets-tier-hdr">
+          <span class="targets-tier-title ${meta.type}">${meta.symbol} ${meta.label}</span>
+          <span class="targets-tier-blurb">${meta.blurb}</span>
+          <span class="targets-tier-count">${rows.length} firms</span>
+        </div>
+        <div class="targets-firm-grid">${cards}</div>
+      </div>
+    `;
+  }).join('') || `<div class="empty-state">No firms in this tier yet. Add one.</div>`;
+
   const haveLists = S.targetsHave || [];
-  haveContainer.innerHTML = haveLists.map((l, idx) => {
+  haveContainer.innerHTML = haveLists.map((l) => {
     return `
       <div class="info-card">
-        <div class="ic-title">${l.title}</div>
+        <div class="ic-title">${escapeHtml(l.title || '')}</div>
         <ul class="ic-list">
-          ${l.items.map(item => `<li>${item}</li>`).join('')}
+          ${(l.items || []).map(item => `<li>${escapeHtml(item)}</li>`).join('')}
         </ul>
       </div>
     `;
@@ -7812,12 +8033,18 @@ function renderTargets() {
 }
 
 function addNewTarget() {
+  if (!S.targets) S.targets = [];
   S.targets.push({
-    tier: 'Target',
+    tier: 'India Entry',
     name: 'Company Name',
-    desc: 'Target requirements / details...',
-    ctc: '₹10–15 LPA',
-    type: 'tgt'
+    office: '',
+    roles: '',
+    desc: 'Why this firm is on the list.',
+    ctc: '₹40–80 LPA',
+    ctcDetail: '',
+    required: ['C++ systems depth', 'Codeforces rating', 'Probability'],
+    note: '',
+    type: 'india'
   });
   save();
   renderTargets();
@@ -7827,53 +8054,81 @@ function addNewTarget() {
 function editTarget(idx) {
   const t = S.targets[idx];
   if (!t) return;
-  
+  const requiredText = Array.isArray(t.required) ? t.required.join('\n') : (t.required || '');
+
   const html = `
     <div class="modal-form-group">
       <label class="modal-form-label">Company / Career Target Name</label>
-      <input type="text" class="modal-form-input" id="edit-tgt-name" value="${t.name}">
+      <input type="text" class="modal-form-input" id="edit-tgt-name" value="${escapeHtml(t.name || '')}">
     </div>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
       <div>
         <label class="modal-form-label">Tier Type</label>
         <select class="modal-form-select" id="edit-tgt-type">
-          <option value="reach" ${t.type === 'reach' ? 'selected' : ''}>Reach / Yellow</option>
-          <option value="tgt" ${t.type === 'tgt' ? 'selected' : ''}>Target / Green</option>
-          <option value="flr" ${t.type === 'flr' ? 'selected' : ''}>Floor / Blue</option>
+          <option value="reach" ${t.type === 'reach' ? 'selected' : ''}>Dream / Reach</option>
+          <option value="tgt" ${t.type === 'tgt' ? 'selected' : ''}>Strong Target</option>
+          <option value="india" ${t.type === 'india' ? 'selected' : ''}>India Entry</option>
+          <option value="flr" ${t.type === 'flr' ? 'selected' : ''}>Floor / Fallback</option>
         </select>
       </div>
       <div>
         <label class="modal-form-label">Tier Label Text</label>
-        <input type="text" class="modal-form-input" id="edit-tgt-tier" value="${t.tier || ''}" placeholder="e.g. Reach">
+        <input type="text" class="modal-form-input" id="edit-tgt-tier" value="${escapeHtml(t.tier || '')}" placeholder="e.g. Dream / Reach">
       </div>
     </div>
     <div class="modal-form-group">
-      <label class="modal-form-label">CTC range (e.g. ₹20–35 LPA)</label>
-      <input type="text" class="modal-form-input" id="edit-tgt-ctc" value="${t.ctc}">
+      <label class="modal-form-label">Office / Locations</label>
+      <input type="text" class="modal-form-input" id="edit-tgt-office" value="${escapeHtml(t.office || '')}" placeholder="e.g. Gurgaon · Mumbai">
     </div>
     <div class="modal-form-group">
-      <label class="modal-form-label">Description / Qualifications needed</label>
-      <textarea class="modal-form-textarea" id="edit-tgt-desc">${t.desc}</textarea>
+      <label class="modal-form-label">Roles they hire</label>
+      <input type="text" class="modal-form-input" id="edit-tgt-roles" value="${escapeHtml(t.roles || '')}" placeholder="e.g. Quant Dev · QR · SWE">
+    </div>
+    <div class="modal-form-group">
+      <label class="modal-form-label">Headline CTC / LPA</label>
+      <input type="text" class="modal-form-input" id="edit-tgt-ctc" value="${escapeHtml(t.ctc || '')}" placeholder="e.g. ₹80 LPA – ₹1.2 Cr">
+    </div>
+    <div class="modal-form-group">
+      <label class="modal-form-label">LPA detail (base vs bonus, India vs global)</label>
+      <textarea class="modal-form-textarea" id="edit-tgt-ctc-detail" style="min-height:64px;">${escapeHtml(t.ctcDetail || '')}</textarea>
+    </div>
+    <div class="modal-form-group">
+      <label class="modal-form-label">Why this firm</label>
+      <textarea class="modal-form-textarea" id="edit-tgt-desc">${escapeHtml(t.desc || '')}</textarea>
+    </div>
+    <div class="modal-form-group">
+      <label class="modal-form-label">Required (one per line — shown as chips)</label>
+      <textarea class="modal-form-textarea" id="edit-tgt-required" style="min-height:90px;">${escapeHtml(requiredText)}</textarea>
+    </div>
+    <div class="modal-form-group">
+      <label class="modal-form-label">Reality check / note</label>
+      <textarea class="modal-form-textarea" id="edit-tgt-note" style="min-height:64px;">${escapeHtml(t.note || '')}</textarea>
     </div>
     <div style="margin-top: 20px; border-top: 1px solid var(--line); padding-top: 10px; text-align: right;">
       <button class="btn-secondary" onclick="deleteTarget(${idx})" style="background: var(--red); color: var(--bg); border: none;">Delete Target</button>
     </div>
   `;
-  
+
   openModal('Edit Placement Target', html, () => {
     t.name = document.getElementById('edit-tgt-name').value.trim();
     t.type = document.getElementById('edit-tgt-type').value;
-    t.tier = document.getElementById('edit-tgt-tier').value.trim() || (t.type === 'reach' ? 'Reach' : t.type === 'tgt' ? 'Target' : 'Floor');
+    t.tier = document.getElementById('edit-tgt-tier').value.trim() || TARGET_TYPE_DEFAULT_TIER[t.type] || 'Target';
+    t.office = document.getElementById('edit-tgt-office').value.trim();
+    t.roles = document.getElementById('edit-tgt-roles').value.trim();
     t.ctc = document.getElementById('edit-tgt-ctc').value.trim();
+    t.ctcDetail = document.getElementById('edit-tgt-ctc-detail').value.trim();
     t.desc = document.getElementById('edit-tgt-desc').value.trim();
-    
+    t.note = document.getElementById('edit-tgt-note').value.trim();
+    t.required = document.getElementById('edit-tgt-required').value.split('\n').map(x => x.trim()).filter(Boolean);
+
     if(!t.name) {
       showToast('Name is required!');
       return false;
     }
-    
+
     save();
     renderTargets();
+    renderFunnelWidget();
     showToast('Target details updated!');
     return true;
   });
@@ -9037,7 +9292,7 @@ function applyNavFolds() {
 }
 
 // ─── NAVIGATION ───────────────────────────────────────────
-const pageTitles={today:'Today',roadmap:'Systems Roadmap',semester:'Semester 3',calendar:'Academic Calendar',dsa:'DSA Track',projects:'Projects',targets:'Targets',gaming:'Gaming',notes:'Notes',tasks:'Mission Board',applications:'Applications',budget:'Expense Tracker',trips:'Trip Planner',resume:'Resume HQ',schedule:'Daily Matrix',audit:'Weekly Audit',routine:'Daily Routine',physical:'Physical Metrics',mental:'Mental State'};
+const pageTitles={today:'Today',roadmap:'Systems Roadmap',semester:'Semester 3',calendar:'Academic Calendar',dsa:'DSA Track',projects:'Projects',targets:'Quant Funnel',gaming:'Gaming',notes:'Notes',tasks:'Mission Board',applications:'Applications',budget:'Expense Tracker',trips:'Trip Planner',resume:'Resume HQ',schedule:'Daily Matrix',audit:'Weekly Audit',routine:'Daily Routine',physical:'Physical Metrics',mental:'Mental State'};
 
 /* Per-section health palettes: each page gets its own skin class,
    accent color, and browser chrome tint. */
@@ -10067,7 +10322,7 @@ const KANBAN_COLS = [
   { id:'interview', label:'Interview',         color:'var(--mauve)' },
   { id:'offer',     label:'Offer / Rejected',  color:'var(--green)' },
 ];
-const APP_TIER_COLORS = { Reach:'var(--yellow)', Target:'var(--green)', Floor:'var(--blue)', Other:'var(--sub)' };
+const APP_TIER_COLORS = { Reach:'var(--yellow)', Target:'var(--green)', 'India Entry':'var(--mauve)', Floor:'var(--blue)', Other:'var(--sub)' };
 
 function updateAppBadge() {
   const badge = document.getElementById('app-badge');
@@ -10153,7 +10408,7 @@ function editApplication(id) {
   const html = `
     <div class="modal-form-group">
       <label class="modal-form-label">Company Name</label>
-      <input type="text" class="modal-form-input" id="edit-app-company" value="${app.company}" placeholder="e.g. Goldman Sachs">
+      <input type="text" class="modal-form-input" id="edit-app-company" value="${app.company}" placeholder="e.g. Graviton Research Capital">
     </div>
     <div class="modal-form-group">
       <label class="modal-form-label">Role / Position</label>
@@ -11935,7 +12190,8 @@ const paletteCommands = [
   { label: "Go to DSA Track Page", type: "nav", action: () => { gotoPage('dsa'); } },
   { label: "Go to Missions (Tasks)", type: "nav", action: () => { gotoPage('tasks'); } },
   { label: "Go to Projects", type: "nav", action: () => { gotoPage('projects'); } },
-  { label: "Go to Target Companies", type: "nav", action: () => { gotoPage('targets'); } },
+  { label: "Go to Quant Funnel (Targets)", type: "nav", action: () => { gotoPage('targets'); } },
+  { label: "Weight India-entry firms (Graviton / WQ / Tower / QuadEye)", type: "nav", action: () => { openQuantFunnel('india'); } },
   { label: "Go to Gaming Lounge", type: "nav", action: () => { gotoPage('gaming'); } },
   { label: "Go to Study Notes", type: "nav", action: () => { gotoPage('notes'); } },
   { label: "Go to Job Applications", type: "nav", action: () => { gotoPage('applications'); } },
@@ -12117,181 +12373,9 @@ else { init(); initCinematicHud(); }
 </script>
 </body>
 </html>
-/html>
-
-ction", action: () => { gotoPage('budget'); setTimeout(() => document.getElementById('exp-name')?.focus(), 150); } },
-  { label: "Show Weekly Report Card", type: "action", action: () => showWeeklyReport() },
-  { label: "Undo last XP / check action", type: "action", action: () => undoLastAction() },
-  { label: "Open scratchpad", type: "action", action: () => toggleScratchpad() },
-  { label: "Add Mission Task...", type: "action", action: () => { gotoPage('tasks'); setTimeout(() => {
-    // Open task adding modal or highlight input if it exists
-    const addBtn = document.querySelector('.btn-primary[onclick*="Mission"], .btn-primary[onclick*="Task"]');
-    if (addBtn) addBtn.click();
-  }, 150); } },
-  
-  // Ambient Sound Toggles
-  { label: "Ambient Mixer: Toggle Rain Sound", type: "sound", action: () => toggleFocusSound('rain') },
-  { label: "Ambient Mixer: Toggle Brown Noise", type: "sound", action: () => toggleFocusSound('brown') },
-  { label: "Ambient Mixer: Toggle Binaural Focus Drone", type: "sound", action: () => toggleFocusSound('drone') },
-  { label: "Ambient Mixer: Mute all Focus Audio", type: "sound", action: () => {
-    stopSingleFocusSound('rain'); stopSingleFocusSound('brown'); stopSingleFocusSound('drone');
-    showToast('Focus ambient muted');
-  } },
-
-  // System Controls
-  { label: "System: Toggle Theme (Dark / Light)", type: "system", action: () => toggleTheme() },
-  { label: "System: Toggle Sidebar Collapse", type: "system", action: () => toggleSidebar() },
-  { label: "System: Open System Settings", type: "system", action: () => openSettings() },
-  { label: "System: Start / Pause Pomodoro Timer", type: "system", action: () => togglePomo() },
-  { label: "System: Reset Pomodoro Timer", type: "system", action: () => resetPomo() },
-  { label: "System: Download Data Backup (JSON)", type: "system", action: () => exportDataJSON() },
-  { label: "System: Download Expense Sheet (CSV)", type: "system", action: () => downloadExpensesCSV() },
-  { label: "System: Print Expense Statement (PDF)", type: "system", action: () => printExpensesPDF() },
-  { label: "System: Restore Data from Backup (JSON)", type: "system", action: () => triggerJSONUpload() },
-  { label: "System: Request Browser Notifications permission", type: "system", action: () => requestNotificationPermission() }
-];
-
-function openCommandPalette() {
-  playClickSound();
-  const backdrop = document.getElementById('palette-backdrop');
-  const input = document.getElementById('palette-input');
-  if (!backdrop || !input) return;
-  
-  // Request notifications permission proactively
-  if ('Notification' in window && Notification.permission === 'default') {
-    Notification.requestPermission();
-  }
-  
-  backdrop.classList.add('show');
-  input.value = "";
-  isPaletteOpen = true;
-  activePaletteIndex = 0;
-  onPaletteInput("");
-  
-  setTimeout(() => input.focus(), 50);
-}
-
-function closeCommandPalette() {
-  const backdrop = document.getElementById('palette-backdrop');
-  if (backdrop) backdrop.classList.remove('show');
-  isPaletteOpen = false;
-}
-
-function onPaletteInput(query) {
-  const q = query.toLowerCase().trim();
-  if (!q) {
-    filteredCommands = [...paletteCommands];
-  } else {
-    filteredCommands = paletteCommands.filter(cmd => cmd.label.toLowerCase().includes(q));
-  }
-  activePaletteIndex = Math.min(activePaletteIndex, Math.max(0, filteredCommands.length - 1));
-  renderPaletteList();
-}
-
-function renderPaletteList() {
-  const listEl = document.getElementById('palette-list');
-  if (!listEl) return;
-  
-  if (filteredCommands.length === 0) {
-    listEl.innerHTML = `<div class="empty-state" style="padding: 20px;">No matching commands found.</div>`;
-    return;
-  }
-  
-  listEl.innerHTML = filteredCommands.map((cmd, idx) => {
-    const activeClass = idx === activePaletteIndex ? 'active' : '';
-    const icon = cmd.type === 'nav' ? '🗺️' : cmd.type === 'sound' ? '🎵' : cmd.type === 'action' ? '⚡' : '⚙️';
-    return `
-      <div class="palette-item ${activeClass}" onclick="executePaletteItem(${idx})">
-        <span class="palette-item-icon">${icon}</span>
-        <span>${cmd.label}</span>
-        <span class="palette-item-details">${cmd.type.toUpperCase()}</span>
-      </div>
-    `;
-  }).join('');
-  
-  // Scroll active item into view
-  const activeEl = listEl.querySelector('.palette-item.active');
-  if (activeEl) {
-    activeEl.scrollIntoView({ block: 'nearest' });
-  }
-}
-
-function onPaletteKeyDown(e) {
-  if (e.key === 'ArrowDown') {
-    e.preventDefault();
-    activePaletteIndex = (activePaletteIndex + 1) % filteredCommands.length;
-    renderPaletteList();
-  } else if (e.key === 'ArrowUp') {
-    e.preventDefault();
-    activePaletteIndex = (activePaletteIndex - 1 + filteredCommands.length) % filteredCommands.length;
-    renderPaletteList();
-  } else if (e.key === 'Enter') {
-    e.preventDefault();
-    executePaletteItem(activePaletteIndex);
-  } else if (e.key === 'Escape') {
-    e.preventDefault();
-    closeCommandPalette();
-  }
-}
-
-function executePaletteItem(index) {
-  const cmd = filteredCommands[index];
-  if (cmd && cmd.action) {
-    closeCommandPalette();
-    cmd.action();
-  }
-}
-
-// Key listeners for global command palette trigger
-document.addEventListener('keydown', (e) => {
-  const tag = (e.target && e.target.tagName) || '';
-  const typing = tag === 'INPUT' || tag === 'TEXTAREA' || (e.target && e.target.isContentEditable);
-  if ((e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'Z') && !e.shiftKey && !typing) {
-    e.preventDefault();
-    undoLastAction();
-    return;
-  }
-  if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K' || e.key === 'p' || e.key === 'P')) {
-    e.preventDefault();
-    if (isPaletteOpen) {
-      closeCommandPalette();
-    } else {
-      openCommandPalette();
-    }
-  }
-});
-
-// Restore theme and sidebar state on load
-(function applyStoredPrefs() {
-  const theme = localStorage.getItem('abhi_theme');
-  if (theme === 'light') {
-    document.documentElement.classList.add('light');
-    const icon = document.getElementById('theme-icon');
-    const label = document.getElementById('theme-label');
-    if (icon) icon.textContent = '☀️';
-    if (label) label.textContent = 'Light';
-  }
-  syncThemeChrome();
-  const sidebar = localStorage.getItem('abhi_sidebar');
-  if (sidebar === 'collapsed') {
-    const layout = document.querySelector('.layout');
-    const btn = document.getElementById('sidebar-toggle-btn');
-    if (layout) layout.classList.add('sidebar-collapsed');
-    if (btn) { btn.textContent = '›'; btn.style.left = '44px'; }
-  }
-})();
-
-requestAnimationFrame(() => document.body.classList.remove('booting'));
+nFrame(() => document.body.classList.remove('booting'));
 if (window.__osLocked) { showLockScreen(); }
 else { init(); initCinematicHud(); }
 </script>
 </body>
 </html>
-/html>
-
-initCinematicHud(); }
-</script>
-</body>
-</html>
-/html>
-
