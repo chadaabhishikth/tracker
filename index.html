@@ -2599,6 +2599,72 @@ body:not(.booting) .layout{animation:bootIn .55s var(--ease) both;}
 .health-metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;}
 .health-check{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line);cursor:pointer;}
 
+/* Four-band Health skin: navy → royal → ice → mint (Routine / Physical / Mental only) */
+html.health-skin{
+  --navy:#14286A; --blood:#3B6FE0; --wine:#3B6FE0; --umber:#0e1c4a;
+  --salmon:#8EC4E8; --cream:#E8F3EE; --ice:#8EC4E8; --lilac:#8EC4E8;
+  --bg:#0d1738; --bg1:#14286A; --bg2:#1c3a8a; --bg3:#2548a8;
+  --line:#3B6FE0; --line2:#2a4fb8;
+  --text:#E8F3EE; --sub:#c5e4ef; --muted:#8EC4E8;
+  --blue:#8EC4E8; --accent:#8EC4E8; --lavender:#8EC4E8;
+  --green:#E8F3EE; --yellow:#8EC4E8; --red:#5a8cff;
+  --peach:#8EC4E8; --mauve:#8EC4E8; --teal:#8EC4E8; --sky:#8EC4E8;
+  --ink:#E8F3EE; --paper:#14286A;
+  --shadow:0 12px 32px rgba(10,20,60,.5);
+  --glow:0 0 0 1px color-mix(in srgb,#8EC4E8 35%,transparent), 0 10px 28px color-mix(in srgb,#3B6FE0 30%,transparent);
+}
+html.health-skin.light{
+  --bg:#E8F3EE; --bg1:#dceff6; --bg2:#c8e4f2; --bg3:#b4d8ec;
+  --line:#3B6FE0; --line2:#8EC4E8;
+  --text:#14286A; --sub:#1c3a8a; --muted:#3B6FE0;
+  --blue:#14286A; --accent:#14286A; --green:#14286A; --yellow:#3B6FE0;
+  --ink:#14286A; --paper:#E8F3EE;
+}
+html.health-skin body::before{
+  background:
+    linear-gradient(180deg,#14286A 0%,#3B6FE0 38%,#8EC4E8 72%,#E8F3EE 100%),
+    radial-gradient(700px 360px at 12% -8%, color-mix(in srgb,#8EC4E8 40%,transparent), transparent 58%);
+  opacity:.55;
+  animation:healthPulse 7s ease-in-out infinite;
+}
+html.health-skin.light body::before{opacity:.38;}
+@keyframes healthPulse{
+  0%,100%{opacity:.48; filter:saturate(1);}
+  50%{opacity:.68; filter:saturate(1.18);}
+}
+html.health-skin .health-hero{
+  background:linear-gradient(120deg,#14286A,#3B6FE0 45%,#8EC4E8 80%,#E8F3EE);
+  border-radius:16px; padding:18px 20px; margin-bottom:16px;
+  color:#E8F3EE; position:relative; overflow:hidden;
+  animation:healthHeroIn .6s var(--ease) both;
+}
+html.health-skin .health-hero::after{
+  content:''; position:absolute; inset:-40% auto auto 40%; width:220px; height:220px;
+  background:radial-gradient(circle,#E8F3EE 0%,transparent 70%);
+  opacity:.25; animation:healthOrb 6s ease-in-out infinite;
+}
+@keyframes healthHeroIn{from{opacity:0; transform:translateY(12px) scale(.98);}to{opacity:1;transform:none;}}
+@keyframes healthOrb{0%,100%{transform:translate(0,0);}50%{transform:translate(-18px,10px);}}
+html.health-skin .health-hero-kicker{font-family:var(--font-mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:.85;}
+html.health-skin .health-hero-title{font-size:20px;font-weight:700;margin:4px 0 2px;}
+html.health-skin .health-hero-sub{font-size:12px;opacity:.88;}
+html.health-skin .workout-arena{
+  --volt:#E8F3EE; --blaze:#3B6FE0; --plasma:#8EC4E8;
+  background:
+    radial-gradient(480px 220px at 0% 0%, color-mix(in srgb,#3B6FE0 40%,transparent), transparent 60%),
+    #0e1c4a;
+  border-color:color-mix(in srgb,#8EC4E8 50%,transparent);
+  color:#E8F3EE;
+}
+html.health-skin .arena-title{color:#8EC4E8;text-shadow:0 0 12px #8EC4E8;}
+html.health-skin .set-pip{border-color:#8EC4E8;color:#8EC4E8;}
+html.health-skin .set-pip.on{background:#8EC4E8;color:#14286A;box-shadow:0 0 12px #8EC4E8;}
+html.health-skin #page-routine .quest-card,
+html.health-skin #page-physical .glass-card,
+html.health-skin #page-mental .glass-card{
+  animation:riseIn .55s var(--ease) both;
+}
+
 </style>
 </head>
 <body class="booting">
@@ -3454,6 +3520,11 @@ body:not(.booting) .layout{animation:bootIn .55s var(--ease) both;}
   <!-- ACADEMIC CALENDAR -->
 
   <div id="page-routine" class="content">
+    <div class="health-hero">
+      <div class="health-hero-kicker">Health OS · four-band</div>
+      <div class="health-hero-title">Daily Routine</div>
+      <div class="health-hero-sub">Navy → royal → ice → mint. Check the non-negotiables, then hit the arena.</div>
+    </div>
     <div class="section-hdr">DAILY ROUTINE <button class="edit-btn" onclick="editHealthList('routine')">⚙️</button></div>
     <div class="quest-card glass-card" id="routine-list"></div>
     <div style="height:18px"></div>
@@ -3464,12 +3535,22 @@ body:not(.booting) .layout{animation:bootIn .55s var(--ease) both;}
     </div>
   </div>
   <div id="page-physical" class="content">
+    <div class="health-hero">
+      <div class="health-hero-kicker">Health OS · body</div>
+      <div class="health-hero-title">Physical Metrics</div>
+      <div class="health-hero-sub">Track weight, sleep, and recovery on the blue band.</div>
+    </div>
     <div class="section-hdr">PHYSICAL METRICS</div>
     <div class="health-metric-grid" id="physical-metrics"></div>
     <div class="section-hdr" style="margin-top:18px;">CHECKS</div>
     <div class="quest-card glass-card" id="physical-checks"></div>
   </div>
   <div id="page-mental" class="content">
+    <div class="health-hero">
+      <div class="health-hero-kicker">Health OS · mind</div>
+      <div class="health-hero-title">Mental State</div>
+      <div class="health-hero-sub">Mood, focus, and check-ins — same four-band skin.</div>
+    </div>
     <div class="section-hdr">MENTAL STATE</div>
     <div class="glass-card" style="padding:16px;" id="mental-metrics"></div>
     <div class="section-hdr" style="margin-top:18px;">CHECKS</div>
@@ -8669,6 +8750,7 @@ function gotoPage(id,el){
   if(id==='calendar'){renderAcademicCalendar();}
   if(id==='targets'){renderTargets(); renderCompetencyTracker();}
   if(id==='gaming'){renderGaming();updateGamingLogDisplay();}
+  applyHealthSkin(id);
   if(id==='routine'||id==='physical'||id==='mental'){renderHealthPages();}
   if(id==='dsa'){renderSRSQueue();renderDSALog();}
   if(id==='applications'){renderKanban();}
