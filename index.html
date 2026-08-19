@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#181a24">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="OS Dashboard">
 <title>System: Abhishikth — OS Dashboard</title>
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.json">
 <style>
@@ -2093,6 +2099,14 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 /* Undo toast extra */
 .toast.undo{pointer-events:auto;display:flex;align-items:center;gap:12px;color:var(--text);}
 .toast.undo button{background:none;border:1px solid var(--line2);color:var(--blue);border-radius:4px;padding:3px 8px;cursor:pointer;font-family:var(--font-mono);font-size:10px;}
+.install-banner{
+  display:none; align-items:center; gap:10px; flex-wrap:wrap;
+  background:rgba(137,180,250,0.08); border-bottom:1px solid rgba(137,180,250,0.25);
+  padding:8px 28px; font-size:12px; color:var(--text);
+}
+.install-banner.show{display:flex;}
+.install-banner button{font-size:11px;}
+@media(max-width:900px){.install-banner{padding:8px 16px;}}
 
 /* ─── PRINT MEDIA QUERY ────────────────────────────── */
 @media print {
@@ -2267,6 +2281,11 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     <button class="lc-btn" onclick="quickLogExpense()" style="width:100%;font-size:12px;">Log Expense ₹</button>
   </div>
 
+  <div class="install-banner" id="install-banner">
+    <span>Install this as an app so 9 PM streak alerts fire even after you close the tab.</span>
+    <button class="btn-primary" id="install-app-btn" type="button" onclick="promptInstallPWA()">Install</button>
+    <button class="btn-secondary" type="button" onclick="dismissInstallBanner()">Later</button>
+  </div>
   <!-- Streak Risk Banner -->
   <div class="streak-risk-banner" id="streak-risk-banner">
     🔥 Streak at risk! No XP logged today. Complete a task before midnight!
@@ -3486,6 +3505,9 @@ if(!S.lastGithubSync) S.lastGithubSync = 0;
 if(!S.githubProfile) S.githubProfile = null;
 if(S.scratchpadText === undefined) S.scratchpadText = '';
 if(!S.accentColor) S.accentColor = 'blue';
+if(S.notifyEnabled === undefined) S.notifyEnabled = true;
+if(!S.notifyHour && S.notifyHour !== 0) S.notifyHour = 21;
+if(S.ntfyTopic === undefined) S.ntfyTopic = '';
 if (!S.srs.reviews || typeof S.srs.reviews !== 'object') {
   const reviews = {};
   Object.keys(S.srs).forEach(k => {
@@ -3521,6 +3543,7 @@ function save(skipPush){
     try { showToast('Storage is full — export a JSON backup now!', true); } catch(_){}
     return;
   }
+  writeNotifySnapshot();
   if (skipPush) return;
   const cfg = getSyncConfig();
   if (cfg.auto && cfg.token) {
@@ -4874,86 +4897,219 @@ function checkMissionDueDates() {
 }
 
 // ─── DAILY XP NOTIFICATION ───────────────────────────────
-function initNotifications() {
-  if (!('Notification' in window)) return;
-  if (Notification.permission==='default') {
-    setTimeout(()=>Notification.requestPermission(), 6000);
+function countMissionsDueSoon() {
+  const missions = ((S.missions || {}).longTerm) || [];
+  const today = new Date(); today.setHours(0,0,0,0);
+  let count = 0;
+  missions.forEach(m => {
+    if (m.done || !m.deadline) return;
+    const d = new Date(m.deadline);
+    if (!isNaN(d)) {
+      const diff = (d - today) / 86400000;
+      if (diff >= 0 && diff <= 7) count++;
+    }
+  });
+  return count;
+}
+
+async function readNotifySnapshot() {
+  try {
+    const cache = await caches.open('abhi-notify-v1');
+    const res = await cache.match('./__notify_snapshot__');
+    if (!res) return null;
+    return await res.json();
+  } catch (e) { return null; }
+}
+
+async function writeNotifySnapshot() {
+  try {
+    const prev = await readNotifySnapshot();
+    const snap = {
+      enabled: S.notifyEnabled !== false,
+      notifyHour: S.notifyHour == null ? 21 : Number(S.notifyHour),
+      ntfyTopic: (S.ntfyTopic || '').trim(),
+      date: getLocalISODate(),
+      xpToday: (S.xp && S.xp.today) || 0,
+      lastLog: S.lastLoggedTimestamp || 0,
+      lastVisit: Date.now(),
+      name: (S.profile && S.profile.name) || 'Abhishikth',
+      missionsDue: countMissionsDueSoon(),
+      lastDailyNotified: prev && prev.lastDailyNotified,
+      lastInactiveNotified: prev && prev.lastInactiveNotified,
+      lastMissionNotified: prev && prev.lastMissionNotified
+    };
+    const cache = await caches.open('abhi-notify-v1');
+    await cache.put('./__notify_snapshot__', new Response(JSON.stringify(snap), {
+      headers: { 'Content-Type': 'application/json' }
+    }));
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({ type: 'SNAPSHOT', state: snap });
+    }
+  } catch (e) {
+    console.warn('notify snapshot failed', e);
+  }
+}
+
+function isStandalonePWA() {
+  return window.matchMedia('(display-mode: standalone)').matches
+    || window.navigator.standalone === true
+    || document.referrer.includes('android-app://');
+}
+
+let _deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  _deferredInstallPrompt = e;
+  const banner = document.getElementById('install-banner');
+  if (banner && localStorage.getItem('abhi_install_dismissed') !== '1' && !isStandalonePWA()) {
+    banner.classList.add('show');
+  }
+});
+
+async function promptInstallPWA() {
+  if (_deferredInstallPrompt) {
+    _deferredInstallPrompt.prompt();
+    const choice = await _deferredInstallPrompt.userChoice.catch(() => null);
+    _deferredInstallPrompt = null;
+    if (choice && choice.outcome === 'accepted') {
+      dismissInstallBanner();
+      showToast('Installed. Keep the app on your home screen for lock-screen alerts.');
+      enableBackgroundAlerts();
+      return;
+    }
+  }
+  showToast('In Chrome: menu → Install app / Add to Home screen', true);
+}
+
+function dismissInstallBanner() {
+  const banner = document.getElementById('install-banner');
+  if (banner) banner.classList.remove('show');
+  try { localStorage.setItem('abhi_install_dismissed', '1'); } catch (_) {}
+}
+
+async function enableBackgroundAlerts() {
+  if (!('Notification' in window)) {
+    return { ok: false, reason: 'Notifications API missing' };
+  }
+  let perm = Notification.permission;
+  if (perm !== 'granted') {
+    perm = await Notification.requestPermission();
+  }
+  if (perm !== 'granted') {
+    return { ok: false, reason: 'Permission: ' + perm };
+  }
+  S.notifyEnabled = true;
+  writeNotifySnapshot();
+
+  let periodic = 'unsupported';
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    if (reg.periodicSync) {
+      const status = await navigator.permissions.query({ name: 'periodic-background-sync' }).catch(() => null);
+      if (!status || status.state === 'granted') {
+        await reg.periodicSync.register('os-daily-check', { minInterval: 60 * 60 * 1000 });
+        periodic = 'registered';
+      } else {
+        periodic = 'need-install';
+      }
+    }
+    if (reg.sync) {
+      try { await reg.sync.register('os-notify-check'); } catch (_) {}
+    }
+    if (reg.active) reg.active.postMessage({ type: 'CHECK_NOW' });
+  } catch (e) {
+    periodic = 'need-install';
+    console.warn('periodic sync register failed', e);
   }
   scheduleXPNotification();
+  return { ok: true, periodic, standalone: isStandalonePWA() };
 }
+
+async function getBackgroundAlertStatus() {
+  const perm = ('Notification' in window) ? Notification.permission : 'unsupported';
+  let periodic = 'unsupported';
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    if (reg.periodicSync) {
+      const tags = await reg.periodicSync.getTags();
+      periodic = tags.includes('os-daily-check') ? 'registered' : (isStandalonePWA() ? 'not-registered' : 'need-install');
+    }
+  } catch (_) {
+    periodic = isStandalonePWA() ? 'error' : 'need-install';
+  }
+  return { perm, periodic, standalone: isStandalonePWA() };
+}
+
+function initNotifications() {
+  if (!('Notification' in window)) return;
+  writeNotifySnapshot();
+  if (S.notifyEnabled !== false && Notification.permission === 'granted') {
+    enableBackgroundAlerts();
+  } else if (Notification.permission === 'default' && S.notifyEnabled !== false) {
+    setTimeout(() => {
+      Notification.requestPermission().then((p) => {
+        if (p === 'granted') enableBackgroundAlerts();
+      });
+    }, 4000);
+  }
+  scheduleXPNotification();
+  if (!isStandalonePWA() && localStorage.getItem('abhi_install_dismissed') !== '1') {
+    const banner = document.getElementById('install-banner');
+    if (banner && !_deferredInstallPrompt) {
+      // Chromium only fires beforeinstallprompt on qualifying installs;
+      // still show a hint after a delay so you know to Add to Home Screen.
+      setTimeout(() => { if (!_deferredInstallPrompt && banner) banner.classList.add('show'); }, 8000);
+    }
+  }
+}
+
 function scheduleXPNotification() {
   const now = new Date();
-  const target = new Date(); target.setHours(21,0,0,0);
-  if (target <= now) target.setDate(target.getDate()+1);
-  
-  if (window.xpNotificationTimeout) {
-    clearTimeout(window.xpNotificationTimeout);
-  }
-  
+  const hour = (S.notifyHour == null) ? 21 : Number(S.notifyHour);
+  const target = new Date();
+  target.setHours(hour, 0, 0, 0);
+  if (target <= now) target.setDate(target.getDate() + 1);
+  if (window.xpNotificationTimeout) clearTimeout(window.xpNotificationTimeout);
   window.xpNotificationTimeout = setTimeout(() => {
-    if ((S.xp.today || 0) === 0) {
-      sendBrowserNotification('⚡ System: Abhishikth', "No XP logged today! Don't break your streak — grind time! 🔥");
+    writeNotifySnapshot();
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({ type: 'CHECK_NOW' });
+    } else if ((S.xp.today || 0) === 0) {
+      sendBrowserNotification('⚡ Streak at risk', "No XP logged today. Don't break the streak.");
     }
     scheduleXPNotification();
   }, target - now);
 }
 
 function checkInactivityNotifications(previousVisit, previousLog) {
+  writeNotifySnapshot();
+  if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({ type: 'CHECK_NOW' });
+  }
   const now = Date.now();
   const threshold = 20 * 60 * 60 * 1000;
-  
-  if (previousVisit) {
-    const elapsedVisit = now - previousVisit;
-    if (elapsedVisit > threshold) {
-      const hours = (elapsedVisit / (1000 * 60 * 60)).toFixed(1);
-      const msg = `Welcome back! It has been ${hours} hours since your last visit. ⚡`;
-      setTimeout(() => {
-        showToast(msg);
-        sendBrowserNotification('OS Dashboard', msg);
-      }, 2000);
-    }
+  if (previousVisit && (now - previousVisit) > threshold) {
+    const hours = ((now - previousVisit) / 3600000).toFixed(1);
+    setTimeout(() => showToast(`Welcome back — ${hours}h since last visit.`), 1600);
   }
-  
-  if (previousLog) {
-    const elapsedLog = now - previousLog;
-    if (elapsedLog > threshold) {
-      const hours = (elapsedLog / (1000 * 60 * 60)).toFixed(1);
-      const msg = `You haven't logged any items (expenses, DSA, or tasks) in the last ${hours} hours! 🔥`;
-      setTimeout(() => {
-        showToast(msg, true);
-        sendBrowserNotification('OS Dashboard 📈', msg);
-      }, 4500);
-    }
-  }
-  
-  // Register background interval checks (every hour) while tab is open
-  setInterval(() => {
-    const currentNow = Date.now();
-    if (S.lastVisitedTimestamp && (currentNow - S.lastVisitedTimestamp) > threshold) {
-      sendBrowserNotification('OS Dashboard', `You have been inactive for over 20 hours! ⚡`);
-    }
-    
-    if (S.lastLoggedTimestamp && (currentNow - S.lastLoggedTimestamp) > threshold) {
-      if (!S.lastLogWarned || (currentNow - S.lastLogWarned) > threshold) {
-        sendBrowserNotification('OS Dashboard 📈', `No activities logged in the last 20 hours! Keep grinding! 🔥`);
-        S.lastLogWarned = currentNow;
-        save();
-      }
-    }
-  }, 60 * 60 * 1000);
 }
 
 function initInactivityListeners() {
-  window.addEventListener('focus', () => {
-    S.lastVisitedTimestamp = Date.now();
-    save(true);
-  });
-  
-  document.addEventListener('click', () => {
-    const now = Date.now();
-    if (!S.lastVisitedTimestamp || (now - S.lastVisitedTimestamp) > 5 * 60 * 1000) {
-      S.lastVisitedTimestamp = now;
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      S.lastVisitedTimestamp = Date.now();
       save(true);
+    } else {
+      writeNotifySnapshot();
+    }
+  });
+  window.addEventListener('pagehide', () => writeNotifySnapshot());
+}
+
+if (navigator.serviceWorker) {
+  navigator.serviceWorker.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'NOTIFICATION_CLICK') {
+      if (event.data.tag === 'missions-due') gotoPage('tasks');
     }
   });
 }
@@ -7812,15 +7968,27 @@ function openSettings() {
       </div>
 
       <div style="border: 1px solid var(--line2); padding: 14px; border-radius: 8px; background: var(--bg2);">
-        <h4 style="font-size: 13px; font-weight:600; color:var(--text); margin-bottom: 6px; font-family: var(--font-mono); text-transform: uppercase;">6. Daily Notifications (9 PM)</h4>
-        <p style="font-size: 11px; color: var(--sub); margin-bottom: 10px;">Enable reminders at 9 PM to alert you on laptop and mobile if you haven't logged any XP today.</p>
+        <h4 style="font-size: 13px; font-weight:600; color:var(--text); margin-bottom: 6px; font-family: var(--font-mono); text-transform: uppercase;">6. Lock-screen alerts (no tab required)</h4>
+        <p style="font-size: 11px; color: var(--sub); margin-bottom: 10px;">
+          Chrome/Edge/Android: <b>Install the PWA</b>, allow notifications. The service worker then pings you at the hour below even after you close the tab.
+          Optional ntfy topic also buzzes the ntfy app on your phone.
+        </p>
         <div style="display:flex; flex-direction:column; gap:8px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px;">
-            <span style="color:var(--sub);">Permission Status:</span>
-            <span id="settings-notification-status" style="font-family:var(--font-mono); font-weight:600; color:var(--lavender);">${('Notification' in window) ? Notification.permission : 'unsupported'}</span>
+          <label style="font-size:11px; color:var(--sub); display:flex; align-items:center; gap:6px;">
+            <input type="checkbox" id="settings-notify-enabled" ${S.notifyEnabled !== false ? 'checked' : ''}> Enable background streak / inactivity alerts
+          </label>
+          <div class="modal-form-group" style="margin-bottom:0;">
+            <label class="modal-form-label" style="font-size:10px;">Alert hour (local time)</label>
+            <input type="number" min="0" max="23" class="modal-form-input" id="settings-notify-hour" value="${S.notifyHour == null ? 21 : S.notifyHour}" style="padding:6px 8px; font-size:12px;">
           </div>
-          <button class="btn-secondary" onclick="requestNotificationPermissionFromSettings()" style="width:100%; font-size:11px; padding: 6px; background:var(--blue); border-color:var(--blue); color:var(--bg);">Request Permission</button>
-          <button class="btn-secondary" onclick="testNotificationFromSettings()" style="width:100%; font-size:11px; padding: 6px; background:transparent; border-color:var(--line2); color:var(--text);">Send Test Notification ⚡</button>
+          <div class="modal-form-group" style="margin-bottom:0;">
+            <label class="modal-form-label" style="font-size:10px;">ntfy topic (optional, phone lock screen)</label>
+            <input type="text" class="modal-form-input" id="settings-ntfy-topic" value="${escapeHtml(S.ntfyTopic || '')}" placeholder="e.g. abhi-os-7f3k9q" style="padding:6px 8px; font-size:12px;">
+          </div>
+          <div id="settings-notify-health" style="font-family:var(--font-mono); font-size:10px; color:var(--muted); line-height:1.6;">Checking background status…</div>
+          <button class="btn-secondary" onclick="requestNotificationPermissionFromSettings()" style="width:100%; font-size:11px; padding: 6px; background:var(--blue); border-color:var(--blue); color:var(--bg);">Enable lock-screen alerts</button>
+          <button class="btn-secondary" onclick="promptInstallPWA()" style="width:100%; font-size:11px; padding: 6px;">Install as app</button>
+          <button class="btn-secondary" onclick="testNotificationFromSettings()" style="width:100%; font-size:11px; padding: 6px; background:transparent; border-color:var(--line2); color:var(--text);">Send test now ⚡</button>
         </div>
       </div>
 
@@ -7840,6 +8008,15 @@ function openSettings() {
     const auto = document.getElementById('sync-auto').checked;
     let ghInput = document.getElementById('sync-github-username').value.trim();
     const accentVal = document.getElementById('settings-accent-color').value;
+    const notifyEn = document.getElementById('settings-notify-enabled');
+    const notifyHr = document.getElementById('settings-notify-hour');
+    const ntfyEl = document.getElementById('settings-ntfy-topic');
+    if (notifyEn) S.notifyEnabled = notifyEn.checked;
+    if (notifyHr) {
+      const h = parseInt(notifyHr.value, 10);
+      S.notifyHour = (isNaN(h) || h < 0 || h > 23) ? 21 : h;
+    }
+    if (ntfyEl) S.ntfyTopic = ntfyEl.value.trim();
     
     if (ghInput.toLowerCase().includes('github.com/')) {
       const parts = ghInput.split(/github\.com\//i)[1];
@@ -7855,35 +8032,60 @@ function openSettings() {
     save();
     syncGithubContributions();
     syncGithubProfile();
+    scheduleXPNotification();
+    writeNotifySnapshot();
+    if (S.notifyEnabled !== false) enableBackgroundAlerts();
     showToast('Sync settings saved!');
     return true; 
   });
+  setTimeout(refreshSettingsNotifyHealth, 40);
+}
+
+async function refreshSettingsNotifyHealth() {
+  const el = document.getElementById('settings-notify-health');
+  if (!el) return;
+  const st = await getBackgroundAlertStatus();
+  const bits = [
+    'Permission: ' + st.perm,
+    'Installed app: ' + (st.standalone ? 'yes' : 'no'),
+    'Background check: ' + st.periodic
+  ];
+  el.textContent = bits.join(' · ');
+  el.style.color = (st.perm === 'granted' && (st.periodic === 'registered' || st.standalone)) ? 'var(--green)' : 'var(--yellow)';
 }
 
 function requestNotificationPermissionFromSettings() {
-  if (!('Notification' in window)) {
-    showToast('Notifications are not supported by this browser.', true);
-    return;
-  }
-  Notification.requestPermission().then(permission => {
-    const statusEl = document.getElementById('settings-notification-status');
-    if (statusEl) statusEl.textContent = permission;
-    if (permission === 'granted') {
-      showToast('Notifications enabled! 🔔');
-      sendBrowserNotification('OS Dashboard', 'Notifications successfully enabled! 🚀');
+  enableBackgroundAlerts().then((res) => {
+    refreshSettingsNotifyHealth();
+    if (res && res.ok) {
+      showToast(res.periodic === 'registered'
+        ? 'Background alerts armed. Close the tab — you should still get 9 PM pings.'
+        : 'Permission granted. Install the app (Chrome menu → Install) so alerts survive closing the tab.');
+      sendBrowserNotification('OS Dashboard', 'Lock-screen alerts enabled. Install the app for when this tab is gone.');
     } else {
-      showToast('Notification permission: ' + permission, true);
+      showToast((res && res.reason) || 'Could not enable alerts', true);
     }
   });
 }
 
 function testNotificationFromSettings() {
-  if (Notification.permission !== 'granted') {
-    showToast('Please enable permissions first!', true);
+  if (!('Notification' in window) || Notification.permission !== 'granted') {
+    showToast('Enable lock-screen alerts first.', true);
     return;
   }
-  sendBrowserNotification('Test Notification ⚡', 'Testing 9 PM everyday notifications integration!');
-  showToast('Test notification sent!');
+  writeNotifySnapshot();
+  sendBrowserNotification('Test alert ⚡', 'If you see this, OS notifications work. Install the PWA so this still fires after you close the tab.');
+  if (S.ntfyTopic) {
+    fetch('https://ntfy.sh/' + encodeURIComponent(S.ntfyTopic), {
+      method: 'POST',
+      headers: { 'Title': 'OS Dashboard test', 'Tags': 'zap' },
+      body: 'ntfy topic is live. Phone should buzz if the ntfy app is subscribed.'
+    }).catch(() => {});
+  }
+  if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({ type: 'CHECK_NOW' });
+  }
+  showToast('Test sent.');
 }
 
 function triggerJSONUpload() {
@@ -10103,9 +10305,11 @@ function sendBrowserNotification(title, body) {
       navigator.serviceWorker.ready.then(reg => {
         reg.showNotification(title, {
           body: body,
-          icon: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%23181a24"/><text y=".9em" font-size="90">⚡</text></svg>',
-          tag: 'daily-reminder',
-          renotify: true
+          icon: 'icons/icon-192.png',
+          badge: 'icons/icon-192.png',
+          tag: title.indexOf('Budget') >= 0 ? 'budget-alert' : (title.indexOf('Streak') >= 0 ? 'daily-xp' : 'os-alert'),
+          renotify: true,
+          requireInteraction: true
         });
       }).catch(err => {
         console.warn("Service worker notification failed, falling back", err);
