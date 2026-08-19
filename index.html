@@ -467,18 +467,70 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
 
 /* ─── TARGETS PAGE ────────────────────────────────────── */
 .targets-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
-.target-card{background:var(--bg1);border:1px solid var(--line);border-radius:var(--r);padding:20px;}
-.tc-tier{font-family:var(--font-mono);font-size:9px;letter-spacing:2px;margin-bottom:8px;text-transform:uppercase;}
-.tc-name{font-size:15px;font-weight:600;margin-bottom:6px;}
-.tc-desc{font-size:12px;color:var(--sub);line-height:1.5;margin-bottom:14px;}
-.tc-ctc{font-family:var(--font-mono);font-size:16px;font-weight:700;}
-.reach .tc-tier{color:var(--yellow);}
-.reach .tc-ctc{color:var(--yellow);}
-.tgt .tc-tier{color:var(--green);}
-.tgt .tc-ctc{color:var(--green);}
-.flr .tc-tier{color:var(--blue);}
-.flr .tc-ctc{color:var(--blue);}
-
+.targets-brief{
+  background:color-mix(in srgb, var(--yellow) 5%, transparent);
+  border:1px solid color-mix(in srgb, var(--yellow) 18%, transparent);
+  border-radius:var(--r); padding:18px 20px; margin-bottom:16px;
+}
+.targets-brief-grid{display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:16px;}
+.tb-kicker{font-family:var(--font-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--yellow);margin-bottom:6px;}
+.tb-body{font-size:12px;color:var(--sub);line-height:1.65;}
+.tb-body strong{color:var(--text);font-weight:600;}
+.targets-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+.tf-btn{
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.6px;text-transform:uppercase;
+  padding:6px 12px;border-radius:5px;border:1px solid var(--line2);background:var(--bg1);
+  color:var(--sub);cursor:pointer;transition:all .15s;
+}
+.tf-btn:hover{color:var(--text);}
+.tf-btn.active{background:color-mix(in srgb, var(--blue) 12%, transparent);border-color:color-mix(in srgb, var(--blue) 30%, transparent);color:var(--blue);box-shadow:var(--glow);}
+.tf-btn.active.reach{color:var(--yellow);border-color:color-mix(in srgb, var(--yellow) 35%, transparent);background:color-mix(in srgb, var(--yellow) 10%, transparent);}
+.tf-btn.active.tgt{color:var(--green);border-color:color-mix(in srgb, var(--green) 35%, transparent);background:color-mix(in srgb, var(--green) 10%, transparent);}
+.tf-btn.active.india{color:var(--mauve);border-color:color-mix(in srgb, var(--mauve) 35%, transparent);background:color-mix(in srgb, var(--mauve) 10%, transparent);}
+.tf-btn.active.flr{color:var(--blue);border-color:color-mix(in srgb, var(--blue) 35%, transparent);background:color-mix(in srgb, var(--blue) 10%, transparent);}
+.targets-tier-block{margin-bottom:22px;}
+.targets-tier-hdr{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap;}
+.targets-tier-title{font-family:var(--font-mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:700;}
+.targets-tier-blurb{font-size:11px;color:var(--muted);flex:1;min-width:180px;}
+.targets-tier-count{font-family:var(--font-mono);font-size:10px;color:var(--sub);}
+.targets-firm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;}
+.target-card{background:var(--bg1);border:1px solid var(--line);border-radius:var(--r);padding:18px 18px 16px;display:flex;flex-direction:column;}
+.target-card.reach{border-color:color-mix(in srgb, var(--yellow) 28%, var(--line));}
+.target-card.tgt{border-color:color-mix(in srgb, var(--green) 28%, var(--line));}
+.target-card.india{border-color:color-mix(in srgb, var(--mauve) 32%, var(--line));}
+.target-card.flr{border-color:color-mix(in srgb, var(--blue) 28%, var(--line));}
+.tc-tier{font-family:var(--font-mono);font-size:9px;letter-spacing:2px;margin-bottom:8px;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;}
+.tc-name{font-size:16px;font-weight:600;margin-bottom:4px;letter-spacing:-0.02em;}
+.tc-office{font-size:10px;color:var(--muted);margin-bottom:3px;font-family:var(--font-mono);line-height:1.4;}
+.tc-roles{font-size:11px;color:var(--sub);margin-bottom:10px;}
+.tc-desc{font-size:12px;color:var(--sub);line-height:1.55;margin-bottom:12px;}
+.tc-ctc{font-family:var(--font-mono);font-size:15px;font-weight:700;letter-spacing:-0.02em;}
+.tc-ctc-sub{font-size:10px;color:var(--muted);font-family:var(--font-mono);line-height:1.45;margin:4px 0 12px;}
+.tc-req-label{font-family:var(--font-mono);font-size:8px;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.tc-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;}
+.tc-chip{font-size:10px;padding:3px 7px;border-radius:4px;background:var(--bg2);border:1px solid var(--line2);color:var(--sub);line-height:1.4;}
+.tc-note{font-size:11px;color:var(--muted);line-height:1.5;border-top:1px solid var(--line);padding-top:10px;margin-top:auto;}
+.reach .tc-tier,.reach .tc-ctc,.targets-tier-title.reach{color:var(--yellow);}
+.tgt .tc-tier,.tgt .tc-ctc,.targets-tier-title.tgt{color:var(--green);}
+.india .tc-tier,.india .tc-ctc,.targets-tier-title.india{color:var(--mauve);}
+.flr .tc-tier,.flr .tc-ctc,.targets-tier-title.flr{color:var(--blue);}
+@media(max-width:1100px){
+  .targets-brief-grid{grid-template-columns:1fr;}
+}
+.funnel-widget{padding:16px 18px;margin-bottom:16px;}
+.funnel-widget-hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+.funnel-kicker{font-family:var(--font-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--yellow);margin-bottom:4px;}
+.funnel-title{font-size:15px;font-weight:600;letter-spacing:-0.02em;}
+.funnel-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+.funnel-chip-card{background:var(--bg2);border:1px solid var(--line2);border-radius:8px;padding:10px 12px;cursor:pointer;text-align:left;transition:border-color .15s,transform .15s;}
+.funnel-chip-card:hover{border-color:var(--mauve);transform:translateY(-1px);}
+.funnel-chip-name{font-size:12px;font-weight:600;color:var(--text);}
+.funnel-chip-ctc{font-family:var(--font-mono);font-size:11px;color:var(--mauve);margin-top:3px;}
+.funnel-chip-req{font-size:10px;color:var(--muted);margin-top:5px;line-height:1.4;}
+.funnel-bar{font-size:12px;color:var(--sub);line-height:1.6;border-top:1px solid var(--line);padding-top:10px;}
+.funnel-bar strong{color:var(--text);}
+.tc-actions{display:flex;gap:4px;align-items:center;}
+@media(max-width:900px){.funnel-strip{grid-template-columns:1fr 1fr;}}
 /* ─── GAMING PAGE ─────────────────────────────────────── */
 .gaming-hero{background:color-mix(in srgb, var(--yellow) 4%, transparent);border:1px solid color-mix(in srgb, var(--yellow) 15%, transparent);border-radius:var(--r);padding:24px;margin-bottom:20px;display:flex;gap:20px;align-items:flex-start;}
 .gaming-emoji{font-size:40px;flex-shrink:0;}
@@ -2151,6 +2203,9 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 }
 
 /* Audit / targets / trips collapse on tablet */
+@media(max-width:1280px){
+  #page-targets #competency-tracker-container{grid-template-columns:1fr 1fr !important;}
+}
 @media(max-width:1100px){
   #page-audit > div{grid-template-columns:1fr !important;}
   #page-targets #targets-have-container{grid-template-columns:1fr !important;}
@@ -2812,7 +2867,7 @@ html.skin-mental #page-mental .glass-card{
     </div>
     <div class="nav-section nav-fold" data-fold="intel" onclick="toggleNavFold('intel',event)">INTEL <span class="fold-chev">▾</span></div>
     <div class="nav-group" data-group="intel">
-    <div class="nav-item" onclick="gotoPage('targets',this)"><span class="nav-icon">🎯</span>Targets</div>
+    <div class="nav-item" onclick="gotoPage('targets',this)"><span class="nav-icon">🎯</span>Quant Funnel</div>
     <div class="nav-item" onclick="gotoPage('gaming',this)"><span class="nav-icon">🎮</span>Gaming</div>
     <div class="nav-item" onclick="gotoPage('notes',this)"><span class="nav-icon">📝</span>Notes</div>
     </div>
@@ -2905,6 +2960,7 @@ html.skin-mental #page-mental .glass-card{
 
   <!-- TODAY -->
   <div id="page-today" class="content active">
+    <div class="funnel-widget glass-card" id="funnel-widget"></div>
     <!-- XP History Chart -->
     <div class="xp-chart-card glass-card">
       <div class="xp-chart-header">
@@ -3273,10 +3329,12 @@ html.skin-mental #page-mental .glass-card{
   <!-- TARGETS -->
   <div id="page-targets" class="content">
     <div class="section-hdr" style="display:flex; justify-content:space-between; align-items:center;">
-      <span>PLACEMENT TARGETS — JULY 2028</span>
+      <span>PLACEMENT TARGETS — QUANT FUNNEL · JULY 2028</span>
       <button class="btn-primary" onclick="addNewTarget()" style="padding: 4px 10px; font-size: 11px; font-family: var(--font-mono);">+ ADD TARGET</button>
     </div>
-    <div class="targets-grid" id="targets-grid-container"></div>
+    <div id="targets-brief"></div>
+    <div class="targets-filters" id="targets-filters"></div>
+    <div id="targets-grid-container"></div>
     <div class="section-hdr" style="margin-top:20px; display:flex; justify-content:space-between; align-items:center;">
       <span>WHAT YOU ALREADY HAVE</span>
       <button class="btn-primary" onclick="editTargetsHave()" style="padding: 4px 10px; font-size: 11px; font-family: var(--font-mono);">⚙️ EDIT LISTS</button>
@@ -3765,7 +3823,7 @@ html.skin-mental #page-mental .glass-card{
       <div class="mobile-drawer-item" onclick="gotoMobilePage('semester')"><span class="mobile-drawer-icon">📚</span>Sem 3</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('dsa')"><span class="mobile-drawer-icon">🧩</span>DSA Track</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('projects')"><span class="mobile-drawer-icon">🛠</span>Projects</div>
-      <div class="mobile-drawer-item" onclick="gotoMobilePage('targets')"><span class="mobile-drawer-icon">🎯</span>Targets</div>
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('targets')"><span class="mobile-drawer-icon">🎯</span>Quant Funnel</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('gaming')"><span class="mobile-drawer-icon">🎮</span>Gaming</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('notes')"><span class="mobile-drawer-icon">📝</span>Notes</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('applications')"><span class="mobile-drawer-icon">💼</span>Applications</div>
@@ -3827,7 +3885,7 @@ html.skin-mental #page-mental .glass-card{
 <div class="ticker-bar" id="ticker-bar">
   <div class="ticker-wrapper">
     <div style="display:flex;align-items:center;">
-      <span class="ticker-title">HUD News & Quotes</span>
+      <span class="ticker-title">QUANT FUNNEL</span>
       <span class="ticker-content" id="ticker-text">Loading latest hacker news...</span>
     </div>
     <span style="font-size:8px;color:var(--muted)">v2.5 // SECURE</span>
@@ -3914,9 +3972,10 @@ const DEFAULT_SCHEDULE = {
 };
 const DEFAULT_QUESTS = [
   {id:'q-run',text:'Execute your 2.5 km run at 05:30 AM',xp:15},
+  {id:'q-cf',text:'Solve 1 Codeforces problem (not LeetCode)',xp:20},
   {id:'q-lc',text:'Log at least 1 Leetcode problem',xp:20},
   {id:'q-read',text:'Read textbook / watch lecture resource',xp:15},
-  {id:'q-build',text:'Write or run code today',xp:15},
+  {id:'q-build',text:'Write or run C++ / systems code today',xp:15},
   {id:'q-notes',text:'Write notes or recall summary',xp:10},
   {id:'q-review',text:'Review one concept from yesterday',xp:10},
 ];
@@ -3981,24 +4040,27 @@ const DEFAULT_PHASES = [
   },
   {
     n: 4,
-    title: 'Placement Strategy & FinTech Integration',
+    title: 'Quant Funnel Execution',
     period: 'Months 19+ · Sem 6',
     status: 'Elite layer',
     learn: [
-      'Interview optimization: C++ question banks, OS memory parsing, networking loops',
-      'Resume tailoring emphasizing Aerosynapse R&D, CMS, and custom matching engines',
-      'Placement execution: direct HFT outreach and on-campus placement tests'
+      'Graviton / QuadEye / Tower India OA loops: C++ + Codeforces + probability',
+      'WorldQuant BRAIN: ship alphas weekly — most open quant door from Amrita',
+      'Resume lead: matching engine first, AeroSynapse second',
+      'Keep the floor live: Flipkart/Swiggy infra + fintech if the funnel does not convert'
     ],
     res: [
-      'HFT developer prep guides, systems architecture mock interviews'
+      'Heard on the Street + Fifty Challenging Problems in Probability',
+      'Codeforces gym + Graviton/QuadEye mock OAs',
+      'WorldQuant BRAIN docs'
     ],
-    stack: ['C++', 'Python', 'IPC', 'WebSockets', 'Vol-Prediction'],
-    ms: 'Live End-to-End Algorithmic Trading Mock Pipeline (WebSocket Data Engine, Analytical Volatility Predictor, Shared-Memory IPC matching).'
+    stack: ['C++', 'Codeforces', 'Probability', 'Microstructure', 'Python'],
+    ms: 'Public low-latency C++ matching engine + 1800 CF + BRAIN alphas + India-entry applications filed.'
   }
 ];
 const DEFAULT_SUBJECTS = [
-  {name:'Data Structures & Algorithms 2',code:'22AIE203 — graphs, tries, hash functions, Merkle trees',pri:'Critical',pclass:'pri-c',res:'CLRS + MIT 6.006 on YouTube',res2:'Sync Leetcode problems to class topics weekly'},
-  {name:'Operating Systems',code:'22AIE202 — processes, scheduling, memory, synchronization',pri:'Critical',pclass:'pri-c',res:'Silberschatz (Dinosaur Book) + CodeVault YouTube',res2:'Trace scheduling algorithms on paper — JPMC/Goldman test this'},
+  {name:'Data Structures & Algorithms 2',code:'22AIE203 — graphs, tries, hash functions, Merkle trees',pri:'Critical',pclass:'pri-c',res:'CLRS + MIT 6.006 on YouTube',res2:'LeetCode for DE Shaw + floor. Codeforces is the HFT signal — rate over volume.'},
+  {name:'Operating Systems',code:'22AIE202 — processes, scheduling, memory, synchronization',pri:'Critical',pclass:'pri-c',res:'Silberschatz (Dinosaur Book) + CodeVault YouTube',res2:'Trace scheduling + memory on paper — Graviton / Tower / HRT test this'},
   {name:'Fundamentals of AI',code:'22AIE201 — search, adversarial games, CSPs, logic, planning',pri:'High',pclass:'pri-h',res:'AIMA — Russell & Norvig + CS50 AI',res2:'You\'re ahead here — go deeper than the syllabus'},
   {name:'Mathematics for Computing 3',code:'22MAT220 — convex optimization, KKT conditions, MDPs, Markov chains',pri:'High',pclass:'pri-h',res:'Boyd Convex Optimization (free PDF) + 3Blue1Brown',res2:'Feeds Phase 2 ML directly — KKT underpins SVMs'},
   {name:'Computer Networks',code:'22AIE204 — OSI stack, TCP/IP, routing, SDN, IoT',pri:'Medium',pclass:'pri-m',res:'Kurose & Ross (Top-Down Approach) + Hussein Nasser',res2:'Core CS fundamental tested at Goldman systems teams'},
@@ -4007,7 +4069,7 @@ const DEFAULT_SUBJECTS = [
   {name:'Strategic Lessons from Mahabharata',code:'22ADM201',pri:'Routine',pclass:'pri-l',res:'Class notes only',res2:'Attend and clear the exam'},
   {name:'CS50 AI with Python',code:'Self-Study Foundation — search, optimization, logic, machine learning',pri:'High',pclass:'pri-h',res:'CS50 AI — Harvard (online course)',res2:'Build classical AI search & logic paradigms to ground your mathematical foundation'},
 ];
-const DEFAULT_MISSIONS = { daily: [{id:"m1", text:"Complete 2 LeetCode problems", done:false, xp:25}, {id:"m2", text:"Read 1 chapter of OS", done:false, xp:25}], longTerm: [{id:"l1", text:"Build a Fullstack App", done:false, deadline:"Aug 30"}, {id:"l2", text:"Get an Internship", done:false, deadline:"Dec 2026"}] };
+const DEFAULT_MISSIONS = { daily: [{id:"m1", text:"Solve 1 Codeforces problem", done:false, xp:25}, {id:"m2", text:"Write C++ systems code (not DSA-in-C++)", done:false, xp:25}, {id:"m3", text:"Read 1 chapter of OS / probability", done:false, xp:20}], longTerm: [{id:"l1", text:"Ship a C++ order-matching engine on GitHub", done:false, deadline:"2026-12-31", xp:40}, {id:"l2", text:"Hit Codeforces Specialist (1600+)", done:false, deadline:"2027-06-01", xp:40}, {id:"l3", text:"Submit 10 WorldQuant BRAIN alphas", done:false, deadline:"2027-03-01", xp:30}, {id:"l4", text:"Internship at Graviton / Tower / QuadEye / WorldQuant", done:false, deadline:"2027-06-01", xp:50}] };
 const DEFAULT_PROJECTS = [
   {
     id: 'p-1',
@@ -4052,14 +4114,198 @@ const DEFAULT_PROJECTS = [
   }
 ];
 const DEFAULT_TARGETS = [
-  { tier: 'Reach', name: 'AlphaGrep / Tower Research / Optiver', desc: 'Lethal C++ STL, Cache/Memory mastery, OS Internals, Custom Order Engine.', ctc: '₹40 - ₹80+ LPA', type: 'reach' },
-  { tier: 'Target', name: 'Goldman Sachs / JPMC / Uber', desc: 'Hard Leetcode DSA, Advanced CN/OS fundamentals, Strong Concurrent Portfolio.', ctc: '₹20 - ₹35 LPA', type: 'tgt' },
-  { tier: 'Floor', name: 'Top Product Startups / Flipkart', desc: 'Solid Medium-Hard DSA, Edge-AI deployment, robust backend design.', ctc: '₹12 - ₹20 LPA', type: 'flr' }
+  {
+    tier: 'Dream / Reach', type: 'reach', name: 'Jane Street',
+    office: 'NYC · London · HK · Mumbai / Bengaluru (tiny)',
+    roles: 'Quant Trader · Quant Researcher · Software Engineer',
+    ctc: '₹2.5–5.8 Cr global',
+    ctcDetail: 'US Y1 ~$300–700k (QT at the top, SWE ~$300–500k). An India seat, if one opens, is still ₹80L–2 Cr+. Not an Amrita campus pipeline.',
+    desc: 'The prestige name. They hire probability and decision-making, not LeetCode volume. SWE is still olympiad-adjacent.',
+    required: ['IOI / ICPC or Codeforces ~2000+', 'Probability + expected value under time pressure', 'C++ or OCaml/Python (SWE); trading games (QT)', 'Referral or contest win — not a campus slot'],
+    note: 'India office exists. Headcount is tiny and almost entirely reserved for olympiad-caliber CPs or strong referrals.'
+  },
+  {
+    tier: 'Dream / Reach', type: 'reach', name: 'Citadel / Citadel Securities',
+    office: 'NYC · Chicago · London · Hong Kong — no India campus channel',
+    roles: 'QR (Citadel HF) · QT / Core SWE (Citadel Securities)',
+    ctc: '₹2.3–5.8 Cr US Y1',
+    ctcDetail: 'HF QR ~$275–475k Y1. CitSec QT ~$400–700k. SWE ~$300–550k. Zero meaningful India-campus hiring.',
+    desc: 'Two firms, one brand. Securities is HFT market-making; the hedge fund is research + PM track. Both are closed loops from India.',
+    required: ['CF 1900+ or equivalent olympiad', 'Probability, stats, brainteasers (QR/QT)', 'Deep C++ systems / kernel / networking (CitSec SWE)', 'US/UK/HK visa path or a later lateral'],
+    note: 'Do not weight this as a 2028 campus outcome. Use it as the skill ceiling you train against.'
+  },
+  {
+    tier: 'Dream / Reach', type: 'reach', name: 'Optiver',
+    office: 'Amsterdam · Chicago · Sydney · Mumbai (tiny)',
+    roles: 'Market Maker / QT · Quant Researcher · Quant Developer',
+    ctc: '₹2.1–3.3 Cr global',
+    ctcDetail: 'US/EU Y1 ~$250–400k. Occasional IIT international packages reported ~₹2–2.5 Cr. India office headcount is tiny.',
+    desc: 'Options-native market maker. Mental math and market intuition are first-class, not a side quest.',
+    required: ['Fast mental math + options intuition', 'Probability / combinatorics on a whiteboard', 'C++17+ for quant-dev (STL, memory, latency)', 'CF 1800+ or a brutal OA + trader games'],
+    note: 'India office exists. Same story as Jane Street: reserved for IOI/ICPC-caliber or referrals.'
+  },
+  {
+    tier: 'Dream / Reach', type: 'reach', name: 'Two Sigma',
+    office: 'NYC · London — no India campus channel',
+    roles: 'Quant Researcher · Quant SWE · Data Scientist',
+    ctc: '₹2.1–3.3 Cr US Y1',
+    ctcDetail: 'US new-grad ~$250–400k. Research-heavier than pure HFT. No India-campus pipeline.',
+    desc: 'Systematic hedge fund. Stats, ML, and research taste matter more than raw matching-engine latency.',
+    required: ['Probability, stats, ML fundamentals', 'Python + C++ (research + production)', 'CF 1800+ or a strong research / Kaggle signal', 'Papers or non-trivial modeling projects help'],
+    note: 'Treat as a later off-campus / intern-return shot, not a July 2028 campus card.'
+  },
+  {
+    tier: 'Dream / Reach', type: 'reach', name: 'Hudson River Trading (HRT)',
+    office: 'NYC · Chicago · London — no India campus channel',
+    roles: 'Algorithm Developer · Core SWE · Quant Researcher',
+    ctc: '₹2.5–4.2 Cr US Y1',
+    ctcDetail: 'US SWE/algo-dev ~$300–500k Y1. One of the most C++-lethal bars on earth. No India campus.',
+    desc: 'If Jane Street is probability, HRT is machines. Cache lines, kernel bypass, and nanoseconds.',
+    required: ['Lethal C++: cache, SIMD, allocators, atomics', 'Linux internals, networking, lock-free queues', 'CF 1900+ (speed + correctness)', 'A public low-latency project that is not a tutorial clone'],
+    note: 'The C++ bar here is the training target even if the offer never comes from HRT itself.'
+  },
+  {
+    tier: 'Strong Target', type: 'tgt', name: 'Jump Trading',
+    office: 'Chicago · London · Singapore — rare India hire',
+    roles: 'Quant Dev · Algo Trader · Researcher',
+    ctc: '₹2.3–3.6 Cr US Y1',
+    ctcDetail: 'US new-grad ~$275–430k. India hiring is sporadic and referral-driven.',
+    desc: 'Same universe as HRT/CitSec. Slightly more reachable via internships than Jane Street, still a dream from Amrita.',
+    required: ['C++ systems + probability (both, not either)', 'CF 1800–2000', 'OS / networking depth', 'Internship or contest signal that a Jump engineer will vouch for'],
+    note: 'Keep on the list as a skill north star. Do not build the 2028 plan around a Jump campus drive.'
+  },
+  {
+    tier: 'Strong Target', type: 'tgt', name: 'D. E. Shaw',
+    office: 'Hyderabad (real India office) · NYC · London',
+    roles: 'SWE · QR · Systems / Platform',
+    ctc: '₹35–80 LPA India · ₹2.3–3.3 Cr US',
+    ctcDetail: 'Hyderabad campus/off-campus new-grad typically ₹35–80 LPA depending on role. US QR/SWE ~$280–390k. Most realistic "global quant brand" with an actual India funnel.',
+    required: ['Hard DSA (more LeetCode-shaped than HFT, still brutal)', 'OS + CN + concurrency', 'C++ or Python at production depth', 'Strong CGPA + a systems or research project'],
+    note: 'Weight this above glamour HFT names. Hyderabad is a real office with real India hiring.'
+  },
+  {
+    tier: 'Strong Target', type: 'tgt', name: 'IMC Trading',
+    office: 'Amsterdam · Chicago · Sydney — limited India',
+    roles: 'Trader · Quant Researcher · Quant Developer',
+    ctc: '₹2.4–3.3 Cr global',
+    ctcDetail: 'US/EU Y1 ~$290–400k. Comp grows fast after year 1. India presence is not a campus pipeline.',
+    desc: 'Market maker with a heavy trader-game process. Dev track is C++ and low-latency.',
+    required: ['Trading games + probability', 'Mental math / market making intuition', 'C++ for quant-dev', 'CF 1700+ and a clean OA'],
+    note: 'Apply off-campus / intern. Do not wait for an Amrita drive that will not come.'
+  },
+  {
+    tier: 'Strong Target', type: 'tgt', name: 'Akuna Capital',
+    office: 'Chicago · Sydney — no India campus',
+    roles: 'Trader · Quant · Software Engineer',
+    ctc: '₹1.5–2.5 Cr US/AU',
+    ctcDetail: 'US new-grad roughly $180–300k. Slightly more accessible than T1, still closed from India campus.',
+    desc: 'Options-heavy prop shop. A notch below Optiver/IMC on brand, same skill family.',
+    required: ['Options / vol intuition', 'Probability + coding OA', 'C++ or Python', 'CF 1600+ as a floor'],
+    note: 'Useful practice target for Optiver-style interviews. Not a 2028 campus bet.'
+  },
+  {
+    tier: 'Strong Target', type: 'tgt', name: 'SIG (Susquehanna)',
+    office: 'Philadelphia · occasional India / remote research',
+    roles: 'Trader · QR · Quant Dev',
+    ctc: '₹1.7–2.5 Cr US',
+    ctcDetail: 'US trader/QR Y1 ~$200–300k. Decision-theory interviews. Occasional research touchpoints into India.',
+    desc: 'Game theory and making good decisions with incomplete information. Less "nanosecond C++" than HRT.',
+    required: ['Game theory + probability + EV', 'Decision-making interviews, not just DSA', 'Python / C++', 'Poker / strategy games are a real signal here'],
+    note: 'Interview style is unique. Prep specifically; do not reuse a pure-HFT C++ loop and hope.'
+  },
+  {
+    tier: 'Strong Target', type: 'tgt', name: 'Tower Research Capital',
+    office: 'NYC · Gurgaon · Mumbai',
+    roles: 'Core Dev · Quant Dev · Quant Researcher',
+    ctc: '₹50–90 LPA India typical · ₹1–2 Cr top',
+    ctcDetail: 'India new-grad commonly ₹50–90 LPA; top CSE/IIT outliers ₹1–2 Cr. US ~$265–370k. The Gurgaon/Mumbai office is a real apply target.',
+    desc: 'Global HFT with an actual India engineering office. C++ + OS internals + an order-book project is the language they speak.',
+    required: ['Deep C++ (STL internals, cache, memory)', 'OS internals + networking', 'CF 1800+ preferred', 'Public order-matching / market-data engine'],
+    note: 'Listed again under India-entry because the India office is the realistic door. Same firm, weight the Gurgaon path.'
+  },
+  {
+    tier: 'India Entry', type: 'india', name: 'Graviton Research Capital',
+    office: 'Gurgaon (India-based, quant-dev heavy)',
+    roles: 'Quant Dev · Quant Researcher · Core SWE',
+    ctc: '₹80 LPA – ₹1.2 Cr',
+    ctcDetail: 'India new-grad TC typically ₹80L–1.2 Cr (base + Y1 bonus). IIT intern stipends have hit ₹25L+/month. Off-campus is possible with CF + C++.',
+    desc: 'Your most important near-term name. India HFT that pays T1 money without requiring a US visa. Quant-dev heavy.',
+    required: ['C++ that is actually systems C++, not DSA-in-C++', 'Codeforces 1800+ (2000+ makes you visible)', 'OS, cache, lock-free, sockets', 'Math puzzles + probability in later rounds'],
+    note: 'Most realistic high-pay entry from an Indian engineering college. Weight this heavier than Jane Street.'
+  },
+  {
+    tier: 'India Entry', type: 'india', name: 'WorldQuant',
+    office: 'Mumbai / Hyderabad research + global platform',
+    roles: 'QR · Research Consultant · Quant Dev',
+    ctc: '₹20–50 LPA India entry',
+    ctcDetail: 'Full-time India QR/dev often ₹20–50 LPA to start, scales with alpha. Research Consultant path via WorldQuant BRAIN is the open door.',
+    desc: 'The most accessible "quant" brand. Less CF-obsessed, more stats + research + the BRAIN platform.',
+    required: ['Stats, regression, time series', 'Python (NumPy/pandas) + some C++', 'WorldQuant BRAIN alphas — start now', 'Ability to write and defend a research idea'],
+    note: 'Most realistic near-term quant entry from Amrita. Start BRAIN this semester. Weight this.'
+  },
+  {
+    tier: 'India Entry', type: 'india', name: 'Tower Research — India office',
+    office: 'Gurgaon / Mumbai',
+    roles: 'Core Dev · Quant Dev',
+    ctc: '₹50–90 LPA typical · ₹1 Cr+ outliers',
+    ctcDetail: 'Same firm as the T2 card. This row exists so the India office is weighted as an apply target, not a poster on the wall.',
+    desc: 'Apply here, not to NYC. Same C++/OS bar, India comp, India interviews.',
+    required: ['C++ STL + memory + concurrency', 'Linux, epoll, shared memory', 'CF 1700–1900', 'Matching engine or UDP market-data handler on GitHub'],
+    note: 'Treat as a primary 2027–28 application, not a reach fantasy.'
+  },
+  {
+    tier: 'India Entry', type: 'india', name: 'Millennium',
+    office: 'Mumbai / Bengaluru (India presence growing)',
+    roles: 'Quant Dev · Platform SWE · QR',
+    ctc: '₹40–80 LPA India',
+    ctcDetail: 'India tech/quant-dev typically ₹40–80 LPA as the office scales. US PM/QR is a different universe ($300k+).',
+    desc: 'Multi-manager pod shop, not classic HFT. More platform + research engineering than nanosecond matching.',
+    required: ['C++ and/or Python at production depth', 'Data systems, not just DSA', 'Stats literacy for QR-adjacent roles', 'Internships / referrals matter more than CF here'],
+    note: 'Growing India presence. Watch 2027–28 headcount. A strong second-wave target after Graviton/Tower.'
+  },
+  {
+    tier: 'India Entry', type: 'india', name: 'QuadEye',
+    office: 'Gurgaon',
+    roles: 'Quant Strategist · Quant Dev · Core SWE',
+    ctc: '₹75 LPA – ₹1.2 Cr',
+    ctcDetail: 'Careers page has advertised intern conversion at min ₹93 LPA (no upper cap). Typical new-grad band ~₹75L–1.2 Cr.',
+    desc: 'Indian HFT in the same Gurgaon cluster as Graviton. Pays like a T1 if you clear the bar.',
+    required: ['C++ + CP (CF 1800+)', 'Probability / math puzzles', 'Low-latency instincts', 'IIT-shaped process — off-campus needs a loud GitHub + CF'],
+    note: 'Realistic if the CF rating and C++ project are real. Same bucket as Graviton. Weight it.'
+  },
+  {
+    tier: 'Floor / Fallback', type: 'flr', name: 'Flipkart / Swiggy-tier product SWE',
+    office: 'Bengaluru · Hyderabad (low-latency / infra teams)',
+    roles: 'SDE-1 · Backend / Infra · Platform',
+    ctc: '₹18–40 LPA',
+    ctcDetail: 'Top product new-grad typically ₹18–40 LPA (Flipkart/Swiggy/better startups). Infra / low-latency teams sit at the top of that band.',
+    desc: 'The employability floor. Same systems muscle (C++, OS, backend) still wins. Keeps 2028 safe if quant does not convert.',
+    required: ['Solid medium-hard DSA (this is the LeetCode lane)', 'Backend + OS + networks', 'One production-shaped project', 'Edge-AI (AeroSynapse) is a plus, not the pitch'],
+    note: 'Do not abandon this lane. Quant is a funnel. This is the job if the funnel does not convert.'
+  },
+  {
+    tier: 'Floor / Fallback', type: 'flr', name: 'Fintech infra (PhonePe / Razorpay / Cred / Groww)',
+    office: 'Bengaluru · Pune · Hyderabad',
+    roles: 'Backend · Payments infra · Data / reliability',
+    ctc: '₹18–35 LPA',
+    ctcDetail: 'New-grad typically ₹18–35 LPA. Closer to markets than food-delivery SWE, still not HFT.',
+    desc: 'If you want to stay near money without clearing an HFT OA. Payments, ledgers, exactly-once, reliability.',
+    required: ['DSA + system design basics', 'Databases, queues, consistency', 'Java/Go/C++ — language less sacred than HFT', 'Internship on a real backend'],
+    note: 'Fallback that still compounds. Better than a random service-company safety net.'
+  }
 ];
 const DEFAULT_TARGETS_HAVE = [
-  { title: 'Portfolio breadth', items: ['Computer vision (AeroSynapse)', 'Mobile product (System: Engineer)', 'Web + backend (Satyam News)'] },
-  { title: 'Technical depth', items: ['TensorRT + DeepStream at 150+ FPS', 'Flutter + Riverpod + Drift architecture', 'PostgreSQL production backend'] },
-  { title: 'Add by Sem 6', items: ['Low-Latency C++ Order Matching Engine', 'Custom HTTP/1.1 Web Server in C++', 'System design fundamentals (DDIA)'] }
+  { title: 'Already in the stack', items: ['Computer vision (AeroSynapse) — keep, do not lead with it', 'Mobile product (System: Engineer)', 'Web + backend (Satyam News)', 'TensorRT + DeepStream at 150+ FPS'] },
+  { title: 'The actual quant bar', items: ['C++: deep — memory model, cache, lock-free. Not DSA-in-C++', 'Codeforces rating matters more here than LeetCode grinding', 'Probability / stats / combinatorics under a clock', 'Market microstructure: order book, latency, maker-taker'] },
+  { title: 'Close by Sem 6', items: ['Low-latency C++ order matching engine on GitHub', 'CF Specialist 1600+ now, 1800+ by Sem 6', 'Custom HTTP/1.1 or UDP market-data handler in C++', 'Heard on the Street + Fifty Challenging Problems in Probability'] }
+];
+const DEFAULT_APPLICATIONS = [
+  { id:'app-graviton', company:'Graviton Research Capital', role:'Quant Developer', tier:'India Entry', column:'drafting', date:'', notes:'₹80 LPA – ₹1.2 Cr · CF 1800+ · systems C++ · Gurgaon. Weight this.' },
+  { id:'app-wq', company:'WorldQuant', role:'Research Consultant / QR', tier:'India Entry', column:'drafting', date:'', notes:'₹20–50 LPA · start BRAIN this semester · stats + Python. Most open door.' },
+  { id:'app-tower-in', company:'Tower Research — India', role:'Core / Quant Dev', tier:'India Entry', column:'drafting', date:'', notes:'₹50–90 LPA typical · Gurgaon/Mumbai · matching engine on GitHub' },
+  { id:'app-quadeye', company:'QuadEye', role:'Quant Strategist / Dev', tier:'India Entry', column:'drafting', date:'', notes:'₹75 LPA – ₹1.2 Cr · CF 1800+ · Gurgaon HFT' },
+  { id:'app-deshaw', company:'D. E. Shaw', role:'SWE / Systems', tier:'Target', column:'drafting', date:'', notes:'₹35–80 LPA Hyderabad · hardest realistic global brand from India' },
+  { id:'app-millennium', company:'Millennium', role:'Quant Dev / Platform', tier:'India Entry', column:'drafting', date:'', notes:'₹40–80 LPA · India presence growing · 2027–28 watch' }
 ];
 const DEFAULT_GAMING = {
   verdict: "4 hours/week is 2.4% of your waking hours. That's not a threat to your goals — it's basic mental maintenance. The people who land top placements aren't the ones who studied every waking hour. They're the ones who studied consistently for 2 years without burning out. Sustainability beats intensity over an 18-month horizon every time.",
@@ -4122,7 +4368,46 @@ if(!S.noteTabs) S.noteTabs = JSON.parse(JSON.stringify(DEFAULT_NOTE_TABS));
 if (S.targets && S.targets.length > 0 && S.targets[0].name.includes('Goldman Sachs')) {
   S.targets = JSON.parse(JSON.stringify(DEFAULT_TARGETS));
   S.targetsHave = JSON.parse(JSON.stringify(DEFAULT_TARGETS_HAVE));
+  S.targetsVersion = 2;
   localStorage.setItem('abhi_os', JSON.stringify(S));
+}
+if (!S.targetsVersion || S.targetsVersion < 2) {
+  S.targets = JSON.parse(JSON.stringify(DEFAULT_TARGETS));
+  S.targetsHave = JSON.parse(JSON.stringify(DEFAULT_TARGETS_HAVE));
+  S.targetsVersion = 2;
+}
+if (S.questsList && !S.questsList.some(q => q.id === 'q-cf')) {
+  const i = S.questsList.findIndex(q => q.id === 'q-lc');
+  S.questsList.splice(i >= 0 ? i : 1, 0, {id:'q-cf',text:'Solve 1 Codeforces problem (not LeetCode)',xp:20});
+}
+if (S.missions && S.missions.longTerm && S.missions.longTerm.some(m => m.text === 'Build a Fullstack App')) {
+  S.missions.longTerm = JSON.parse(JSON.stringify(DEFAULT_MISSIONS.longTerm));
+}
+if (S.missions && S.missions.daily && S.missions.daily.some(m => m.text === 'Complete 2 LeetCode problems')) {
+  S.missions.daily = JSON.parse(JSON.stringify(DEFAULT_MISSIONS.daily));
+}
+if (S.phases && S.phases[3] && (S.phases[3].title || '').includes('FinTech')) {
+  S.phases[3] = JSON.parse(JSON.stringify(DEFAULT_PHASES[3]));
+}
+if (S.subjects) {
+  S.subjects.forEach(s => {
+    if (!s.res2) return;
+    if (s.name.indexOf('Operating Systems') === 0 && s.res2.indexOf('Goldman') >= 0) {
+      s.res2 = 'Trace scheduling + memory on paper — Graviton / Tower / HRT test this';
+    }
+    if (s.name.indexOf('Computer Networks') === 0 && s.res2.indexOf('Goldman') >= 0) {
+      s.res2 = 'TCP/UDP, epoll, kernel-bypass awareness — HFT systems interviews';
+    }
+    if (s.name.indexOf('Data Structures') === 0 && s.res2.indexOf('Leetcode') >= 0) {
+      s.res2 = 'LeetCode for DE Shaw + floor. Codeforces is the HFT signal — rate over volume.';
+    }
+    if (s.name.indexOf('Mathematics') === 0 && s.res2.indexOf('KKT') >= 0) {
+      s.res2 = 'Probability + EV + combinatorics — Heard on the Street. This is the quant interview language.';
+    }
+  });
+}
+if ((!S.applications || S.applications.length === 0) && typeof DEFAULT_APPLICATIONS !== 'undefined') {
+  S.applications = JSON.parse(JSON.stringify(DEFAULT_APPLICATIONS));
 }
 if(!S.phases || !S.phases[0] || S.phases[0].title.includes('Classical AI') || !S.phases[0].learn.some(l => l.includes('CS50'))) {
   S.phases = JSON.parse(JSON.stringify(DEFAULT_PHASES));
@@ -5501,6 +5786,10 @@ async function syncHackerNews() {
     "“Operating Systems: The core layer that connects logic to physical silicon.”"
   ];
   
+  if (Math.random() < 0.65) {
+    tickerText.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+    return;
+  }
   try {
     // Attempt to fetch top stories from public HackerNews API
     const res = await fetch('https://hacker-news.firebaseio.com/v0/topstories.json');
@@ -6148,6 +6437,7 @@ function init(){
   renderSidebar();
   renderHealthPages();
   renderToday();
+  renderFunnelWidget();
   renderRoadmap(1);
   renderSemester();
   renderDSALog();
@@ -6593,6 +6883,7 @@ function deleteSchedSlot(idx) {
 
 // ─── TODAY ────────────────────────────────────────────────
 function renderToday(){
+  try { renderFunnelWidget(); } catch(_){}
   const day=DAYS[new Date().getDay()];
   const sched=S.schedule[day]||[];
   const now=new Date();
@@ -6973,9 +7264,11 @@ function renderPhaseProgress(){
   const mastery=S.competencyMastery||{};
   const osList=(typeof DEFAULT_COMPETENCY_LIST!=='undefined' && DEFAULT_COMPETENCY_LIST.osRoles) ? DEFAULT_COMPETENCY_LIST.osRoles : [];
   const aiList=(typeof DEFAULT_COMPETENCY_LIST!=='undefined' && DEFAULT_COMPETENCY_LIST.aiArch) ? DEFAULT_COMPETENCY_LIST.aiArch : [];
+  const quantList=(typeof DEFAULT_COMPETENCY_LIST!=='undefined' && DEFAULT_COMPETENCY_LIST.quantBar) ? DEFAULT_COMPETENCY_LIST.quantBar : [];
   const osPct = osList.length ? Math.round(osList.filter(x=>mastery[x.id]).length / osList.length * 100) : 0;
-  const allComp = osList.length + aiList.length;
-  const phasePct = allComp ? Math.round([...osList,...aiList].filter(x=>mastery[x.id]).length / allComp * 100) : 0;
+  const quantPct = quantList.length ? Math.round(quantList.filter(x=>mastery[x.id]).length / quantList.length * 100) : 0;
+  const allComp = osList.length + aiList.length + quantList.length;
+  const phasePct = allComp ? Math.round([...osList,...aiList,...quantList].filter(x=>mastery[x.id]).length / allComp * 100) : 0;
   const activeDays = Object.keys(S.heatmap||{}).filter(k => (S.heatmap[k]||0) > 0).length;
   const items=[
     {name:(S.phases[0]&&S.phases[0].title)||'Phase 1',pct:phasePct,color:'var(--mauve)'},
@@ -7107,6 +7400,14 @@ const DEFAULT_COMPETENCY_LIST = {
     { id: 'c_deepstream', name: 'DeepStream Pipeline', desc: 'Video processing pipelines & GStreamer layout' },
     { id: 'c_sahi', name: 'SAHI Tiling', desc: 'Sliced inference for small targets in 4K' },
     { id: 'c_quant', name: 'Model Quantization', desc: 'FP32 to INT8 weights scaling & post-training compression' }
+  ],
+  quantBar: [
+    { id: 'c_cpp_mm', name: 'C++ Memory Model', desc: 'atomics, acquire/release, false sharing — not DSA-in-C++' },
+    { id: 'c_stl_int', name: 'STL Internals', desc: 'vector growth, unordered_map hashing, allocator behavior' },
+    { id: 'c_cf', name: 'Codeforces Rating', desc: 'Specialist 1600+ now; 1800+ by Sem 6; 2000+ for T1' },
+    { id: 'c_prob', name: 'Probability Under Time', desc: 'EV, Bayes, combinatorics, Heard on the Street style' },
+    { id: 'c_micro', name: 'Market Microstructure', desc: 'LOB, maker/taker, latency, colocation, tick data' },
+    { id: 'c_ome', name: 'Order Matching Engine', desc: 'Price-time priority, preallocated pools, O(1) cancel' }
   ]
 };
 
@@ -7117,15 +7418,18 @@ function renderCompetencyTracker() {
   const extras = S.customCompetencies || [];
   const comp = {
     osRoles: DEFAULT_COMPETENCY_LIST.osRoles.concat(extras.filter(x => x.category === 'os')),
-    aiArch: DEFAULT_COMPETENCY_LIST.aiArch.concat(extras.filter(x => x.category === 'ai'))
+    aiArch: DEFAULT_COMPETENCY_LIST.aiArch.concat(extras.filter(x => x.category === 'ai')),
+    quantBar: (DEFAULT_COMPETENCY_LIST.quantBar || []).concat(extras.filter(x => x.category === 'quant'))
   };
   const mastery = S.competencyMastery || {};
-  
+  const catTitle = { os: 'OS Core Competencies', ai: 'AI Architectures & Edge', quant: 'Quant / HFT Bar' };
+  const catColor = { os: 'var(--blue)', ai: 'var(--mauve)', quant: 'var(--yellow)' };
+
   const getListHTML = (items, category) => {
     let total = items.length;
     let done = items.filter(x => mastery[x.id]).length;
     let pct = Math.round((done / total) * 100) || 0;
-    
+
     let listHTML = items.map(item => {
       const isDone = !!mastery[item.id];
       return `
@@ -7138,15 +7442,15 @@ function renderCompetencyTracker() {
         </div>
       `;
     }).join('');
-    
+
     return `
       <div class="glass-card" style="padding: 16px; border-radius: var(--r);">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-          <div style="font-family:var(--font-mono); font-size:10px; font-weight:700; color:var(--mauve); text-transform:uppercase;">${category === 'os' ? 'OS Core Competencies' : 'AI Architectures & Edge'}</div>
+          <div style="font-family:var(--font-mono); font-size:10px; font-weight:700; color:${catColor[category] || 'var(--mauve)'}; text-transform:uppercase;">${catTitle[category] || category}</div>
           <span style="font-family:var(--font-mono); font-size:11px; color:var(--green); font-weight:700;">${pct}%</span>
         </div>
         <div class="prog-track" style="height:4px; margin-bottom:16px;">
-          <div class="prog-fill" style="width:${pct}%; background:var(--green);"></div>
+          <div class="prog-fill" style="width:${pct}%; background:${catColor[category] || 'var(--green)'};"></div>
         </div>
         <div style="display:flex; flex-direction:column; gap:6px;">
           ${listHTML}
@@ -7154,9 +7458,9 @@ function renderCompetencyTracker() {
       </div>
     `;
   };
-  
-  container.innerHTML = getListHTML(comp.osRoles, 'os') + getListHTML(comp.aiArch, 'ai')
-    + `<button class="btn-secondary" style="margin-top:12px;width:100%;" onclick="addCustomCompetency()">+ Add competency</button>`;
+
+  container.innerHTML = getListHTML(comp.osRoles, 'os') + getListHTML(comp.aiArch, 'ai') + getListHTML(comp.quantBar, 'quant')
+    + `<button class="btn-secondary" style="margin-top:12px;width:100%;grid-column:1/-1;" onclick="addCustomCompetency()">+ Add competency</button>`;
 }
 
 function toggleCompetency(id, category) {
@@ -7536,37 +7840,192 @@ function deleteSubject(idx) {
 }
 
 // ─── TARGETS ─────────────────────────────────────────────
+const TARGET_TIER_META = [
+  { type: 'reach', label: 'Tier 1 — Dream / Reach', blurb: 'Global HFT / quant. India campus almost never. Skill ceiling, not a 2028 plan.', symbol: '⬆' },
+  { type: 'tgt', label: 'Tier 2 — Strong Targets', blurb: 'Still elite. D.E. Shaw + Tower India are the swing names with real doors.', symbol: '◎' },
+  { type: 'india', label: 'Tier 3 — India-accessible entry', blurb: 'Weight these. This is the real 2028 funnel from an Indian engineering college.', symbol: '◆' },
+  { type: 'flr', label: 'Floor / Fallback', blurb: 'Stay employable if the quant funnel does not convert.', symbol: '▽' }
+];
+const TARGET_TYPE_DEFAULT_TIER = { reach: 'Dream / Reach', tgt: 'Strong Target', india: 'India Entry', flr: 'Floor / Fallback' };
+const APP_TIER_FROM_TYPE = { reach: 'Reach', tgt: 'Target', india: 'India Entry', flr: 'Floor' };
+let targetsFilter = 'all';
+
+function targetTypeClass(type) {
+  if (type === 'reach') return 'reach';
+  if (type === 'tgt') return 'tgt';
+  if (type === 'india') return 'india';
+  return 'flr';
+}
+
+function setTargetsFilter(f) {
+  targetsFilter = f;
+  renderTargets();
+}
+
+function openQuantFunnel(filter) {
+  if (filter) targetsFilter = filter;
+  gotoPage('targets');
+}
+
+function addTargetToApplications(idx) {
+  const t = (S.targets || [])[idx];
+  if (!t) return;
+  if (!S.applications) S.applications = [];
+  const exists = S.applications.some(a => (a.company || '').toLowerCase() === (t.name || '').toLowerCase());
+  if (exists) { showToast(t.name + ' is already on the board'); gotoPage('applications'); return; }
+  const req = Array.isArray(t.required) ? t.required.join(' · ') : '';
+  S.applications.push({
+    id: 'app-' + Date.now(),
+    company: t.name,
+    role: t.roles || 'Quant Dev',
+    tier: APP_TIER_FROM_TYPE[targetTypeClass(t.type)] || 'Target',
+    column: 'drafting',
+    date: new Date().toLocaleDateString('en-IN'),
+    notes: [t.ctc, req, t.note].filter(Boolean).join(' — ')
+  });
+  save();
+  renderKanban();
+  showToast(t.name + ' added to Applications');
+}
+
+function renderFunnelWidget() {
+  const el = document.getElementById('funnel-widget');
+  if (!el) return;
+  const targets = S.targets || DEFAULT_TARGETS || [];
+  const pick = ['Graviton', 'WorldQuant', 'Tower Research — India', 'QuadEye'];
+  const weighted = pick.map(name => targets.find(t => t.name === name)).filter(Boolean);
+  const cards = weighted.map(t => {
+    const req = (t.required && t.required[0]) ? t.required[0] : '';
+    return `<button class="funnel-chip-card" type="button" onclick="openQuantFunnel('india')">
+      <div class="funnel-chip-name">${escapeHtml(t.name)}</div>
+      <div class="funnel-chip-ctc">${escapeHtml(t.ctc || '')}</div>
+      <div class="funnel-chip-req">${escapeHtml(req)}</div>
+    </button>`;
+  }).join('');
+  el.innerHTML = `
+    <div class="funnel-widget-hdr">
+      <div>
+        <div class="funnel-kicker">July 2028 · Quant-first</div>
+        <div class="funnel-title">Weight these. Jane Street is the ceiling, not the plan.</div>
+      </div>
+      <button class="btn-secondary" type="button" onclick="openQuantFunnel('all')" style="font-size:11px;padding:6px 10px;">Open full funnel →</button>
+    </div>
+    <div class="funnel-strip">${cards}</div>
+    <div class="funnel-bar"><strong>The bar:</strong> systems C++ (not DSA-in-C++) · Codeforces &gt; LeetCode · probability under a clock · market microstructure. Floor stays live at Flipkart/Swiggy-infra and fintech if this does not convert.</div>
+  `;
+}
+
 function renderTargets() {
   const grid = document.getElementById('targets-grid-container');
   const haveContainer = document.getElementById('targets-have-container');
+  const brief = document.getElementById('targets-brief');
+  const filters = document.getElementById('targets-filters');
   if(!grid || !haveContainer) return;
-  
+
   const targets = S.targets || [];
-  grid.innerHTML = targets.map((t, idx) => {
-    const typeClass = t.type === 'reach' ? 'reach' : t.type === 'tgt' ? 'tgt' : 'flr';
-    const symbol = t.type === 'reach' ? '⬆' : t.type === 'tgt' ? '◎' : '▽';
-    const tierText = t.tier || (t.type === 'reach' ? 'Reach' : t.type === 'tgt' ? 'Target' : 'Floor');
-    
-    return `
-      <div class="target-card ${typeClass}">
-        <div class="tc-tier">
-          ${symbol} ${tierText}
-          <button class="edit-btn" onclick="editTarget(${idx})">✏️</button>
+  const counts = { all: targets.length, reach: 0, tgt: 0, india: 0, flr: 0 };
+  targets.forEach(t => {
+    const k = targetTypeClass(t.type);
+    counts[k] = (counts[k] || 0) + 1;
+  });
+
+  if (brief) {
+    brief.innerHTML = `
+      <div class="targets-brief glass-card">
+        <div class="targets-brief-grid">
+          <div>
+            <div class="tb-kicker">The actual bar</div>
+            <div class="tb-body">
+              <strong>C++</strong> that is deep — memory model, cache, lock-free — not DSA-in-C++.
+              <strong>Probability / stats</strong> under a clock.
+              <strong>Market microstructure</strong> basics (order book, latency, maker-taker).
+              <strong>Codeforces rating matters more here than LeetCode grinding.</strong>
+            </div>
+          </div>
+          <div>
+            <div class="tb-kicker">India reality</div>
+            <div class="tb-body">
+              Tier 1 barely hire from India-campus channels. Jane Street and Optiver have India offices — headcount is tiny and almost entirely reserved for IOI/ICPC-caliber CPs or strong referrals.
+              <strong>Graviton, WorldQuant, Tower India, QuadEye</strong> are the names to weight.
+            </div>
+          </div>
+          <div>
+            <div class="tb-kicker">How to read LPA</div>
+            <div class="tb-body">
+              Figures are <strong>2025–26 market signals</strong> for new-grad total comp (base + year-1 bonus), not offers.
+              Global names shown in Cr at ~₹83/USD. Ranges swing with desk, year, and competing offers.
+            </div>
+          </div>
         </div>
-        <div class="tc-name">${t.name}</div>
-        <div class="tc-desc">${t.desc}</div>
-        <div class="tc-ctc">${t.ctc}</div>
       </div>
     `;
-  }).join('');
-  
+  }
+
+  if (filters) {
+    const pills = [
+      { id: 'all', label: 'All ' + counts.all, cls: '' },
+      { id: 'reach', label: 'Dream ' + counts.reach, cls: 'reach' },
+      { id: 'tgt', label: 'Strong ' + counts.tgt, cls: 'tgt' },
+      { id: 'india', label: 'India ' + counts.india, cls: 'india' },
+      { id: 'flr', label: 'Floor ' + counts.flr, cls: 'flr' }
+    ];
+    filters.innerHTML = pills.map(p =>
+      `<button class="tf-btn ${p.cls} ${targetsFilter === p.id ? 'active' : ''}" onclick="setTargetsFilter('${p.id}')">${p.label}</button>`
+    ).join('');
+  }
+
+  const visibleTiers = TARGET_TIER_META.filter(meta => targetsFilter === 'all' || targetsFilter === meta.type);
+  grid.innerHTML = visibleTiers.map(meta => {
+    const rows = targets
+      .map((t, idx) => ({ t, idx }))
+      .filter(({ t }) => targetTypeClass(t.type) === meta.type);
+    if (!rows.length) return '';
+    const cards = rows.map(({ t, idx }) => {
+      const typeClass = targetTypeClass(t.type);
+      const tierText = t.tier || TARGET_TYPE_DEFAULT_TIER[typeClass] || 'Target';
+      const required = Array.isArray(t.required) ? t.required : [];
+      const chips = required.length
+        ? `<div class="tc-req-label">Required</div><div class="tc-chips">${required.map(r => `<span class="tc-chip">${escapeHtml(r)}</span>`).join('')}</div>`
+        : '';
+      return `
+        <div class="target-card ${typeClass}">
+          <div class="tc-tier">
+            <span>${meta.symbol} ${escapeHtml(tierText)}</span>
+            <div class="tc-actions">
+              <button class="edit-btn" title="Add to Applications" onclick="addTargetToApplications(${idx})">＋</button>
+              <button class="edit-btn" onclick="editTarget(${idx})">✏️</button>
+            </div>
+          </div>
+          <div class="tc-name">${escapeHtml(t.name || '')}</div>
+          ${t.office ? `<div class="tc-office">${escapeHtml(t.office)}</div>` : ''}
+          ${t.roles ? `<div class="tc-roles">${escapeHtml(t.roles)}</div>` : ''}
+          ${t.desc ? `<div class="tc-desc">${escapeHtml(t.desc)}</div>` : ''}
+          <div class="tc-ctc">${escapeHtml(t.ctc || '')}</div>
+          ${t.ctcDetail ? `<div class="tc-ctc-sub">${escapeHtml(t.ctcDetail)}</div>` : ''}
+          ${chips}
+          ${t.note ? `<div class="tc-note">${escapeHtml(t.note)}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+    return `
+      <div class="targets-tier-block">
+        <div class="targets-tier-hdr">
+          <span class="targets-tier-title ${meta.type}">${meta.symbol} ${meta.label}</span>
+          <span class="targets-tier-blurb">${meta.blurb}</span>
+          <span class="targets-tier-count">${rows.length} firms</span>
+        </div>
+        <div class="targets-firm-grid">${cards}</div>
+      </div>
+    `;
+  }).join('') || `<div class="empty-state">No firms in this tier yet. Add one.</div>`;
+
   const haveLists = S.targetsHave || [];
-  haveContainer.innerHTML = haveLists.map((l, idx) => {
+  haveContainer.innerHTML = haveLists.map((l) => {
     return `
       <div class="info-card">
-        <div class="ic-title">${l.title}</div>
+        <div class="ic-title">${escapeHtml(l.title || '')}</div>
         <ul class="ic-list">
-          ${l.items.map(item => `<li>${item}</li>`).join('')}
+          ${(l.items || []).map(item => `<li>${escapeHtml(item)}</li>`).join('')}
         </ul>
       </div>
     `;
@@ -7574,12 +8033,18 @@ function renderTargets() {
 }
 
 function addNewTarget() {
+  if (!S.targets) S.targets = [];
   S.targets.push({
-    tier: 'Target',
+    tier: 'India Entry',
     name: 'Company Name',
-    desc: 'Target requirements / details...',
-    ctc: '₹10–15 LPA',
-    type: 'tgt'
+    office: '',
+    roles: '',
+    desc: 'Why this firm is on the list.',
+    ctc: '₹40–80 LPA',
+    ctcDetail: '',
+    required: ['C++ systems depth', 'Codeforces rating', 'Probability'],
+    note: '',
+    type: 'india'
   });
   save();
   renderTargets();
@@ -7589,53 +8054,81 @@ function addNewTarget() {
 function editTarget(idx) {
   const t = S.targets[idx];
   if (!t) return;
-  
+  const requiredText = Array.isArray(t.required) ? t.required.join('\n') : (t.required || '');
+
   const html = `
     <div class="modal-form-group">
       <label class="modal-form-label">Company / Career Target Name</label>
-      <input type="text" class="modal-form-input" id="edit-tgt-name" value="${t.name}">
+      <input type="text" class="modal-form-input" id="edit-tgt-name" value="${escapeHtml(t.name || '')}">
     </div>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
       <div>
         <label class="modal-form-label">Tier Type</label>
         <select class="modal-form-select" id="edit-tgt-type">
-          <option value="reach" ${t.type === 'reach' ? 'selected' : ''}>Reach / Yellow</option>
-          <option value="tgt" ${t.type === 'tgt' ? 'selected' : ''}>Target / Green</option>
-          <option value="flr" ${t.type === 'flr' ? 'selected' : ''}>Floor / Blue</option>
+          <option value="reach" ${t.type === 'reach' ? 'selected' : ''}>Dream / Reach</option>
+          <option value="tgt" ${t.type === 'tgt' ? 'selected' : ''}>Strong Target</option>
+          <option value="india" ${t.type === 'india' ? 'selected' : ''}>India Entry</option>
+          <option value="flr" ${t.type === 'flr' ? 'selected' : ''}>Floor / Fallback</option>
         </select>
       </div>
       <div>
         <label class="modal-form-label">Tier Label Text</label>
-        <input type="text" class="modal-form-input" id="edit-tgt-tier" value="${t.tier || ''}" placeholder="e.g. Reach">
+        <input type="text" class="modal-form-input" id="edit-tgt-tier" value="${escapeHtml(t.tier || '')}" placeholder="e.g. Dream / Reach">
       </div>
     </div>
     <div class="modal-form-group">
-      <label class="modal-form-label">CTC range (e.g. ₹20–35 LPA)</label>
-      <input type="text" class="modal-form-input" id="edit-tgt-ctc" value="${t.ctc}">
+      <label class="modal-form-label">Office / Locations</label>
+      <input type="text" class="modal-form-input" id="edit-tgt-office" value="${escapeHtml(t.office || '')}" placeholder="e.g. Gurgaon · Mumbai">
     </div>
     <div class="modal-form-group">
-      <label class="modal-form-label">Description / Qualifications needed</label>
-      <textarea class="modal-form-textarea" id="edit-tgt-desc">${t.desc}</textarea>
+      <label class="modal-form-label">Roles they hire</label>
+      <input type="text" class="modal-form-input" id="edit-tgt-roles" value="${escapeHtml(t.roles || '')}" placeholder="e.g. Quant Dev · QR · SWE">
+    </div>
+    <div class="modal-form-group">
+      <label class="modal-form-label">Headline CTC / LPA</label>
+      <input type="text" class="modal-form-input" id="edit-tgt-ctc" value="${escapeHtml(t.ctc || '')}" placeholder="e.g. ₹80 LPA – ₹1.2 Cr">
+    </div>
+    <div class="modal-form-group">
+      <label class="modal-form-label">LPA detail (base vs bonus, India vs global)</label>
+      <textarea class="modal-form-textarea" id="edit-tgt-ctc-detail" style="min-height:64px;">${escapeHtml(t.ctcDetail || '')}</textarea>
+    </div>
+    <div class="modal-form-group">
+      <label class="modal-form-label">Why this firm</label>
+      <textarea class="modal-form-textarea" id="edit-tgt-desc">${escapeHtml(t.desc || '')}</textarea>
+    </div>
+    <div class="modal-form-group">
+      <label class="modal-form-label">Required (one per line — shown as chips)</label>
+      <textarea class="modal-form-textarea" id="edit-tgt-required" style="min-height:90px;">${escapeHtml(requiredText)}</textarea>
+    </div>
+    <div class="modal-form-group">
+      <label class="modal-form-label">Reality check / note</label>
+      <textarea class="modal-form-textarea" id="edit-tgt-note" style="min-height:64px;">${escapeHtml(t.note || '')}</textarea>
     </div>
     <div style="margin-top: 20px; border-top: 1px solid var(--line); padding-top: 10px; text-align: right;">
       <button class="btn-secondary" onclick="deleteTarget(${idx})" style="background: var(--red); color: var(--bg); border: none;">Delete Target</button>
     </div>
   `;
-  
+
   openModal('Edit Placement Target', html, () => {
     t.name = document.getElementById('edit-tgt-name').value.trim();
     t.type = document.getElementById('edit-tgt-type').value;
-    t.tier = document.getElementById('edit-tgt-tier').value.trim() || (t.type === 'reach' ? 'Reach' : t.type === 'tgt' ? 'Target' : 'Floor');
+    t.tier = document.getElementById('edit-tgt-tier').value.trim() || TARGET_TYPE_DEFAULT_TIER[t.type] || 'Target';
+    t.office = document.getElementById('edit-tgt-office').value.trim();
+    t.roles = document.getElementById('edit-tgt-roles').value.trim();
     t.ctc = document.getElementById('edit-tgt-ctc').value.trim();
+    t.ctcDetail = document.getElementById('edit-tgt-ctc-detail').value.trim();
     t.desc = document.getElementById('edit-tgt-desc').value.trim();
-    
+    t.note = document.getElementById('edit-tgt-note').value.trim();
+    t.required = document.getElementById('edit-tgt-required').value.split('\n').map(x => x.trim()).filter(Boolean);
+
     if(!t.name) {
       showToast('Name is required!');
       return false;
     }
-    
+
     save();
     renderTargets();
+    renderFunnelWidget();
     showToast('Target details updated!');
     return true;
   });
@@ -8799,7 +9292,7 @@ function applyNavFolds() {
 }
 
 // ─── NAVIGATION ───────────────────────────────────────────
-const pageTitles={today:'Today',roadmap:'Systems Roadmap',semester:'Semester 3',calendar:'Academic Calendar',dsa:'DSA Track',projects:'Projects',targets:'Targets',gaming:'Gaming',notes:'Notes',tasks:'Mission Board',applications:'Applications',budget:'Expense Tracker',trips:'Trip Planner',resume:'Resume HQ',schedule:'Daily Matrix',audit:'Weekly Audit',routine:'Daily Routine',physical:'Physical Metrics',mental:'Mental State'};
+const pageTitles={today:'Today',roadmap:'Systems Roadmap',semester:'Semester 3',calendar:'Academic Calendar',dsa:'DSA Track',projects:'Projects',targets:'Quant Funnel',gaming:'Gaming',notes:'Notes',tasks:'Mission Board',applications:'Applications',budget:'Expense Tracker',trips:'Trip Planner',resume:'Resume HQ',schedule:'Daily Matrix',audit:'Weekly Audit',routine:'Daily Routine',physical:'Physical Metrics',mental:'Mental State'};
 
 /* Per-section health palettes: each page gets its own skin class,
    accent color, and browser chrome tint. */
@@ -9829,7 +10322,7 @@ const KANBAN_COLS = [
   { id:'interview', label:'Interview',         color:'var(--mauve)' },
   { id:'offer',     label:'Offer / Rejected',  color:'var(--green)' },
 ];
-const APP_TIER_COLORS = { Reach:'var(--yellow)', Target:'var(--green)', Floor:'var(--blue)', Other:'var(--sub)' };
+const APP_TIER_COLORS = { Reach:'var(--yellow)', Target:'var(--green)', 'India Entry':'var(--mauve)', Floor:'var(--blue)', Other:'var(--sub)' };
 
 function updateAppBadge() {
   const badge = document.getElementById('app-badge');
@@ -9915,7 +10408,7 @@ function editApplication(id) {
   const html = `
     <div class="modal-form-group">
       <label class="modal-form-label">Company Name</label>
-      <input type="text" class="modal-form-input" id="edit-app-company" value="${app.company}" placeholder="e.g. Goldman Sachs">
+      <input type="text" class="modal-form-input" id="edit-app-company" value="${app.company}" placeholder="e.g. Graviton Research Capital">
     </div>
     <div class="modal-form-group">
       <label class="modal-form-label">Role / Position</label>
@@ -9925,8 +10418,9 @@ function editApplication(id) {
       <div>
         <label class="modal-form-label">Tier</label>
         <select class="modal-form-select" id="edit-app-tier">
-          <option value="Reach" ${app.tier==='Reach'?'selected':''}>Reach</option>
-          <option value="Target" ${app.tier==='Target'?'selected':''}>Target</option>
+          <option value="Reach" ${app.tier==='Reach'?'selected':''}>Dream / Reach</option>
+          <option value="Target" ${app.tier==='Target'?'selected':''}>Strong Target</option>
+          <option value="India Entry" ${app.tier==='India Entry'?'selected':''}>India Entry</option>
           <option value="Floor" ${app.tier==='Floor'?'selected':''}>Floor</option>
           <option value="Other" ${app.tier==='Other'?'selected':''}>Other</option>
         </select>
@@ -10345,7 +10839,7 @@ function editExpense(idx) {
 function addCustomCompetency() {
   const html = `
     <div class="modal-form-group"><label class="modal-form-label">Track</label>
-      <select class="modal-form-select" id="cc-cat"><option value="os">OS Core</option><option value="ai">AI / Edge</option></select></div>
+      <select class="modal-form-select" id="cc-cat"><option value="os">OS Core</option><option value="ai">AI / Edge</option><option value="quant">Quant / HFT</option></select></div>
     <div class="modal-form-group"><label class="modal-form-label">Name</label>
       <input class="modal-form-input" id="cc-name" placeholder="e.g. io_uring"></div>
     <div class="modal-form-group"><label class="modal-form-label">Notes</label>
@@ -11351,7 +11845,7 @@ function renderAcademicCalendar() {
 const ACADEMIC_RECOMMENDATIONS = [
   { details: 'LeetCode DP & Graph Grinds', type: 'exam-prep', xp: 25, badge: 'Placement' },
   { details: 'OS Processes & IPC Revision', type: 'exam-prep', xp: 25, badge: 'Academic' },
-  { details: 'Goldman Sachs Mock OA Practice', type: 'milestone', xp: 30, badge: 'Placement' },
+  { details: 'Graviton / QuadEye Mock OA + CF contest', type: 'milestone', xp: 30, badge: 'Placement' },
   { details: 'Draft System Design Architecture', type: 'milestone', xp: 30, badge: 'Projects' },
   { details: 'Review Coursera OS Audit Lab', type: 'task', xp: 15, badge: 'Academic' },
   { details: 'Resume HQ Updates & Refinement', type: 'task', xp: 15, badge: 'Placement' }
@@ -11696,7 +12190,8 @@ const paletteCommands = [
   { label: "Go to DSA Track Page", type: "nav", action: () => { gotoPage('dsa'); } },
   { label: "Go to Missions (Tasks)", type: "nav", action: () => { gotoPage('tasks'); } },
   { label: "Go to Projects", type: "nav", action: () => { gotoPage('projects'); } },
-  { label: "Go to Target Companies", type: "nav", action: () => { gotoPage('targets'); } },
+  { label: "Go to Quant Funnel (Targets)", type: "nav", action: () => { gotoPage('targets'); } },
+  { label: "Weight India-entry firms (Graviton / WQ / Tower / QuadEye)", type: "nav", action: () => { openQuantFunnel('india'); } },
   { label: "Go to Gaming Lounge", type: "nav", action: () => { gotoPage('gaming'); } },
   { label: "Go to Study Notes", type: "nav", action: () => { gotoPage('notes'); } },
   { label: "Go to Job Applications", type: "nav", action: () => { gotoPage('applications'); } },
@@ -11878,5 +12373,9 @@ else { init(); initCinematicHud(); }
 </script>
 </body>
 </html>
-/html>
-
+nFrame(() => document.body.classList.remove('booting'));
+if (window.__osLocked) { showLockScreen(); }
+else { init(); initCinematicHud(); }
+</script>
+</body>
+</html>
