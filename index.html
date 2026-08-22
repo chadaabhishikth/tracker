@@ -6583,26 +6583,7 @@ function checkDailyReset(){
   const today = getLocalISODate();
   if(S.streak.last && S.streak.last !== today){
     showCarryOverWarning();
-    
-    // Carry over / compound unfinished daily missions
-    if(S.missions && S.missions.daily) {
-      // 1. Remove completed daily tasks
-      S.missions.daily = S.missions.daily.filter(t => !t.done);
-      
-      // 2. Compound unfinished daily tasks
-      S.missions.daily.forEach(t => {
-        t.delayed = true;
-        t.delayCount = (t.delayCount || 0) + 1;
-        const base = t.baseXp || t.xp || 25;
-        if (!t.baseXp) t.baseXp = base;
-        t.xp = Math.min(80, Math.round(t.baseXp * (1 + 0.25 * Math.min(t.delayCount, 4))));
-      });
-    }
-    
-    S.tasks = {};
-    S.quests = {};
-    S.xp.today = 0;
-    resetHealthDay();
+    applyDailyRollover(S);
     save();
   }
 }
@@ -9117,14 +9098,7 @@ function ensureHealthState() {
   if (S.health.date !== today) resetHealthDay();
 }
 function resetHealthDay() {
-  if (!S.health || typeof S.health !== 'object') S.health = defaultHealth();
-  const clear = arr => (arr||[]).forEach(x => { x.done = false; if (x.setDone) x.setDone = []; });
-  clear(S.health.routine);
-  clear(S.health.workouts);
-  clear(S.health.physical.checks);
-  clear(S.health.mental.checks);
-  S.health.physical.water = 0;
-  S.health.date = getLocalISODate();
+  resetHealthDayOnState(S);
 }
 function toggleHealthItem(kind, id) {
   ensureHealthState();
@@ -9452,6 +9426,79 @@ function saveSyncConfig(cfg) {
   } catch(_){}
 }
 
+// ─── SYNC FINGERPRINTING ────────────────────────────────────
+// The sync conflict check historically compared `lastUpdated` timestamps, but
+// routine daily-reset saves bump `lastUpdated` on every launch, which made the
+// app think "local is newer than the gist" on every reload (the Cancel loop).
+// Instead we fingerprint the *meaningful* state content — ignoring fields that
+// churn every launch — so we can tell "a routine daily rollover" apart from
+// "real user progress" and auto-push the rollover instead of re-prompting.
+
+// Fields that change on every launch / background sync but carry no user meaning.
+const SYNC_VOLATILE_FIELDS = ['lastUpdated','lastVisitedTimestamp','lastLoggedTimestamp','lastGithubSync','streak'];
+
+function hashString(str) {
+  // FNV-1a 32-bit — deterministic and cheap; collisions are acceptable here
+  // because a mismatch only falls back to the existing confirm() prompt.
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  return h.toString(36);
+}
+
+function stateSyncFingerprint(state) {
+  try {
+    const s = JSON.parse(JSON.stringify(state || {}));
+    SYNC_VOLATILE_FIELDS.forEach(k => { delete s[k]; });
+    return hashString(JSON.stringify(s));
+  } catch (e) {
+    return '';
+  }
+}
+
+// Mirrors the state mutations of checkDailyReset() (minus toast/save), so we can
+// compare "local" against "cloud + today's routine rollover" and auto-push.
+function applyDailyRollover(state) {
+  if (!(state.streak && state.streak.last) || state.streak.last === getLocalISODate()) return state;
+  if (state.missions && state.missions.daily) {
+    state.missions.daily = state.missions.daily.filter(t => !t.done);
+    state.missions.daily.forEach(t => {
+      t.delayed = true;
+      t.delayCount = (t.delayCount || 0) + 1;
+      const base = t.baseXp || t.xp || 25;
+      if (!t.baseXp) t.baseXp = base;
+      t.xp = Math.min(80, Math.round(t.baseXp * (1 + 0.25 * Math.min(t.delayCount, 4))));
+    });
+  }
+  state.tasks = {};
+  state.quests = {};
+  if (state.xp) state.xp.today = 0;
+  resetHealthDayOnState(state);
+  return state;
+}
+
+function resetHealthDayOnState(state) {
+  if (!state.health || typeof state.health !== 'object') state.health = defaultHealth();
+  const clear = arr => (arr || []).forEach(x => { x.done = false; if (x.setDone) x.setDone = []; });
+  clear(state.health.routine);
+  clear(state.health.workouts);
+  if (state.health.physical) { clear(state.health.physical.checks); state.health.physical.water = 0; }
+  if (state.health.mental) clear(state.health.mental.checks);
+  state.health.date = getLocalISODate();
+}
+
+function rolledOverStateFingerprint(state) {
+  try {
+    const s = JSON.parse(JSON.stringify(state || {}));
+    applyDailyRollover(s);
+    return stateSyncFingerprint(s);
+  } catch (e) {
+    return '';
+  }
+}
+
 let isSyncing = false;
 
 async function pushToCloud() {
@@ -9572,9 +9619,24 @@ async function pullFromCloud() {
             const localTime = S.lastUpdated || 0;
             const hasLocalData = localStorage.getItem('abhi_os') || localStorage.getItem('abhi_os_enc');
             if (remoteTime < localTime && hasLocalData) {
-              const takeRemote = confirm('Local state is newer than the gist. Press OK to overwrite the cloud, or Cancel to load the older cloud copy.');
-              if (takeRemote) { updateSyncStatusMsg('Pushing local…'); pushToCloud(); }
-              else { applyRemoteBundle(remoteState, json.files); }
+              // Before prompting, check whether local is *meaningfully* newer.
+              // A `lastUpdated` bump from today's routine daily reset isn't a
+              // real conflict — the cloud copy just needs today's rollover.
+              const localFp = stateSyncFingerprint(S);
+              const remoteFp = stateSyncFingerprint(remoteState);
+              if (localFp === remoteFp) {
+                // Same content, only timestamps differ (e.g. a routine save).
+                updateSyncStatusMsg('Synced (Up to date)');
+              } else if (localFp === rolledOverStateFingerprint(remoteState)) {
+                // Local = cloud + today's routine rollover. Push it up silently
+                // instead of re-prompting, which breaks the Cancel reload loop.
+                updateSyncStatusMsg('Pushing local…');
+                pushToCloud();
+              } else {
+                const takeRemote = confirm('Local state is newer than the gist. Press OK to overwrite the cloud, or Cancel to load the older cloud copy.');
+                if (takeRemote) { updateSyncStatusMsg('Pushing local…'); pushToCloud(); }
+                else { applyRemoteBundle(remoteState, json.files); }
+              }
             } else if (remoteTime > localTime || !hasLocalData) {
               applyRemoteBundle(remoteState, json.files);
             } else {
