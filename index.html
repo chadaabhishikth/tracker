@@ -9431,7 +9431,10 @@ function getSyncConfig() {
   if (!cfg.token) {
     try { cfg.token = sessionStorage.getItem('abhi_os_token') || ''; } catch(_){}
   }
-  return { token: cfg.token || '', gistId: cfg.gistId || '', auto: !!cfg.auto, rememberToken: !!cfg.rememberToken };
+  // rememberToken defaults to TRUE (unless explicitly disabled) so the PAT
+  // survives app restarts on phones — session-only storage silently killed
+  // auto-sync on mobile PWAs because sessionStorage is wiped on every launch.
+  return { token: cfg.token || '', gistId: cfg.gistId || '', auto: !!cfg.auto, rememberToken: cfg.rememberToken !== false };
 }
 
 function saveSyncConfig(cfg) {
@@ -9509,9 +9512,25 @@ async function pushToCloud() {
       showToast('Cloud Sync Successful! ☁️');
       updateSyncStatusMsg('Synced!');
     } else {
-      const errorJson = await res.json();
-      showToast('Sync failed: ' + (errorJson.message || 'Unknown error'));
-      updateSyncStatusMsg('Error');
+      const errorJson = await res.json().catch(() => ({}));
+      if (res.status === 404 && cfg.gistId) {
+        const makeNew = confirm(`Gist "${cfg.gistId}" was not found (deleted, wrong ID, or the token can't access it).\n\nPress OK to create a fresh private gist with your current data (the new Gist ID will be saved automatically — copy it to your other devices).`);
+        if (makeNew) {
+          cfg.gistId = '';
+          saveSyncConfig(cfg);
+          const gistInput = document.getElementById('sync-gist');
+          if (gistInput) gistInput.value = '';
+          setTimeout(() => pushToCloud(), 100);
+        } else {
+          updateSyncStatusMsg('Error');
+        }
+      } else if (res.status === 401) {
+        showToast('Sync failed: token rejected. Generate a new PAT with the "gist" scope.');
+        updateSyncStatusMsg('Error');
+      } else {
+        showToast('Sync failed: ' + (errorJson.message || 'Unknown error'));
+        updateSyncStatusMsg('Error');
+      }
     }
   } catch (err) {
     console.error(err);
@@ -9578,8 +9597,14 @@ async function pullFromCloud() {
         updateSyncStatusMsg('Error');
       }
     } else {
-      const errorJson = await res.json();
-      showToast('Pull failed: ' + (errorJson.message || 'Unknown error'));
+      const errorJson = await res.json().catch(() => ({}));
+      if (res.status === 404) {
+        showToast('Pull failed: gist not found. Check the Gist ID, or clear it and Push once to create a new gist.');
+      } else if (res.status === 401) {
+        showToast('Pull failed: token rejected. Generate a new PAT with the "gist" scope.');
+      } else {
+        showToast('Pull failed: ' + (errorJson.message || 'Unknown error'));
+      }
       updateSyncStatusMsg('Error');
     }
   } catch (err) {
@@ -9641,6 +9666,8 @@ function openSettings() {
           <button class="btn-secondary" onclick="exportDataJSON()" style="flex:1; font-size:12px; padding: 8px; font-family: var(--font-body);">Backup Data (JSON)</button>
           <button class="btn-secondary" onclick="triggerJSONUpload()" style="flex:1; font-size:12px; padding: 8px; font-family: var(--font-body);">Restore Data (JSON)</button>
         </div>
+        <p style="font-size: 11px; color: var(--sub); margin: 10px 0 8px;">A local snapshot is saved automatically every time a cloud pull replaces this device's data. If a sync ever ate your progress, restore it here:</p>
+        <button class="btn-secondary" onclick="restorePresyncBackup()" style="width:100%; font-size:12px; padding: 8px; font-family: var(--font-body);">↩️ Restore Pre-Sync Snapshot</button>
       </div>
       
       <div style="border: 1px solid var(--line2); padding: 14px; border-radius: 8px; background: var(--bg2);">
@@ -10779,6 +10806,11 @@ function printExpensesPDF() {
 
 
 function applyRemoteBundle(remoteState, files) {
+  // Safety net: snapshot the current local state BEFORE it gets replaced by
+  // the cloud copy, so progression data is never lost to a bad sync.
+  try {
+    localStorage.setItem('abhi_os_presync_backup', JSON.stringify({ savedAt: Date.now(), state: JSON.stringify(S) }));
+  } catch (e) { console.warn('Could not snapshot local state before sync:', e); }
   S = remoteState;
   try {
     if (files && files['resume.json'] && files['resume.json'].content) {
@@ -10794,9 +10826,32 @@ function applyRemoteBundle(remoteState, files) {
     }
   } catch (e) { console.warn(e); }
   save(true);
-  showToast('State updated from cloud! Reloading...');
+  showToast('State updated from cloud! (Previous local copy saved as snapshot) Reloading...');
   updateSyncStatusMsg('Synced!');
   setTimeout(() => window.location.reload(), 800);
+}
+
+// Restore the local snapshot taken just before the last cloud pull.
+function restorePresyncBackup() {
+  let raw = null;
+  try { raw = localStorage.getItem('abhi_os_presync_backup'); } catch(_){}
+  if (!raw) { showToast('No pre-sync snapshot found on this device.'); return; }
+  try {
+    const bak = JSON.parse(raw);
+    const bakState = JSON.parse(bak.state);
+    if (!bakState || typeof bakState !== 'object') throw new Error('bad snapshot');
+    const when = bak.savedAt ? new Date(bak.savedAt).toLocaleString() : 'unknown time';
+    if (!confirm(`Restore the local snapshot taken just before the last cloud pull (${when})?\n\nYour current state will be kept as the new snapshot, so you can undo this. The restored state becomes the newest copy and will win the next sync.`)) return;
+    const current = JSON.stringify(S);
+    S = bakState;
+    save(); // updates lastUpdated so the restored state wins future syncs (and auto-pushes if enabled)
+    try { localStorage.setItem('abhi_os_presync_backup', JSON.stringify({ savedAt: Date.now(), state: current })); } catch(_){}
+    showToast('Pre-sync snapshot restored! Reloading...');
+    setTimeout(() => window.location.reload(), 800);
+  } catch (e) {
+    console.error(e);
+    showToast('Snapshot is corrupted and could not be restored.');
+  }
 }
 
 function settingsSetPin() {
