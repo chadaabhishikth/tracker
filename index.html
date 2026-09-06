@@ -3348,7 +3348,6 @@ html.skin-mental #page-mental .glass-card{
   </div>
 
   <!-- GAMING -->
-  <!-- GAMING -->
   <div id="page-gaming" class="content">
     <div class="section-hdr" style="display:flex; justify-content:space-between; align-items:center;">
       <span>GAMING PLANNER</span>
@@ -4729,6 +4728,27 @@ function getLocalISODate(date = new Date()) {
   return `${y}-${m}-${d}`;
 }
 
+// Parse a date string as LOCAL midnight. `new Date('2026-10-22')` is parsed as
+// UTC midnight by spec, which is 5.5h behind IST local midnight and makes
+// day-difference maths land on fractional values (off-by-one countdowns).
+function parseLocalDate(value) {
+  if (value == null || value === '') return null;
+  if (value instanceof Date) {
+    const c = new Date(value.getTime());
+    return isNaN(c) ? null : c;
+  }
+  const str = String(value).trim();
+  const iso = str.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (iso) return new Date(+iso[1], +iso[2] - 1, +iso[3]);
+  const isoTime = str.match(/^(\d{4})-(\d{2})-(\d{2})[T ]/);
+  if (isoTime) {
+    const d = new Date(str);
+    return isNaN(d) ? null : d;
+  }
+  const d = new Date(str);
+  return isNaN(d) ? null : d;
+}
+
 function escapeHtml(str) {
   if (str == null) return '';
   return String(str).replace(/[&<>"'`]/g, ch => ({
@@ -4795,6 +4815,23 @@ function getProblemReview(name) {
 function setProblemReview(name, data) {
   const s = getSRSStore();
   s.reviews[name] = data;
+}
+
+// Move an existing review record when a logged problem is renamed.
+function migrateProblemReview(oldName, newName) {
+  if (!oldName || !newName || oldName === newName) return;
+  const s = getSRSStore();
+  const existing = s.reviews[oldName] || (s[oldName] && typeof s[oldName] === 'object' && !Array.isArray(s[oldName]) ? s[oldName] : null);
+  if (existing && !s.reviews[newName]) s.reviews[newName] = existing;
+  delete s.reviews[oldName];
+  if (s[oldName] && typeof s[oldName] === 'object' && !Array.isArray(s[oldName])) delete s[oldName];
+}
+
+function deleteProblemReview(name) {
+  if (!name) return;
+  const s = getSRSStore();
+  delete s.reviews[name];
+  if (s[name] && typeof s[name] === 'object' && !Array.isArray(s[name])) delete s[name];
 }
 
 function getLCXP(diff) {
@@ -4992,10 +5029,35 @@ function testPomoAlarm() {
   playPomoChime(type);
 }
 
+// A single shared AudioContext, created/unlocked on the first real user gesture.
+// Browsers block a context that is first constructed inside a timer callback
+// (which is exactly when the Pomodoro chime fires), and constructing a fresh one
+// per sound also hits the per-document context limit after a few dozen clicks.
+let sfxAudioCtx = null;
+
+function getSfxAudioCtx() {
+  const Ctor = window.AudioContext || window.webkitAudioContext;
+  if (!Ctor) return null;
+  try {
+    if (!sfxAudioCtx) sfxAudioCtx = new Ctor();
+    if (sfxAudioCtx.state === 'suspended') sfxAudioCtx.resume().catch(() => {});
+    return sfxAudioCtx;
+  } catch (e) {
+    console.warn('AudioContext unavailable', e);
+    return null;
+  }
+}
+
+// Prime the context while we still have gesture credit.
+['pointerdown', 'keydown', 'touchstart'].forEach(evt => {
+  document.addEventListener(evt, () => { getSfxAudioCtx(); }, { once: true, capture: true });
+});
+
 function playPomoChime(type) {
   if (type === 'none') return;
   try {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const audioCtx = getSfxAudioCtx();
+    if (!audioCtx) return;
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.connect(gain);
@@ -5383,7 +5445,8 @@ function executeTerminalCommand(cmdText) {
 function playClickSound() {
   if (isSfxMuted()) return;
   try {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const audioCtx = getSfxAudioCtx();
+    if (!audioCtx) return;
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.connect(gain);
@@ -6697,15 +6760,15 @@ function editProfile() {
   const html = `
     <div class="modal-form-group">
       <label class="modal-form-label">Name</label>
-      <input type="text" class="modal-form-input" id="edit-profile-name" value="${p.name}">
+      <input type="text" class="modal-form-input" id="edit-profile-name" value="${escapeHtml(p.name)}">
     </div>
     <div class="modal-form-group">
       <label class="modal-form-label">Branch / College</label>
-      <input type="text" class="modal-form-input" id="edit-profile-branch" value="${p.branch}">
+      <input type="text" class="modal-form-input" id="edit-profile-branch" value="${escapeHtml(p.branch)}">
     </div>
     <div class="modal-form-group">
       <label class="modal-form-label">Semester</label>
-      <input type="text" class="modal-form-input" id="edit-profile-sem" value="${p.sem}">
+      <input type="text" class="modal-form-input" id="edit-profile-sem" value="${escapeHtml(p.sem)}">
     </div>
     <div class="modal-form-group">
       <label class="modal-form-label">Total XP</label>
@@ -6942,7 +7005,7 @@ function renderDelayedTasks() {
       <div style="background:var(--bg1);border:1px solid color-mix(in srgb, var(--yellow) 28%, transparent);border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;gap:12px;">
         <button class="check-btn" onclick="toggleMission('daily', ${idx})" style="width:20px;height:20px;border-color:var(--yellow);"></button>
         <div style="flex:1;font-size:13px;color:var(--text);">
-          <span style="color:var(--yellow);font-weight:600;margin-right:6px;">[Delayed ${t.delayCount || 1}x]</span> ${t.text}
+          <span style="color:var(--yellow);font-weight:600;margin-right:6px;">[Delayed ${Number(t.delayCount) || 1}x]</span> ${escapeHtml(t.text)}
           <span style="font-size:10px;color:var(--mauve);margin-left:8px;font-family:var(--font-mono);font-weight:600;">+${xpReward} XP</span>
         </div>
         <button class="edit-btn" onclick="openMissionModal('daily', ${idx})" style="margin:0; opacity: 0.8;">⚙️</button>
@@ -7005,10 +7068,10 @@ function renderPastDoneTasks() {
     pastTasksList.innerHTML = tasksForDate.map(t => `
       <div style="background:var(--bg1); border:1px solid var(--line); border-radius:4px; padding:8px 12px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
         <div style="font-size:12px; color:var(--text); flex:1;">
-          ${t.name}
-          <span style="font-size:10px; color:var(--mauve); font-family:var(--font-mono); margin-left:6px; font-weight:700;">+${t.xp} XP</span>
+          ${escapeHtml(t.name)}
+          <span style="font-size:10px; color:var(--mauve); font-family:var(--font-mono); margin-left:6px; font-weight:700;">+${Number(t.xp) || 0} XP</span>
         </div>
-        <button onclick="deletePastDoneTask('${t.id}')" style="background:none; border:none; color:var(--red); font-size:12px; cursor:pointer; opacity:0.8; padding:2px;">🗑️</button>
+        <button onclick="deletePastDoneTask('${escapeHtml(t.id)}')" style="background:none; border:none; color:var(--red); font-size:12px; cursor:pointer; opacity:0.8; padding:2px;">🗑️</button>
       </div>
     `).join('');
   }
@@ -7303,9 +7366,9 @@ function renderMissions() {
       <div style="background:var(--bg1);border:1px solid var(--line);border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;gap:12px;">
         <button class="check-btn ${t.done ? 'checked' : ''}" onclick="toggleMission('${type}', ${idx})" style="width:20px;height:20px;">${t.done ? '✓' : ''}</button>
         <div style="flex:1;font-size:13px;${t.done ? 'text-decoration:line-through;color:var(--muted);' : 'color:var(--text);'}">
-          ${t.delayed ? `<span style="color:var(--yellow);font-weight:600;margin-right:4px;">[Delayed ${t.delayCount || 1}x]</span>` : ''}
-          ${t.text}
-          ${t.deadline ? `<span style="font-size:10px;color:var(--yellow);margin-left:8px;font-family:var(--font-mono);">[Due: ${t.deadline}]</span>` : ''}
+          ${t.delayed ? `<span style="color:var(--yellow);font-weight:600;margin-right:4px;">[Delayed ${Number(t.delayCount) || 1}x]</span>` : ''}
+          ${escapeHtml(t.text)}
+          ${t.deadline ? `<span style="font-size:10px;color:var(--yellow);margin-left:8px;font-family:var(--font-mono);">[Due: ${escapeHtml(t.deadline)}]</span>` : ''}
           <span style="font-size:10px;color:var(--mauve);margin-left:8px;font-family:var(--font-mono);font-weight:600;">+${t.xp || 25} XP</span>
         </div>
         <button class="edit-btn" onclick="openMissionModal('${type}', ${idx})" style="margin:0; opacity: 0.8;">⚙️</button>
@@ -7353,12 +7416,12 @@ function openMissionModal(type, idx = null) {
   const html = `
     <div class="form-row">
       <label class="form-label">Mission Task</label>
-      <input type="text" id="mission-text" class="form-input" value="${m.text || ''}" placeholder="E.g., Complete OS Lab">
+      <input type="text" id="mission-text" class="form-input" value="${escapeHtml(m.text || '')}" placeholder="E.g., Complete OS Lab">
     </div>
     ${type === 'longTerm' ? `
     <div class="form-row">
       <label class="form-label">Deadline (Optional)</label>
-      <input type="date" id="mission-deadline" class="form-input" value="${m.deadline || ''}" placeholder="YYYY-MM-DD">
+      <input type="date" id="mission-deadline" class="form-input" value="${escapeHtml(m.deadline || '')}" placeholder="YYYY-MM-DD">
     </div>
     ` : ''}
   `;
@@ -7436,8 +7499,8 @@ function renderCompetencyTracker() {
         <div class="quest-item ${isDone ? 'done-item' : ''}" onclick="toggleCompetency('${item.id}', '${category}')">
           <div class="quest-check ${isDone ? 'done' : ''}">${isDone ? '✓' : ''}</div>
           <div class="quest-text">
-            <strong>${item.name}</strong>
-            <div style="font-size:10px; color:var(--sub);">${item.desc}</div>
+            <strong>${escapeHtml(item.name)}</strong>
+            <div style="font-size:10px; color:var(--sub);">${escapeHtml(item.desc)}</div>
           </div>
         </div>
       `;
@@ -7746,11 +7809,11 @@ function renderSemester(){
   document.getElementById('subject-list').innerHTML=S.subjects.map((s, idx)=>`
     <div class="sub-item">
       <div>
-        <div class="sub-name">${s.name} <button class="edit-btn" onclick="editSubjectCard(${idx})">✏️</button></div>
-        <div class="sub-code">${s.code}</div>
-        <div class="sub-res"><span>${s.res}</span> — ${s.res2}</div>
+        <div class="sub-name">${escapeHtml(s.name)} <button class="edit-btn" onclick="editSubjectCard(${idx})">✏️</button></div>
+        <div class="sub-code">${escapeHtml(s.code)}</div>
+        <div class="sub-res"><span>${escapeHtml(s.res)}</span> — ${escapeHtml(s.res2)}</div>
       </div>
-      <span class="pri ${s.pclass}">${s.pri}</span>
+      <span class="pri ${escapeHtml(s.pclass)}">${escapeHtml(s.pri)}</span>
     </div>`).join('');
 }
 
@@ -7775,16 +7838,16 @@ function editSubjectCard(idx) {
   const html = `
     <div class="modal-form-group">
       <label class="modal-form-label">Subject Name</label>
-      <input type="text" class="modal-form-input" id="edit-sub-name" value="${s.name}">
+      <input type="text" class="modal-form-input" id="edit-sub-name" value="${escapeHtml(s.name)}">
     </div>
     <div class="modal-form-group">
       <label class="modal-form-label">Subject Code / Code Note</label>
-      <input type="text" class="modal-form-input" id="edit-sub-code" value="${s.code}">
+      <input type="text" class="modal-form-input" id="edit-sub-code" value="${escapeHtml(s.code)}">
     </div>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
       <div>
         <label class="modal-form-label">Priority Label</label>
-        <input type="text" class="modal-form-input" id="edit-sub-pri" value="${s.pri}">
+        <input type="text" class="modal-form-input" id="edit-sub-pri" value="${escapeHtml(s.pri)}">
       </div>
       <div>
         <label class="modal-form-label">Priority Class Style</label>
@@ -8153,10 +8216,10 @@ function editTargetsHave() {
       <div style="border: 1px solid var(--line2); padding: 12px; border-radius: 8px; margin-bottom: 12px; background: var(--bg2);">
         <div class="modal-form-group" style="margin-bottom: 8px;">
           <label class="modal-form-label" style="font-size: 8px;">List Title</label>
-          <input type="text" class="modal-form-input have-list-title" value="${list.title}" style="padding: 6px 8px; font-size: 12px;">
+          <input type="text" class="modal-form-input have-list-title" value="${escapeHtml(list.title)}" style="padding: 6px 8px; font-size: 12px;">
         </div>
         <label class="modal-form-label" style="font-size: 8px; margin-bottom: 4px;">Items (one per line)</label>
-        <textarea class="modal-form-textarea have-list-items" style="min-height: 60px; padding: 6px 8px; font-size: 12px;">${list.items.join('\n')}</textarea>
+        <textarea class="modal-form-textarea have-list-items" style="min-height: 60px; padding: 6px 8px; font-size: 12px;">${escapeHtml(list.items.join('\n'))}</textarea>
       </div>
     `;
   };
@@ -8290,7 +8353,7 @@ function editGamingSlots() {
               <input type="checkbox" class="slot-edit-highlight" ${s.color === 'yellow' ? 'checked' : ''}> Highlight / Yellow?
             </label>
           </div>
-          <input type="text" class="modal-form-input slot-edit-desc" value="${s.desc.replace(/<br>/g, '\n').replace(/<[^>]*>/g, '')}" placeholder="e.g. No gaming" style="padding: 6px 8px; font-size: 12px;">
+          <input type="text" class="modal-form-input slot-edit-desc" value="${escapeHtml(String(s.desc || '').replace(/<br>/g, '\n').replace(/<[^>]*>/g, ''))}" placeholder="e.g. No gaming" style="padding: 6px 8px; font-size: 12px;">
         </div>
       `).join('')}
     </div>
@@ -8350,12 +8413,12 @@ function renderProjects() {
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
           <div>
             <div style="font-size:15px;font-weight:600;margin-bottom:3px;">
-              ${p.name}
-              <button class="edit-btn" onclick="editProject('${p.id}')">✏️</button>
+              ${escapeHtml(p.name)}
+              <button class="edit-btn" onclick="editProject('${escapeHtml(p.id)}')">✏️</button>
             </div>
-            <div style="font-size:12px;color:var(--sub);">${p.desc}</div>
+            <div style="font-size:12px;color:var(--sub);">${escapeHtml(p.desc)}</div>
           </div>
-          <span class="pri ${statusClass}">${p.status}</span>
+          <span class="pri ${escapeHtml(statusClass)}">${escapeHtml(p.status)}</span>
         </div>
         <div style="margin-bottom:10px;">
           <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--sub);margin-bottom:4px;">
@@ -8370,9 +8433,9 @@ function renderProjects() {
           <div style="font-size:12px;color:var(--sub);margin-bottom:10px;">Checklist / tasks:</div>
           <ul class="ic-list">
             ${p.tasks.map((t, idx) => `
-              <li style="cursor: pointer; display: flex; align-items: flex-start; gap: 8px;" onclick="toggleProjectTask('${p.id}', ${idx})">
+              <li style="cursor: pointer; display: flex; align-items: flex-start; gap: 8px;" onclick="toggleProjectTask('${escapeHtml(p.id)}', ${idx})">
                 <span class="check-btn ${t.done ? 'checked' : ''}" style="width: 14px; height: 14px; font-size: 8px; margin-top: 2px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">${t.done ? '✓' : ''}</span>
-                <span style="${t.done ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${t.text}</span>
+                <span style="${t.done ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${escapeHtml(t.text)}</span>
               </li>
             `).join('')}
           </ul>
@@ -8420,7 +8483,7 @@ function editProject(id) {
     const tasks = p.tasks || [];
     return tasks.map((t, idx) => `
       <div class="checklist-editor-item">
-        <input type="text" class="modal-form-input proj-edit-task-text" value="${t.text}" style="padding: 6px 8px; font-size: 12px;">
+        <input type="text" class="modal-form-input proj-edit-task-text" value="${escapeHtml(t.text)}" style="padding: 6px 8px; font-size: 12px;">
         <label style="display:flex; align-items:center; gap:3px; font-size:11px; color:var(--sub);">
           <input type="checkbox" class="proj-edit-task-done" ${t.done ? 'checked' : ''}> Done
         </label>
@@ -8433,16 +8496,16 @@ function editProject(id) {
     const html = `
       <div class="modal-form-group">
         <label class="modal-form-label">Project Name</label>
-        <input type="text" class="modal-form-input" id="edit-proj-name" value="${p.name}">
+        <input type="text" class="modal-form-input" id="edit-proj-name" value="${escapeHtml(p.name)}">
       </div>
       <div class="modal-form-group">
         <label class="modal-form-label">Description</label>
-        <input type="text" class="modal-form-input" id="edit-proj-desc" value="${p.desc}">
+        <input type="text" class="modal-form-input" id="edit-proj-desc" value="${escapeHtml(p.desc)}">
       </div>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
         <div>
           <label class="modal-form-label">Status Label</label>
-          <input type="text" class="modal-form-input" id="edit-proj-status" value="${p.status}">
+          <input type="text" class="modal-form-input" id="edit-proj-status" value="${escapeHtml(p.status)}">
         </div>
         <div>
           <label class="modal-form-label">Status Style</label>
@@ -8591,7 +8654,7 @@ function editDSALogProblem(id) {
   const html = `
     <div class="modal-form-group">
       <label class="modal-form-label">Problem Name</label>
-      <input type="text" class="modal-form-input" id="edit-dsa-name" value="${p.name}">
+      <input type="text" class="modal-form-input" id="edit-dsa-name" value="${escapeHtml(p.name)}">
     </div>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
       <div>
@@ -8604,12 +8667,12 @@ function editDSALogProblem(id) {
       </div>
       <div>
         <label class="modal-form-label">Topic</label>
-        <input type="text" class="modal-form-input" id="edit-dsa-topic" value="${p.topic || ''}">
+        <input type="text" class="modal-form-input" id="edit-dsa-topic" value="${escapeHtml(p.topic || '')}">
       </div>
     </div>
     <div class="modal-form-group">
       <label class="modal-form-label">Notes / Key Insights</label>
-      <input type="text" class="modal-form-input" id="edit-dsa-notes" value="${p.notes || ''}">
+      <input type="text" class="modal-form-input" id="edit-dsa-notes" value="${escapeHtml(p.notes || '')}">
     </div>
     <div style="margin-top: 20px; border-top: 1px solid var(--line); padding-top: 10px; text-align: right;">
       <button class="btn-secondary" onclick="deleteDSALogProblem('${id}')" style="background: var(--red); color: var(--bg); border: none;">Delete Log Entry</button>
@@ -8633,6 +8696,10 @@ function editDSALogProblem(id) {
       S.lc[newDiff] = (S.lc[newDiff] || 0) + 1;
     }
     
+    // SRS review history is keyed by problem name, so a rename would otherwise
+    // orphan the old record and reset the problem's review schedule.
+    if (p.name !== newName) migrateProblemReview(p.name, newName);
+    
     p.name = newName;
     p.diff = newDiff;
     p.topic = newTopic;
@@ -8640,6 +8707,7 @@ function editDSALogProblem(id) {
     
     save();
     renderDSALog();
+    renderSRSQueue();
     updateStats();
     showToast('DSA Log updated!');
     return true;
@@ -8654,8 +8722,12 @@ function deleteDSALogProblem(id) {
       const diff = p.diff;
       S.lc[diff] = Math.max(0, (S.lc[diff] || 0) - 1);
       S.lc.log.splice(idx, 1);
+      // Drop the SRS record too, so it cannot resurface against a future
+      // problem that happens to reuse the same name.
+      if (!S.lc.log.some(x => x.name === p.name)) deleteProblemReview(p.name);
       save();
       renderDSALog();
+      renderSRSQueue();
       updateStats();
       closeModal();
       showToast('DSA log entry deleted.');
@@ -8687,7 +8759,7 @@ function renderNotesSidebar() {
     return `
       <div class="note-tab ${isActive ? 'active' : ''}" onclick="swNote('${t.key}', this)">
         <div class="note-dot" style="background:${dotColor};"></div>
-        ${t.title}
+        ${escapeHtml(t.title)}
         <button class="note-pin-btn ${isPinned?'pinned':''}" onclick="event.stopPropagation();togglePinNote('${t.key}',this)" title="${isPinned?'Unpin':'Pin'} notebook">${isPinned?'📌':'📍'}</button>
       </div>
     `;
@@ -8700,13 +8772,16 @@ function renderNotesSidebar() {
   }
 }
 
-function openNotesManager() {
-  const tabs = S.noteTabs || [];
+function openNotesManager(draft) {
+  // Work on a throwaway copy: add/remove inside the modal must not mutate the
+  // live S.noteTabs, otherwise cancelling the modal still leaves the change
+  // in memory (and the next unrelated save() persists it).
+  const tabs = draft || JSON.parse(JSON.stringify(S.noteTabs || []));
   
   const buildTabsListHtml = () => {
     return tabs.map((t, idx) => `
       <div class="checklist-editor-item notes-manager-item" data-idx="${idx}" style="gap:6px; margin-bottom:10px;">
-        <input type="text" class="modal-form-input note-tab-title" value="${t.title}" style="padding: 6px 8px; font-size: 12px; flex:2;">
+        <input type="text" class="modal-form-input note-tab-title" value="${escapeHtml(t.title)}" style="padding: 6px 8px; font-size: 12px; flex:2;">
         <select class="modal-form-select note-tab-color" style="padding: 6px 8px; font-size: 12px; flex:1;">
           <option value="blue" ${t.color === 'blue' ? 'selected' : ''}>Blue</option>
           <option value="red" ${t.color === 'red' ? 'selected' : ''}>Red</option>
@@ -8752,37 +8827,32 @@ function openNotesManager() {
     return true;
   });
   
-  window.addNoteTabEdit = () => {
+  // Snapshot whatever the user has typed so far, so re-rendering the modal body
+  // after an add/remove never discards in-progress edits.
+  const collectDraft = () => {
     const items = document.querySelectorAll('.notes-manager-item');
     const updated = [];
     items.forEach((div, i) => {
-      const idx = parseInt(div.getAttribute('data-idx'));
+      const idx = parseInt(div.getAttribute('data-idx'), 10);
       updated.push({
         key: tabs[idx] ? tabs[idx].key : 'note-' + Date.now() + '-' + i,
         title: div.querySelector('.note-tab-title').value.trim(),
         color: div.querySelector('.note-tab-color').value
       });
     });
+    return updated;
+  };
+  
+  window.addNoteTabEdit = () => {
+    const updated = collectDraft();
     updated.push({ key: 'note-' + Date.now(), title: 'New Notebook', color: 'blue' });
-    // Assign temporarily to tabs array so helper can rebuild
-    S.noteTabs = updated;
-    openNotesManager();
+    openNotesManager(updated);
   };
   
   window.removeNoteTabEdit = (idx) => {
-    const items = document.querySelectorAll('.notes-manager-item');
-    const updated = [];
-    items.forEach((div, i) => {
-      const idxVal = parseInt(div.getAttribute('data-idx'));
-      updated.push({
-        key: tabs[idxVal] ? tabs[idxVal].key : 'note-' + Date.now() + '-' + i,
-        title: div.querySelector('.note-tab-title').value.trim(),
-        color: div.querySelector('.note-tab-color').value
-      });
-    });
+    const updated = collectDraft();
     updated.splice(idx, 1);
-    S.noteTabs = updated;
-    openNotesManager();
+    openNotesManager(updated);
   };
 }
 
@@ -9384,11 +9454,10 @@ function gotoMobilePage(id, el) {
     const onclickAttr = item.getAttribute('onclick');
     return onclickAttr && onclickAttr.includes(`'${id}'`);
   });
-  if (desktopNavItem) {
-    gotoPage(id, desktopNavItem);
-  } else {
-    gotoPage(id, document.querySelector('.sidebar .nav-item'));
-  }
+  // Pass null rather than the first sidebar item when there is no matching
+  // desktop nav entry — gotoPage() resolves it itself, and the old fallback
+  // wrongly lit up the "Today" tab for drawer-only pages.
+  gotoPage(id, desktopNavItem || null);
   const overlay = document.getElementById('mobile-drawer-overlay');
   overlay.classList.remove('show');
   document.querySelectorAll('.mobile-tab-item').forEach(item => item.classList.remove('active'));
@@ -9933,6 +10002,11 @@ async function exportBakedHTML() {
   const targetsHaveStr = JSON.stringify(S.targetsHave, null, 2);
   const missionsStr = JSON.stringify(S.missions, null, 2);
   const gamingStr = JSON.stringify(S.gaming, null, 2);
+  // These two also live inside the START/END_DEFAULTS block. Leaving them out of
+  // the regenerated block deletes their `const` declarations from the baked file,
+  // and hydrateState() then dies on a ReferenceError before the app can boot.
+  const applicationsStr = JSON.stringify(S.applications || [], null, 2);
+  const noteTabsStr = JSON.stringify(S.noteTabs || [], null, 2);
   
   const newDefaultsBlock = `// START_DEFAULTS
 const DEFAULT_PROFILE = ${profileStr};
@@ -9944,7 +10018,9 @@ const DEFAULT_PROJECTS = ${projectsStr};
 const DEFAULT_TARGETS = ${targetsStr};
 const DEFAULT_TARGETS_HAVE = ${targetsHaveStr};
 const DEFAULT_MISSIONS = ${missionsStr};
+const DEFAULT_APPLICATIONS = ${applicationsStr};
 const DEFAULT_GAMING = ${gamingStr};
+const DEFAULT_NOTE_TABS = ${noteTabsStr};
 // END_DEFAULTS`;
 
   const startMarker = "// START_DEFAULTS";
@@ -10203,11 +10279,31 @@ function renderHeatmap() {
 }
 
 // ─── SPACED REPETITION (SRS) ──────────────────────────────
+// Log dates are written with toLocaleDateString('en-IN') => DD/MM/YYYY, but a
+// browser/OS with a different locale can emit YYYY-MM-DD or MM/DD/YYYY. Guessing
+// wrong yields NaN day-diffs, which silently keeps problems out of the SRS queue.
 function parseLogDate(dateStr) {
   if (!dateStr) return null;
-  const parts = dateStr.split('/');
-  if (parts.length === 3) return new Date(parseInt(parts[2]), parseInt(parts[1])-1, parseInt(parts[0]));
-  return new Date(dateStr);
+  const str = String(dateStr).trim();
+  if (/^\d{4}-\d{2}-\d{2}/.test(str)) return parseLocalDate(str);
+
+  const parts = str.split(/[\/\-.]/).map(p => p.trim()).filter(Boolean);
+  if (parts.length === 3 && parts.every(p => /^\d+$/.test(p))) {
+    let [a, b, c] = parts.map(Number);
+    // 4-digit year first => YYYY/MM/DD
+    if (parts[0].length === 4) {
+      const d = new Date(a, b - 1, c);
+      return isNaN(d) ? null : d;
+    }
+    // Otherwise DD/MM/YYYY (en-IN default). If the first field can only be a
+    // month (>12 in slot 2) fall back to MM/DD/YYYY so US locales still work.
+    let day = a, month = b;
+    if (b > 12 && a <= 12) { day = b; month = a; }
+    if (month < 1 || month > 12) return null;
+    const d = new Date(c, month - 1, day);
+    return isNaN(d) ? null : d;
+  }
+  return parseLocalDate(str);
 }
 
 function getSRSDueProblems() {
@@ -10265,8 +10361,8 @@ function renderSRSQueue() {
             <div class="srs-item">
               <span class="pl-diff ${diffCls}">${p.diff}</span>
               <div class="srs-info">
-                <div class="srs-name">${p.name}</div>
-                <div class="srs-meta">${p.topic||'General'} · ${p.date} · ${lbl}</div>
+                <div class="srs-name">${escapeHtml(p.name)}</div>
+                <div class="srs-meta">${escapeHtml(p.topic||'General')} · ${escapeHtml(p.date)} · ${lbl}</div>
               </div>
               <button class="srs-btn" onclick="openSRSModal('${id}')">Review →</button>
             </div>
@@ -10299,9 +10395,9 @@ function openSRSModal(id) {
   const html = `
     <div style="text-align:center;margin-bottom:20px;">
       <div style="font-size:28px;margin-bottom:8px;">🧠</div>
-      <div style="font-size:15px;font-weight:600;margin-bottom:4px;">${p.name}</div>
-      <div style="font-size:12px;color:var(--sub);margin-bottom:${p.notes?'12px':'0'}">${p.topic||'General'} · ${p.diff} · logged ${p.date}</div>
-      ${p.notes ? `<div style="background:var(--bg2);border:1px solid var(--line2);border-radius:6px;padding:10px 14px;font-size:12px;color:var(--sub);text-align:left;margin-top:10px;">💡 Your note: ${p.notes}</div>` : ''}
+      <div style="font-size:15px;font-weight:600;margin-bottom:4px;">${escapeHtml(p.name)}</div>
+      <div style="font-size:12px;color:var(--sub);margin-bottom:${p.notes?'12px':'0'}">${escapeHtml(p.topic||'General')} · ${escapeHtml(p.diff)} · logged ${escapeHtml(p.date)}</div>
+      ${p.notes ? `<div style="background:var(--bg2);border:1px solid var(--line2);border-radius:6px;padding:10px 14px;font-size:12px;color:var(--sub);text-align:left;margin-top:10px;">💡 Your note: ${escapeHtml(p.notes)}</div>` : ''}
     </div>
     <div style="font-size:13px;color:var(--text);text-align:center;margin-bottom:16px;">Can you explain the <strong>optimal approach</strong> to this problem from memory?</div>
     <div class="srs-rating-row">
@@ -10377,10 +10473,10 @@ function renderKanban() {
                 <div class="kc-company">${escapeHtml(app.company)}</div>
                 <div class="kc-role">${escapeHtml(app.role||'Role TBD')}</div>
                 <div class="kc-footer">
-                  <span style="font-family:var(--font-mono);font-size:9px;padding:2px 6px;border-radius:3px;background:rgba(255,255,255,0.05);color:${tc};">${app.tier||'Other'}</span>
-                  <span class="kc-date">${app.date||''}</span>
+                  <span style="font-family:var(--font-mono);font-size:9px;padding:2px 6px;border-radius:3px;background:rgba(255,255,255,0.05);color:${tc};">${escapeHtml(app.tier||'Other')}</span>
+                  <span class="kc-date">${escapeHtml(app.date||'')}</span>
                 </div>
-                ${app.notes?`<div style="font-size:10px;color:var(--muted);margin-top:6px;border-top:1px solid var(--line);padding-top:5px;">${app.notes}</div>`:''}
+                ${app.notes?`<div style="font-size:10px;color:var(--muted);margin-top:6px;border-top:1px solid var(--line);padding-top:5px;">${escapeHtml(app.notes)}</div>`:''}
               </div>
             `;
           }).join('')}
@@ -10435,11 +10531,11 @@ function editApplication(id) {
   const html = `
     <div class="modal-form-group">
       <label class="modal-form-label">Company Name</label>
-      <input type="text" class="modal-form-input" id="edit-app-company" value="${app.company}" placeholder="e.g. Graviton Research Capital">
+      <input type="text" class="modal-form-input" id="edit-app-company" value="${escapeHtml(app.company)}" placeholder="e.g. Graviton Research Capital">
     </div>
     <div class="modal-form-group">
       <label class="modal-form-label">Role / Position</label>
-      <input type="text" class="modal-form-input" id="edit-app-role" value="${app.role||''}" placeholder="e.g. Software Engineer Intern">
+      <input type="text" class="modal-form-input" id="edit-app-role" value="${escapeHtml(app.role||'')}" placeholder="e.g. Software Engineer Intern">
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
       <div>
@@ -10461,7 +10557,7 @@ function editApplication(id) {
     </div>
     <div class="modal-form-group">
       <label class="modal-form-label">Notes (OA deadline, links, details...)</label>
-      <textarea class="modal-form-textarea" id="edit-app-notes">${app.notes||''}</textarea>
+      <textarea class="modal-form-textarea" id="edit-app-notes">${escapeHtml(app.notes||'')}</textarea>
     </div>
     <div style="margin-top:16px;border-top:1px solid var(--line);padding-top:10px;text-align:right;">
       <button class="btn-secondary" onclick="deleteApplication('${id}')" style="background:var(--red);color:var(--bg);border:none;">Delete Card</button>
@@ -10645,8 +10741,8 @@ function renderBudget() {
         return `
           <div class="expense-item">
             <div class="expense-cat-dot" style="background:${dot};"></div>
-            <span class="expense-name-col">${e.description}</span>
-            <span style="font-family:var(--font-mono);font-size:9px;color:var(--sub);margin-right:6px;">${e.category}</span>
+            <span class="expense-name-col">${escapeHtml(e.description)}</span>
+            <span style="font-family:var(--font-mono);font-size:9px;color:var(--sub);margin-right:6px;">${escapeHtml(e.category)}</span>
             <span style="font-family:var(--font-mono);font-size:12px;font-weight:600;color:${dot}">₹${e.amount}</span>
             <span style="font-family:var(--font-mono);font-size:9px;color:var(--muted);margin-left:6px;">${e.date.slice(5)}</span>
             <button class="edit-btn" onclick="editExpense(${originalIdx})" style="margin:0;opacity:0.7;" title="Edit">✏️</button>
@@ -10729,9 +10825,9 @@ function printExpensesPDF() {
     total += e.amount;
     rowsHtml += `
       <tr>
-        <td>${e.date}</td>
-        <td>${e.category}</td>
-        <td>${e.description}</td>
+        <td>${escapeHtml(e.date)}</td>
+        <td>${escapeHtml(e.category)}</td>
+        <td>${escapeHtml(e.description)}</td>
         <td class="amount">₹${e.amount}</td>
       </tr>
     `;
@@ -11029,7 +11125,7 @@ function renderTrips() {
       const isOver = spent > t.budget;
       return `
         <div class="trip-card ${activeCls}" onclick="selectTrip('${t.id}')">
-          <div class="trip-card-name">${t.name}</div>
+          <div class="trip-card-name">${escapeHtml(t.name)}</div>
           <div class="trip-card-budget">
             Budget: ₹${t.budget} &middot; Spent: <span style="color:${isOver ? 'var(--red)' : 'var(--green)'};">₹${spent}</span>
           </div>
@@ -11112,14 +11208,15 @@ function updateSelectedTripView() {
   if (trip.expenses.length === 0) {
     expContainer.innerHTML = `<div class="empty-state">No expenses logged for this trip yet. Click "+ Log Trip Expense" to start!</div>`;
   } else {
-    expContainer.innerHTML = [...trip.expenses].reverse().map((e, idx) => {
-      // original index in descending list
-      const originalIdx = trip.expenses.length - 1 - idx;
+    expContainer.innerHTML = trip.expenses.map((e, i) => ({ e, i })).reverse().map(({ e, i }) => {
+      // Carry the real array index through the reversal instead of recomputing it
+      // from the display position, which drifts if the list changes underneath.
+      const originalIdx = i;
       return `
         <div class="trip-expense-item">
           <div>
-            <div style="font-weight:600;margin-bottom:2px;">${e.description}</div>
-            <div style="font-size:10px;color:var(--sub);font-family:var(--font-mono);">${e.date}</div>
+            <div style="font-weight:600;margin-bottom:2px;">${escapeHtml(e.description)}</div>
+            <div style="font-size:10px;color:var(--sub);font-family:var(--font-mono);">${escapeHtml(e.date)}</div>
           </div>
           <div style="display:flex;align-items:center;gap:12px;">
             <span style="font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--peach);">₹${e.amount}</span>
@@ -11256,20 +11353,20 @@ function renderResume() {
       <div class="form-grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
         <div class="form-row">
           <label class="form-label">Role / Job Title</label>
-          <input type="text" class="form-input" value="${exp.role || ''}" oninput="updateResumeListEntry('experience', ${idx}, 'role', this.value)">
+          <input type="text" class="form-input" value="${escapeHtml(exp.role || '')}" oninput="updateResumeListEntry('experience', ${idx}, 'role', this.value)">
         </div>
         <div class="form-row">
           <label class="form-label">Company / Org</label>
-          <input type="text" class="form-input" value="${exp.org || ''}" oninput="updateResumeListEntry('experience', ${idx}, 'org', this.value)">
+          <input type="text" class="form-input" value="${escapeHtml(exp.org || '')}" oninput="updateResumeListEntry('experience', ${idx}, 'org', this.value)">
         </div>
       </div>
       <div class="form-row" style="margin-top:6px;">
         <label class="form-label">Date Range</label>
-        <input type="text" class="form-input" value="${exp.date || ''}" placeholder="e.g. Jan 2026 - Present" oninput="updateResumeListEntry('experience', ${idx}, 'date', this.value)">
+        <input type="text" class="form-input" value="${escapeHtml(exp.date || '')}" placeholder="e.g. Jan 2026 - Present" oninput="updateResumeListEntry('experience', ${idx}, 'date', this.value)">
       </div>
       <div class="form-row" style="margin-top:6px;">
         <label class="form-label">Description / Bullet points</label>
-        <textarea class="form-input" style="height:50px;resize:vertical;" oninput="updateResumeListEntry('experience', ${idx}, 'desc', this.value)">${exp.desc || ''}</textarea>
+        <textarea class="form-input" style="height:50px;resize:vertical;" oninput="updateResumeListEntry('experience', ${idx}, 'desc', this.value)">${escapeHtml(exp.desc || '')}</textarea>
       </div>
     </div>
   `).join('');
@@ -11281,16 +11378,16 @@ function renderResume() {
       <div class="form-grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
         <div class="form-row">
           <label class="form-label">Project Name</label>
-          <input type="text" class="form-input" value="${proj.name || ''}" oninput="updateResumeListEntry('projects', ${idx}, 'name', this.value)">
+          <input type="text" class="form-input" value="${escapeHtml(proj.name || '')}" oninput="updateResumeListEntry('projects', ${idx}, 'name', this.value)">
         </div>
         <div class="form-row">
           <label class="form-label">Technologies Used</label>
-          <input type="text" class="form-input" value="${proj.tech || ''}" placeholder="e.g. React, Node.js" oninput="updateResumeListEntry('projects', ${idx}, 'tech', this.value)">
+          <input type="text" class="form-input" value="${escapeHtml(proj.tech || '')}" placeholder="e.g. React, Node.js" oninput="updateResumeListEntry('projects', ${idx}, 'tech', this.value)">
         </div>
       </div>
       <div class="form-row" style="margin-top:6px;">
         <label class="form-label">Description</label>
-        <textarea class="form-input" style="height:50px;resize:vertical;" oninput="updateResumeListEntry('projects', ${idx}, 'desc', this.value)">${proj.desc || ''}</textarea>
+        <textarea class="form-input" style="height:50px;resize:vertical;" oninput="updateResumeListEntry('projects', ${idx}, 'desc', this.value)">${escapeHtml(proj.desc || '')}</textarea>
       </div>
     </div>
   `).join('');
@@ -11302,21 +11399,21 @@ function renderResume() {
       <div class="form-grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
         <div class="form-row">
           <label class="form-label">Degree / Course</label>
-          <input type="text" class="form-input" value="${edu.degree || ''}" oninput="updateResumeListEntry('education', ${idx}, 'degree', this.value)">
+          <input type="text" class="form-input" value="${escapeHtml(edu.degree || '')}" oninput="updateResumeListEntry('education', ${idx}, 'degree', this.value)">
         </div>
         <div class="form-row">
           <label class="form-label">School / University</label>
-          <input type="text" class="form-input" value="${edu.org || ''}" oninput="updateResumeListEntry('education', ${idx}, 'org', this.value)">
+          <input type="text" class="form-input" value="${escapeHtml(edu.org || '')}" oninput="updateResumeListEntry('education', ${idx}, 'org', this.value)">
         </div>
       </div>
       <div class="form-grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;">
         <div class="form-row">
           <label class="form-label">Date Range</label>
-          <input type="text" class="form-input" value="${edu.date || ''}" placeholder="e.g. 2024 - 2028" oninput="updateResumeListEntry('education', ${idx}, 'date', this.value)">
+          <input type="text" class="form-input" value="${escapeHtml(edu.date || '')}" placeholder="e.g. 2024 - 2028" oninput="updateResumeListEntry('education', ${idx}, 'date', this.value)">
         </div>
         <div class="form-row">
           <label class="form-label">Details / GPA</label>
-          <input type="text" class="form-input" value="${edu.desc || ''}" placeholder="e.g. GPA: 9.2" oninput="updateResumeListEntry('education', ${idx}, 'desc', this.value)">
+          <input type="text" class="form-input" value="${escapeHtml(edu.desc || '')}" placeholder="e.g. GPA: 9.2" oninput="updateResumeListEntry('education', ${idx}, 'desc', this.value)">
         </div>
       </div>
     </div>
@@ -11403,21 +11500,21 @@ function updateResumePreview() {
   if (data.template === 'minimalist') {
     html = `
       <div class="res-hdr">
-        <div class="res-name">${data.name || 'Your Name'}</div>
-        <div class="res-subtitle">${data.title || 'Professional Title'}</div>
+        <div class="res-name">${escapeHtml(data.name || 'Your Name')}</div>
+        <div class="res-subtitle">${escapeHtml(data.title || 'Professional Title')}</div>
         <div class="res-contact">
-          ${data.email ? `<span>Email: ${data.email}</span>` : ''}
-          ${data.phone ? `<span>Phone: ${data.phone}</span>` : ''}
-          ${data.location ? `<span>Location: ${data.location}</span>` : ''}
-          ${data.github ? `<span>GitHub: ${data.github}</span>` : ''}
-          ${data.linkedin ? `<span>LinkedIn: ${data.linkedin}</span>` : ''}
+          ${data.email ? `<span>Email: ${escapeHtml(data.email)}</span>` : ''}
+          ${data.phone ? `<span>Phone: ${escapeHtml(data.phone)}</span>` : ''}
+          ${data.location ? `<span>Location: ${escapeHtml(data.location)}</span>` : ''}
+          ${data.github ? `<span>GitHub: ${escapeHtml(data.github)}</span>` : ''}
+          ${data.linkedin ? `<span>LinkedIn: ${escapeHtml(data.linkedin)}</span>` : ''}
         </div>
       </div>
       
       ${data.summary ? `
         <div class="res-sec">
           <div class="res-sec-title">Summary</div>
-          <div style="font-size:11px;color:#333;white-space:pre-line;">${data.summary}</div>
+          <div style="font-size:11px;color:#333;white-space:pre-line;">${escapeHtml(data.summary)}</div>
         </div>
       ` : ''}
 
@@ -11427,13 +11524,13 @@ function updateResumePreview() {
           ${data.experience.map(exp => `
             <div class="res-item">
               <div class="res-item-hdr">
-                <span>${exp.role || 'Role'}</span>
-                <span>${exp.date || ''}</span>
+                <span>${escapeHtml(exp.role || 'Role')}</span>
+                <span>${escapeHtml(exp.date || '')}</span>
               </div>
               <div class="res-item-sub">
-                <span>${exp.org || 'Organization'}</span>
+                <span>${escapeHtml(exp.org || 'Organization')}</span>
               </div>
-              ${exp.desc ? `<div class="res-item-desc">${exp.desc}</div>` : ''}
+              ${exp.desc ? `<div class="res-item-desc">${escapeHtml(exp.desc)}</div>` : ''}
             </div>
           `).join('')}
         </div>
@@ -11445,10 +11542,10 @@ function updateResumePreview() {
           ${data.projects.map(proj => `
             <div class="res-item">
               <div class="res-item-hdr">
-                <span>${proj.name || 'Project'}</span>
-                <span style="font-size:10px;font-weight:normal;color:#666;">${proj.tech || ''}</span>
+                <span>${escapeHtml(proj.name || 'Project')}</span>
+                <span style="font-size:10px;font-weight:normal;color:#666;">${escapeHtml(proj.tech || '')}</span>
               </div>
-              ${proj.desc ? `<div class="res-item-desc" style="margin-top:4px;">${proj.desc}</div>` : ''}
+              ${proj.desc ? `<div class="res-item-desc" style="margin-top:4px;">${escapeHtml(proj.desc)}</div>` : ''}
             </div>
           `).join('')}
         </div>
@@ -11460,12 +11557,12 @@ function updateResumePreview() {
           ${data.education.map(edu => `
             <div class="res-item">
               <div class="res-item-hdr">
-                <span>${edu.degree || 'Degree'}</span>
-                <span>${edu.date || ''}</span>
+                <span>${escapeHtml(edu.degree || 'Degree')}</span>
+                <span>${escapeHtml(edu.date || '')}</span>
               </div>
               <div class="res-item-sub">
-                <span>${edu.org || 'School'}</span>
-                <span>${edu.desc || ''}</span>
+                <span>${escapeHtml(edu.org || 'School')}</span>
+                <span>${escapeHtml(edu.desc || '')}</span>
               </div>
             </div>
           `).join('')}
@@ -11476,8 +11573,8 @@ function updateResumePreview() {
         <div class="res-sec">
           <div class="res-sec-title">Skills & Tools</div>
           <div style="font-size:11px;color:#333;line-height:1.6;">
-            ${data.skills ? `<div><strong>Skills:</strong> ${data.skills}</div>` : ''}
-            ${data.tools ? `<div style="margin-top:4px;"><strong>Tools:</strong> ${data.tools}</div>` : ''}
+            ${data.skills ? `<div><strong>Skills:</strong> ${escapeHtml(data.skills)}</div>` : ''}
+            ${data.tools ? `<div style="margin-top:4px;"><strong>Tools:</strong> ${escapeHtml(data.tools)}</div>` : ''}
           </div>
         </div>
       ` : ''}
@@ -11486,16 +11583,16 @@ function updateResumePreview() {
     html = `
       <div class="res-left-col">
         <div>
-          <div class="res-name">${data.name || 'Your Name'}</div>
-          <div class="res-subtitle">${data.title || 'Professional Title'}</div>
+          <div class="res-name">${escapeHtml(data.name || 'Your Name')}</div>
+          <div class="res-subtitle">${escapeHtml(data.title || 'Professional Title')}</div>
         </div>
         
         <div class="res-contact-vertical">
-          ${data.email ? `<div>📧 ${data.email}</div>` : ''}
-          ${data.phone ? `<div>📱 ${data.phone}</div>` : ''}
-          ${data.location ? `<div>📍 ${data.location}</div>` : ''}
-          ${data.github ? `<div style="word-break:break-all;">🌐 ${data.github}</div>` : ''}
-          ${data.linkedin ? `<div style="word-break:break-all;">🔗 ${data.linkedin}</div>` : ''}
+          ${data.email ? `<div>📧 ${escapeHtml(data.email)}</div>` : ''}
+          ${data.phone ? `<div>📱 ${escapeHtml(data.phone)}</div>` : ''}
+          ${data.location ? `<div>📍 ${escapeHtml(data.location)}</div>` : ''}
+          ${data.github ? `<div style="word-break:break-all;">🌐 ${escapeHtml(data.github)}</div>` : ''}
+          ${data.linkedin ? `<div style="word-break:break-all;">🔗 ${escapeHtml(data.linkedin)}</div>` : ''}
         </div>
 
         ${data.skills ? `
@@ -11521,7 +11618,7 @@ function updateResumePreview() {
         ${data.summary ? `
           <div class="res-sec">
             <div class="res-sec-title">About Me</div>
-            <div style="font-size:11px;color:#4c4f69;line-height:1.6;white-space:pre-line;">${data.summary}</div>
+            <div style="font-size:11px;color:#4c4f69;line-height:1.6;white-space:pre-line;">${escapeHtml(data.summary)}</div>
           </div>
         ` : ''}
 
@@ -11530,12 +11627,12 @@ function updateResumePreview() {
             <div class="res-sec-title">Experience</div>
             ${data.experience.map(exp => `
               <div class="res-item">
-                <div class="res-item-title">${exp.role || 'Role'}</div>
+                <div class="res-item-title">${escapeHtml(exp.role || 'Role')}</div>
                 <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <span class="res-item-org">${exp.org || 'Organization'}</span>
-                  <span class="res-item-date">${exp.date || ''}</span>
+                  <span class="res-item-org">${escapeHtml(exp.org || 'Organization')}</span>
+                  <span class="res-item-date">${escapeHtml(exp.date || '')}</span>
                 </div>
-                ${exp.desc ? `<div class="res-item-desc" style="margin-top:4px;">${exp.desc}</div>` : ''}
+                ${exp.desc ? `<div class="res-item-desc" style="margin-top:4px;">${escapeHtml(exp.desc)}</div>` : ''}
               </div>
             `).join('')}
           </div>
@@ -11546,9 +11643,9 @@ function updateResumePreview() {
             <div class="res-sec-title">Projects</div>
             ${data.projects.map(proj => `
               <div class="res-item">
-                <div class="res-item-title">${proj.name || 'Project'}</div>
-                <div style="font-size:10px;color:#000080;margin-bottom:2px;font-family:monospace;">${proj.tech || ''}</div>
-                ${proj.desc ? `<div class="res-item-desc">${proj.desc}</div>` : ''}
+                <div class="res-item-title">${escapeHtml(proj.name || 'Project')}</div>
+                <div style="font-size:10px;color:#000080;margin-bottom:2px;font-family:monospace;">${escapeHtml(proj.tech || '')}</div>
+                ${proj.desc ? `<div class="res-item-desc">${escapeHtml(proj.desc)}</div>` : ''}
               </div>
             `).join('')}
           </div>
@@ -11559,12 +11656,12 @@ function updateResumePreview() {
             <div class="res-sec-title">Education</div>
             ${data.education.map(edu => `
               <div class="res-item">
-                <div class="res-item-title">${edu.degree || 'Degree'}</div>
+                <div class="res-item-title">${escapeHtml(edu.degree || 'Degree')}</div>
                 <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <span class="res-item-org">${edu.org || 'School'}</span>
-                  <span class="res-item-date">${edu.date || ''}</span>
+                  <span class="res-item-org">${escapeHtml(edu.org || 'School')}</span>
+                  <span class="res-item-date">${escapeHtml(edu.date || '')}</span>
                 </div>
-                ${edu.desc ? `<div style="font-size:11px;color:#6c6f85;margin-top:2px;">${edu.desc}</div>` : ''}
+                ${edu.desc ? `<div style="font-size:11px;color:#6c6f85;margin-top:2px;">${escapeHtml(edu.desc)}</div>` : ''}
               </div>
             `).join('')}
           </div>
@@ -11574,21 +11671,21 @@ function updateResumePreview() {
   } else if (data.template === 'serif') {
     html = `
       <div class="res-hdr">
-        <div class="res-name">${data.name || 'Your Name'}</div>
-        <div class="res-subtitle">${data.title || 'Professional Title'}</div>
+        <div class="res-name">${escapeHtml(data.name || 'Your Name')}</div>
+        <div class="res-subtitle">${escapeHtml(data.title || 'Professional Title')}</div>
         <div class="res-contact">
-          ${data.email ? `<span>${data.email}</span>` : ''}
-          ${data.phone ? `<span>${data.phone}</span>` : ''}
-          ${data.location ? `<span>${data.location}</span>` : ''}
-          ${data.github ? `<span>${data.github}</span>` : ''}
-          ${data.linkedin ? `<span>${data.linkedin}</span>` : ''}
+          ${data.email ? `<span>${escapeHtml(data.email)}</span>` : ''}
+          ${data.phone ? `<span>${escapeHtml(data.phone)}</span>` : ''}
+          ${data.location ? `<span>${escapeHtml(data.location)}</span>` : ''}
+          ${data.github ? `<span>${escapeHtml(data.github)}</span>` : ''}
+          ${data.linkedin ? `<span>${escapeHtml(data.linkedin)}</span>` : ''}
         </div>
       </div>
 
       ${data.summary ? `
         <div class="res-sec">
           <div class="res-sec-title">Professional Summary</div>
-          <div style="font-size:12px;color:#222;line-height:1.6;white-space:pre-line;text-align:justify;">${data.summary}</div>
+          <div style="font-size:12px;color:#222;line-height:1.6;white-space:pre-line;text-align:justify;">${escapeHtml(data.summary)}</div>
         </div>
       ` : ''}
 
@@ -11598,13 +11695,13 @@ function updateResumePreview() {
           ${data.experience.map(exp => `
             <div class="res-item">
               <div class="res-item-hdr">
-                <span>${exp.org || 'Organization'}</span>
-                <span>${exp.date || ''}</span>
+                <span>${escapeHtml(exp.org || 'Organization')}</span>
+                <span>${escapeHtml(exp.date || '')}</span>
               </div>
               <div class="res-item-sub">
-                <span>${exp.role || 'Role'}</span>
+                <span>${escapeHtml(exp.role || 'Role')}</span>
               </div>
-              ${exp.desc ? `<div class="res-item-desc">${exp.desc}</div>` : ''}
+              ${exp.desc ? `<div class="res-item-desc">${escapeHtml(exp.desc)}</div>` : ''}
             </div>
           `).join('')}
         </div>
@@ -11616,10 +11713,10 @@ function updateResumePreview() {
           ${data.projects.map(proj => `
             <div class="res-item">
               <div class="res-item-hdr">
-                <span>${proj.name || 'Project'}</span>
-                <span style="font-size:11px;font-weight:normal;font-style:italic;">${proj.tech || ''}</span>
+                <span>${escapeHtml(proj.name || 'Project')}</span>
+                <span style="font-size:11px;font-weight:normal;font-style:italic;">${escapeHtml(proj.tech || '')}</span>
               </div>
-              ${proj.desc ? `<div class="res-item-desc">${proj.desc}</div>` : ''}
+              ${proj.desc ? `<div class="res-item-desc">${escapeHtml(proj.desc)}</div>` : ''}
             </div>
           `).join('')}
         </div>
@@ -11631,12 +11728,12 @@ function updateResumePreview() {
           ${data.education.map(edu => `
             <div class="res-item">
               <div class="res-item-hdr">
-                <span>${edu.org || 'School'}</span>
-                <span>${edu.date || ''}</span>
+                <span>${escapeHtml(edu.org || 'School')}</span>
+                <span>${escapeHtml(edu.date || '')}</span>
               </div>
               <div class="res-item-sub">
-                <span>${edu.degree || 'Degree'}</span>
-                <span>${edu.desc || ''}</span>
+                <span>${escapeHtml(edu.degree || 'Degree')}</span>
+                <span>${escapeHtml(edu.desc || '')}</span>
               </div>
             </div>
           `).join('')}
@@ -11647,8 +11744,8 @@ function updateResumePreview() {
         <div class="res-sec">
           <div class="res-sec-title">Skills & Expertise</div>
           <div style="font-size:12px;color:#222;line-height:1.6;">
-            ${data.skills ? `<div><strong>Skills:</strong> ${data.skills}</div>` : ''}
-            ${data.tools ? `<div style="margin-top:4px;"><strong>Tools & Technologies:</strong> ${data.tools}</div>` : ''}
+            ${data.skills ? `<div><strong>Skills:</strong> ${escapeHtml(data.skills)}</div>` : ''}
+            ${data.tools ? `<div style="margin-top:4px;"><strong>Tools & Technologies:</strong> ${escapeHtml(data.tools)}</div>` : ''}
           </div>
         </div>
       ` : ''}
@@ -11821,8 +11918,8 @@ if (currentCalYear < 2026 || (currentCalYear === 2026 && currentCalMonth < 5)) {
 }
 
 function precomputeCDs() {
-  const sem3Start = new Date('2026-06-10');
-  const sem3End = new Date('2026-10-16');
+  const sem3Start = parseLocalDate('2026-06-10');
+  const sem3End = parseLocalDate('2026-10-16');
   let currentCD = 1;
   const holidays = new Set(ACADEMIC_CALENDAR_EVENTS.filter(e => e.type === 'holiday').map(e => e.date));
   
@@ -11841,10 +11938,10 @@ function precomputeCDs() {
     cur.setDate(cur.getDate() + 1);
   }
 
-  const sem4Start = new Date('2026-11-18');
+  const sem4Start = parseLocalDate('2026-11-18');
   let currentCD4 = 1;
   cur = new Date(sem4Start);
-  const sem4EndReal = new Date('2027-03-31');
+  const sem4EndReal = parseLocalDate('2027-03-31');
   while (cur <= sem4EndReal) {
     const iso = getLocalISODate(cur);
     const day = cur.getDay();
@@ -11977,15 +12074,16 @@ function renderCalendarCountdowns() {
   today.setHours(0,0,0,0);
   
   const milestones = [
-    { name: 'Semester 3 Exams', date: new Date('2026-10-22'), type: 'exam' },
-    { name: 'Semester 4 Starts', date: new Date('2026-11-18'), type: 'academic' },
-    { name: 'Semester 4 Midterms', date: new Date('2027-01-27'), type: 'exam' },
-    { name: 'Semester 4 Exams', date: new Date('2027-04-02'), type: 'exam' },
+    { name: 'Semester 3 Exams', date: parseLocalDate('2026-10-22'), type: 'exam' },
+    { name: 'Semester 4 Starts', date: parseLocalDate('2026-11-18'), type: 'academic' },
+    { name: 'Semester 4 Midterms', date: parseLocalDate('2027-01-27'), type: 'exam' },
+    { name: 'Semester 4 Exams', date: parseLocalDate('2027-04-02'), type: 'exam' },
   ];
   
   const holidays = ACADEMIC_CALENDAR_EVENTS
     .filter(e => e.type === 'holiday')
-    .map(e => ({ name: e.details, date: new Date(e.date), type: 'holiday' }))
+    .map(e => ({ name: e.details, date: parseLocalDate(e.date), type: 'holiday' }))
+    .filter(e => e.date)
     .filter(e => e.date >= today)
     .sort((a,b) => a.date - b.date);
     
@@ -12005,7 +12103,7 @@ function renderCalendarCountdowns() {
     return `
       <div class="calendar-countdown-card ${cls}">
         <div class="calendar-countdown-days">${diffDays} <span style="font-size:12px;font-weight:500;color:var(--sub);">days left</span></div>
-        <div class="calendar-countdown-title">${m.name}</div>
+        <div class="calendar-countdown-title">${escapeHtml(m.name)}</div>
         <div class="calendar-countdown-date">Due: ${dateStr}</div>
       </div>
     `;
@@ -12129,7 +12227,7 @@ function renderCalendarTimeline() {
   allEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
 
   allEvents.forEach(e => {
-    const dateObj = new Date(e.date);
+    const dateObj = parseLocalDate(e.date);
     const key = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
     if (!groups[key]) groups[key] = [];
     groups[key].push(e);
@@ -12143,7 +12241,7 @@ function renderCalendarTimeline() {
     const events = groups[key];
     
     const eventsHtml = events.map(e => {
-      const d = new Date(e.date).getDate();
+      const d = parseLocalDate(e.date).getDate();
       let badgeCls = e.type;
       let checkboxHtml = '';
       let deleteBtn = '';
