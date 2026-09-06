@@ -6743,11 +6743,11 @@ function renderSidebar(){
   else if(xp>=2600) rank='C-RANK';
   else if(xp>=1100) rank='D-RANK';
   checkRankUp(xp);
-  const prestigeStr = S.prestige ? ` <span class="prestige-badge">P${S.prestige}</span>` : '';
-  document.getElementById('rank-display').innerHTML = rank + ' · ' + profile.sem + prestigeStr;
+  const prestigeStr = S.prestige ? ` <span class="prestige-badge">P${escapeHtml(S.prestige)}</span>` : '';
+  document.getElementById('rank-display').innerHTML = rank + ' · ' + escapeHtml(profile.sem) + prestigeStr;
   const mRankDisp = document.getElementById('rank-display-mobile');
   if (mRankDisp) mRankDisp.textContent = rank + (S.prestige ? ` P${S.prestige}` : '');
-  document.getElementById('sidebar-name').innerHTML = profile.name + ' <button class="edit-btn" onclick="editProfile()">✏️</button>';
+  document.getElementById('sidebar-name').innerHTML = escapeHtml(profile.name) + ' <button class="edit-btn" onclick="editProfile()">✏️</button>';
   document.getElementById('sidebar-branch').textContent = profile.branch;
   renderMultiplierBadge();
   checkPrestigeAvailable();
@@ -7219,7 +7219,7 @@ function renderQuests(){
     const div=document.createElement('div');
     div.className='quest-item'+(isDone?' done-item':'');
     div.onclick=()=>toggleQuest(q.id);
-    div.innerHTML=`<div class="quest-check ${isDone?'done':''}">${isDone?'✓':''}</div><div class="quest-text">${q.text}</div><div class="quest-xp">+${q.xp} XP</div>`;
+    div.innerHTML=`<div class="quest-check ${isDone?'done':''}">${isDone?'✓':''}</div><div class="quest-text">${escapeHtml(q.text)}</div><div class="quest-xp">+${escapeHtml(q.xp)} XP</div>`;
     list.appendChild(div);
   });
   document.getElementById('quest-count').textContent=done+'/'+activeQuests.length+' done';
@@ -7294,8 +7294,8 @@ function renderQuestsEditList() {
   container.innerHTML = quests.map((q, idx) => {
     return `
       <div class="quest-edit-item" data-id="${q.id || 'q-' + idx}" style="display: flex; gap: 8px; align-items: center; border: 1px solid var(--line2); padding: 10px; border-radius: 6px; margin-bottom: 8px; background: var(--bg2);">
-        <input type="text" class="modal-form-input quest-text-input" value="${q.text || ''}" placeholder="Quest name..." style="flex: 1; padding: 6px 8px; font-size: 13px;">
-        <input type="number" class="modal-form-input quest-xp-input" value="${q.xp || 0}" placeholder="XP" style="width: 70px; padding: 6px 8px; font-size: 13px;">
+        <input type="text" class="modal-form-input quest-text-input" value="${escapeHtml(q.text || '')}" placeholder="Quest name..." style="flex: 1; padding: 6px 8px; font-size: 13px;">
+        <input type="number" class="modal-form-input quest-xp-input" value="${escapeHtml(q.xp || 0)}" placeholder="XP" style="width: 70px; padding: 6px 8px; font-size: 13px;">
         <span style="font-size: 11px; color: var(--sub); font-family: var(--font-mono);">XP</span>
         <button onclick="deleteQuest(${idx})" style="background: none; border: none; color: var(--red); cursor: pointer; font-size: 16px;">🗑</button>
       </div>
