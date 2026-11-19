@@ -1123,7 +1123,15 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
     bottom: 80px;
     right: 16px;
   }
-  .budget-quick-btn { display: none; }
+  .budget-quick-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 6px;
+  }
   .offline-dot span { display: none; }
   .mission-due-badge span:last-child { font-size: 9px; }
   .achievement-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 5px !important; }
@@ -3769,6 +3777,9 @@ html.light .dual-win-box {
       </div>
       <div class="cmd-bar-right">
         <span class="cmd-status-pill"><span class="cmd-status-dot"></span> Campus AB-302 · Sem IV</span>
+        <button class="cmd-override-btn" onclick="toggleBudgetQuickAdd()" style="color:var(--status-optimal); border-color:rgba(52,211,153,0.35); font-weight:700;">
+          💳 +₹ Log Spent
+        </button>
         <button class="cmd-override-btn" id="btn-exam-override" onclick="toggleExamOverride()">⚡ 1-Tap Exam / Field Log</button>
       </div>
     </div>
@@ -7115,7 +7126,21 @@ function quickLogExpense() {
   document.getElementById('budget-quick-popover').classList.remove('show');
   showToast(`₹${amount} logged for ${cat}! 💳`);
   checkBudgetWarnings(amount, cat);
+  if (typeof renderBudget === 'function') renderBudget();
 }
+
+function checkQuickExpenseHash() {
+  if (window.location.hash && window.location.hash.includes('quickExpense')) {
+    setTimeout(() => {
+      toggleBudgetQuickAdd();
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', window.location.pathname + '#today');
+      }
+    }, 350);
+  }
+}
+window.addEventListener('hashchange', checkQuickExpenseHash);
+checkQuickExpenseHash();
 
 // ─── POMODORO SESSION NOTES ──────────────────────────────
 function promptPomoNote(nextMode) {
