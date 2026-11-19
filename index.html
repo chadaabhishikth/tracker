@@ -3344,6 +3344,181 @@ html.light .dual-win-box {
   margin-bottom: 4px;
 }
 
+
+/* ─── TRAVEL & IRCTC BOOKING PLANNER STYLES ───────────────── */
+.travel-hero {
+  padding: 20px;
+  border-radius: var(--r);
+  margin-bottom: 20px;
+}
+.travel-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-subtle);
+}
+.travel-metric-item {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+.travel-metric-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.travel-metric-val {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.travel-journey-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--r);
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.travel-journey-card:hover {
+  border-color: rgba(56, 189, 248, 0.35);
+}
+.travel-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.travel-destination-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.travel-route-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  padding: 3px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-top: 4px;
+}
+.travel-status-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.travel-status-badge.open-now {
+  background: rgba(52, 211, 153, 0.15);
+  color: var(--status-optimal);
+  border: 1px solid var(--status-optimal);
+  animation: pulse-border 2s infinite;
+}
+.travel-status-badge.tomorrow {
+  background: rgba(251, 191, 36, 0.15);
+  color: var(--status-warning);
+  border: 1px solid var(--status-warning);
+  animation: pulse-border 1.5s infinite;
+}
+.travel-status-badge.future {
+  background: rgba(56, 189, 248, 0.12);
+  color: var(--accent);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+.travel-status-badge.booked {
+  background: rgba(52, 211, 153, 0.12);
+  color: var(--status-optimal);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+.travel-status-badge.passed {
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+}
+.travel-timeline-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.travel-timeline-box {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 12px 14px;
+}
+.travel-timeline-box.highlight {
+  border-color: rgba(56, 189, 248, 0.4);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), var(--bg-elevated));
+}
+.travel-timeline-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.travel-timeline-date {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+.travel-timeline-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+.travel-actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-subtle);
+}
+.travel-today-alert {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: var(--r);
+  border-left: 4px solid var(--status-warning) !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.12), var(--bg-surface)) !important;
+}
+.travel-today-alert.open-today {
+  border-left-color: var(--status-optimal) !important;
+  background: linear-gradient(135deg, rgba(52, 211, 153, 0.12), var(--bg-surface)) !important;
+}
 </style>
 </head>
 <body class="booting">
@@ -3437,6 +3612,7 @@ html.light .dual-win-box {
     </div>
     <div class="nav-group">
       <div class="nav-item" onclick="gotoPage('circle',this)"><span class="nav-icon">🌿</span>Circle & Charter</div>
+      <div class="nav-item ws-nav-subitem" onclick="gotoPage('trips',this)"><span class="nav-icon">🚆</span>Travel & IRCTC</div>
     </div>
 
     <!-- 06 / INTEL & ASSETS (Alt+6) -->
@@ -3536,6 +3712,9 @@ html.light .dual-win-box {
         <button class="cmd-override-btn" id="btn-exam-override" onclick="toggleExamOverride()">⚡ 1-Tap Exam / Field Log</button>
       </div>
     </div>
+
+    <!-- IRCTC / TRAVEL ACTIVE BOOKING ALERT BANNER -->
+    <div id="irctc-booking-alert" class="travel-today-alert glass-card" style="display:none;"></div>
 
     <!-- 3-COLUMN OPERATIONAL COCKPIT -->
     <div class="cockpit-grid">
@@ -4096,34 +4275,76 @@ html.light .dual-win-box {
     </div>
   </div>
 
-  <!-- TRIPS PLANNER & LOG -->
+  <!-- 06 / TRAVEL & IRCTC TICKET DISPATCH HQ -->
   <div id="page-trips" class="content">
-    <div class="section-hdr" style="display:flex;justify-content:space-between;align-items:center;">
-      <span>TRIP EXPENSE PLANNER</span>
-      <button class="btn-primary" onclick="addNewTrip()" style="padding:4px 10px;font-size:11px;font-family:var(--font-mono);">+ ADD NEW TRIP</button>
-    </div>
-    <div class="trips-grid">
-      <div>
-        <div class="section-hdr">YOUR TRIPS</div>
-        <div id="trips-list-container"></div>
+    <div class="travel-hero glass-card">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+            <span style="font-family:var(--font-mono); font-size:10px; font-weight:700; color:var(--accent); letter-spacing:2px; text-transform:uppercase;">Travel OS · IRCTC Dispatch</span>
+            <span class="cmd-status-pill" style="font-size:10px; padding:2px 8px;">60-Day Advance Rule</span>
+          </div>
+          <h2 style="font-size:18px; font-weight:700; color:var(--text); margin-bottom:4px;">Home & Journey Planner</h2>
+          <p style="font-size:12px; color:var(--sub); max-width:640px;">
+            Set your journey date — the engine calculates your exact <strong>60-day IRCTC booking window (08:00 AM IST)</strong>, schedules an evening-before reminder alert, computes Tatkal backup dates, and exports 1-tap calendar alarms.
+          </p>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <a href="https://www.irctc.co.in/nget/train-search" target="_blank" rel="noopener noreferrer" class="cmd-override-btn" style="text-decoration:none;">
+            🚆 Open IRCTC ↗
+          </a>
+          <button class="btn-primary" onclick="addNewTrip()" style="padding:8px 14px; font-size:12px; font-family:var(--font-mono); font-weight:600;">
+            + Plan New Journey
+          </button>
+        </div>
       </div>
-      <div>
-        <div class="section-hdr" style="display:flex;justify-content:space-between;align-items:center;">
-          <span>TRIP EXPENSES : <span id="trip-selected-name" style="color:var(--peach);">Select a Trip</span></span>
-          <button class="btn-primary" id="add-trip-exp-btn" onclick="addTripExpense()" style="padding:4px 10px;font-size:11px;display:none;">+ LOG TRIP EXPENSE</button>
+
+      <!-- Quick Metrics Bar -->
+      <div class="travel-metrics-grid" id="travel-metrics-bar"></div>
+    </div>
+
+    <!-- View Switcher Toggles -->
+    <div class="calendar-view-toggles" style="margin-bottom:16px;">
+      <button class="calendar-toggle-btn active" id="btn-travel-timelines" onclick="switchTravelView('timelines')">
+        🚆 IRCTC Booking Timelines & Reminders
+      </button>
+      <button class="calendar-toggle-btn" id="btn-travel-expenses" onclick="switchTravelView('expenses')">
+        💰 Trip Budget & Expense Ledger
+      </button>
+    </div>
+
+    <!-- VIEW 1: IRCTC BOOKING TIMELINES -->
+    <div id="travel-timelines-view" style="display:block;">
+      <div id="travel-cards-container">
+        <!-- Rendered dynamically by renderTravelTimelines() -->
+      </div>
+    </div>
+
+    <!-- VIEW 2: TRIP BUDGET & EXPENSES -->
+    <div id="travel-expenses-view" style="display:none;">
+      <div class="trips-grid">
+        <div>
+          <div class="section-hdr">YOUR TRIPS</div>
+          <div id="trips-list-container"></div>
         </div>
-        <div class="trip-total-banner budget-total-banner" style="margin-bottom:12px;display:none;" id="trip-totals-banner">
-          <div>
-            <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;">Spent so far</div>
-            <div class="budget-total-num" id="trip-total-spent" style="color:var(--red);">₹0</div>
+        <div>
+          <div class="section-hdr" style="display:flex;justify-content:space-between;align-items:center;">
+            <span>TRIP EXPENSES : <span id="trip-selected-name" style="color:var(--peach);">Select a Trip</span></span>
+            <button class="btn-primary" id="add-trip-exp-btn" onclick="addTripExpense()" style="padding:4px 10px;font-size:11px;display:none;">+ LOG TRIP EXPENSE</button>
           </div>
-          <div style="text-align:right;">
-            <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;">Allocated Budget</div>
-            <div class="budget-total-num" id="trip-total-budget" style="color:var(--green);">₹0</div>
+          <div class="trip-total-banner budget-total-banner" style="margin-bottom:12px;display:none;" id="trip-totals-banner">
+            <div>
+              <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;">Spent so far</div>
+              <div class="budget-total-num" id="trip-total-spent" style="color:var(--red);">₹0</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;">Allocated Budget</div>
+              <div class="budget-total-num" id="trip-total-budget" style="color:var(--green);">₹0</div>
+            </div>
           </div>
-        </div>
-        <div class="trip-expense-list" id="trip-expenses-container">
-          <div class="empty-state">Select a trip from the left panel to view or log expenses.</div>
+          <div class="trip-expense-list" id="trip-expenses-container">
+            <div class="empty-state">Select a trip from the left panel to view or log expenses.</div>
+          </div>
         </div>
       </div>
     </div>
@@ -7450,6 +7671,7 @@ function checkDailyReset(){
 }
 
 function updateStats(){
+  if (typeof checkIRCTCAlerts === 'function') checkIRCTCAlerts();
   const day=DAYS[new Date().getDay()];
   const sched=S.schedule[day]||[];
   
@@ -10872,7 +11094,7 @@ function applyNavFolds() {
 }
 
 // ─── NAVIGATION ───────────────────────────────────────────
-const pageTitles={today:'Today',roadmap:'Systems Roadmap',semester:'Semester 4 (AB-302)',circle:'Circle & Charter',calendar:'Academic Calendar',dsa:'DSA Track',projects:'Projects',targets:'Quant Funnel',gaming:'Gaming',notes:'Notes',tasks:'Mission Board',applications:'Applications',budget:'Expense Tracker',trips:'Trip Planner',resume:'Resume HQ',schedule:'Daily Matrix',audit:'Weekly Audit',routine:'Daily Routine',physical:'Physical Metrics',mental:'Mental State'};
+const pageTitles={today:'Today',roadmap:'Systems Roadmap',semester:'Semester 4 (AB-302)',circle:'Circle & Charter',calendar:'Academic Calendar',dsa:'DSA Track',projects:'Projects',targets:'Quant Funnel',gaming:'Gaming',notes:'Notes',tasks:'Mission Board',applications:'Applications',budget:'Expense Tracker',trips:'Travel & IRCTC Planner',resume:'Resume HQ',schedule:'Daily Matrix',audit:'Weekly Audit',routine:'Daily Routine',physical:'Physical Metrics',mental:'Mental State'};
 
 /* Per-section health palettes: each page gets its own skin class,
    accent color, and browser chrome tint. */
@@ -10939,7 +11161,7 @@ function gotoPage(id,el){
   if(id==='dsa'){renderSRSQueue();renderDSALog();}
   if(id==='applications'){renderKanban();}
   if(id==='budget'){renderBudget();}
-  if(id==='trips'){renderTrips();}
+  if(id==='trips'){renderTravelTimelines(); renderTrips();}
   if(id==='resume'){renderResume();}
   syncMobileActiveTab(id);
 }
@@ -12673,13 +12895,701 @@ function editBudgetSetup() {
   });
 }
 
-// ─── TRIPS EXPENSE PLANNER JS ─────────────────────────────
+// ─── TRAVEL & IRCTC TICKET DISPATCH ENGINE ─────────────────────
+let currentTravelView = 'timelines';
+
+function switchTravelView(view) {
+  currentTravelView = view;
+  const tView = document.getElementById('travel-timelines-view');
+  const eView = document.getElementById('travel-expenses-view');
+  const btnT = document.getElementById('btn-travel-timelines');
+  const btnE = document.getElementById('btn-travel-expenses');
+
+  if (tView && eView && btnT && btnE) {
+    if (view === 'timelines') {
+      tView.style.display = 'block';
+      eView.style.display = 'none';
+      btnT.classList.add('active');
+      btnE.classList.remove('active');
+      renderTravelTimelines();
+    } else {
+      tView.style.display = 'none';
+      eView.style.display = 'block';
+      btnT.classList.remove('active');
+      btnE.classList.add('active');
+      renderTrips();
+    }
+  }
+}
+
+// Compute 60-day IRCTC dates & reminders
+function calculateIRCTCTimeline(journeyDateStr, advanceDays = 60) {
+  if (!journeyDateStr) return null;
+  const [y, m, d] = journeyDateStr.split('-').map(Number);
+  const jDate = new Date(y, m - 1, d, 8, 0, 0); // Journey date
+
+  // Booking opens exactly advanceDays (60) days before journey at 08:00 AM IST
+  const bDate = new Date(jDate);
+  bDate.setDate(bDate.getDate() - advanceDays);
+  bDate.setHours(8, 0, 0, 0);
+
+  // Reminder is 1 day before booking opens (Day 61) at 08:00 PM IST
+  const rDate = new Date(bDate);
+  rDate.setDate(rDate.getDate() - 1);
+  rDate.setHours(20, 0, 0, 0);
+
+  // Tatkal opens 1 day before journey date
+  const tatkalAC = new Date(jDate);
+  tatkalAC.setDate(tatkalAC.getDate() - 1);
+  tatkalAC.setHours(10, 0, 0, 0); // 10:00 AM AC
+
+  const tatkalNonAC = new Date(jDate);
+  tatkalNonAC.setDate(tatkalNonAC.getDate() - 1);
+  tatkalNonAC.setHours(11, 0, 0, 0); // 11:00 AM Non-AC
+
+  return {
+    journeyDate: jDate,
+    bookingDate: bDate,
+    reminderDate: rDate,
+    tatkalAC: tatkalAC,
+    tatkalNonAC: tatkalNonAC
+  };
+}
+
+// Format friendly date
+function formatTravelDate(d) {
+  if (!d) return '';
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+// Get Booking Status for trip
+function getTripBookingStatus(trip) {
+  if (trip.booked) {
+    return {
+      type: 'booked',
+      badgeClass: 'booked',
+      badgeText: `✓ BOOKED${trip.pnr ? ' (PNR: ' + trip.pnr + ')' : ''}`,
+      desc: 'Ticket confirmed. Ready for departure!'
+    };
+  }
+
+  const timeline = calculateIRCTCTimeline(trip.journeyDate, trip.advanceDays || 60);
+  if (!timeline) return { type: 'unknown', badgeClass: 'passed', badgeText: 'DATE UNSET', desc: '' };
+
+  const now = new Date();
+  const bDate = timeline.bookingDate;
+  const jDate = timeline.journeyDate;
+
+  // Has journey already passed?
+  if (now > jDate) {
+    return {
+      type: 'passed',
+      badgeClass: 'passed',
+      badgeText: '✓ COMPLETED',
+      desc: 'Journey date has passed.'
+    };
+  }
+
+  // Is today the booking day (between 08:00 AM and 23:59)?
+  const sameDay = now.getFullYear() === bDate.getFullYear() &&
+                  now.getMonth() === bDate.getMonth() &&
+                  now.getDate() === bDate.getDate();
+
+  if (sameDay) {
+    if (now.getHours() >= 8) {
+      return {
+        type: 'open_now',
+        badgeClass: 'open-now',
+        badgeText: '🟢 BOOKING OPEN NOW (08:00 AM)',
+        desc: 'General Quota booking is active! Log into IRCTC now.'
+      };
+    } else {
+      const minsLeft = Math.round((bDate - now) / 60000);
+      return {
+        type: 'today_soon',
+        badgeClass: 'tomorrow',
+        badgeText: `🚨 OPENS TODAY IN ${minsLeft} MINS (08:00 AM)`,
+        desc: 'Have your IRCTC app open and passenger list saved!'
+      };
+    }
+  }
+
+  // Is today the reminder day (1 day before booking opens)?
+  const remDay = new Date(bDate);
+  remDay.setDate(remDay.getDate() - 1);
+  const isRemDay = now.getFullYear() === remDay.getFullYear() &&
+                   now.getMonth() === remDay.getMonth() &&
+                   now.getDate() === remDay.getDate();
+
+  if (isRemDay) {
+    return {
+      type: 'tomorrow',
+      badgeClass: 'tomorrow',
+      badgeText: '🚨 OPENS TOMORROW 08:00 AM IST',
+      desc: 'Reminder: IRCTC General booking opens tomorrow morning! Set your 7:55 AM alarm.'
+    };
+  }
+
+  // In the future before booking opens
+  if (now < bDate) {
+    const diffMs = bDate - now;
+    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    return {
+      type: 'future',
+      badgeClass: 'future',
+      badgeText: `⏳ OPENS IN ${diffDays} DAYS`,
+      desc: `Booking opens on ${formatTravelDate(bDate)} at 08:00 AM IST.`
+    };
+  }
+
+  // Past 60-day booking window, but journey is in future
+  return {
+    type: 'window_open',
+    badgeClass: 'future',
+    badgeText: '⚠️ GENERAL WINDOW OPEN',
+    desc: 'Booking has opened. If seats are WL, prepare for Tatkal 1 day prior!'
+  };
+}
+
+// Render IRCTC Journey Cards
+function renderTravelTimelines() {
+  const container = document.getElementById('travel-cards-container');
+  const metricsBar = document.getElementById('travel-metrics-bar');
+  if (!container) return;
+
+  const trips = S.trips || [];
+
+  // Update summary metrics
+  if (metricsBar) {
+    const unbookedCount = trips.filter(t => !t.booked && new Date(t.journeyDate) > new Date()).length;
+    const upcomingCount = trips.filter(t => new Date(t.journeyDate) > new Date()).length;
+    
+    // Find closest booking window
+    let nextBookingStr = 'None';
+    const futureBookings = trips
+      .map(t => ({ trip: t, timeline: calculateIRCTCTimeline(t.journeyDate, t.advanceDays || 60) }))
+      .filter(item => item.timeline && item.timeline.bookingDate > new Date() && !item.trip.booked)
+      .sort((a, b) => a.timeline.bookingDate - b.timeline.bookingDate);
+
+    if (futureBookings.length > 0) {
+      const days = Math.ceil((futureBookings[0].timeline.bookingDate - new Date()) / (86400000));
+      nextBookingStr = `In ${days} days (${formatTravelDate(futureBookings[0].timeline.bookingDate).split(',')[1].trim()})`;
+    } else if (trips.some(t => getTripBookingStatus(t).type === 'open_now')) {
+      nextBookingStr = '🟢 OPEN TODAY!';
+    }
+
+    const totalBudget = trips.reduce((sum, t) => sum + (t.budget || 0), 0);
+
+    metricsBar.innerHTML = `
+      <div class="travel-metric-item">
+        <div class="travel-metric-label">Active Journeys</div>
+        <div class="travel-metric-val">${upcomingCount}</div>
+      </div>
+      <div class="travel-metric-item">
+        <div class="travel-metric-label">Next Booking Window</div>
+        <div class="travel-metric-val" style="color:var(--accent);">${nextBookingStr}</div>
+      </div>
+      <div class="travel-metric-item">
+        <div class="travel-metric-label">Pending Bookings</div>
+        <div class="travel-metric-val" style="color:${unbookedCount > 0 ? 'var(--status-warning)' : 'var(--status-optimal)'};">${unbookedCount}</div>
+      </div>
+      <div class="travel-metric-item">
+        <div class="travel-metric-label">Total Travel Budget</div>
+        <div class="travel-metric-val">₹${totalBudget.toLocaleString()}</div>
+      </div>
+    `;
+  }
+
+  if (trips.length === 0) {
+    container.innerHTML = `
+      <div class="glass-card" style="padding:32px 20px; text-align:center; border-radius:var(--r);">
+        <div style="font-size:32px; margin-bottom:10px;">🚆</div>
+        <h3 style="font-size:16px; font-weight:700; color:var(--text); margin-bottom:6px;">No Journeys Planned Yet</h3>
+        <p style="font-size:12px; color:var(--sub); max-width:440px; margin:0 auto 16px;">
+          Plan your upcoming trip home or vacation. The engine will automatically calculate when the 60-day IRCTC window opens and notify you 1 day in advance!
+        </p>
+        <button class="btn-primary" onclick="addNewTrip()" style="padding:8px 18px; font-size:12px; font-family:var(--font-mono);">
+          + Plan Journey / Trip Home
+        </button>
+      </div>
+    `;
+    return;
+  }
+
+  // Render cards sorted by journey date
+  const sortedTrips = [...trips].sort((a, b) => new Date(a.journeyDate || '2099-01-01') - new Date(b.journeyDate || '2099-01-01'));
+
+  container.innerHTML = sortedTrips.map(t => {
+    const status = getTripBookingStatus(t);
+    const timeline = calculateIRCTCTimeline(t.journeyDate, t.advanceDays || 60);
+    const returnTimeline = t.returnDate ? calculateIRCTCTimeline(t.returnDate, t.advanceDays || 60) : null;
+    const sourceStr = t.source || 'Chennai (MAS)';
+    const destStr = t.destination || t.name;
+
+    return `
+      <div class="travel-journey-card glass-card">
+        <div class="travel-card-header">
+          <div>
+            <div class="travel-destination-title">
+              <span>🚆 ${escapeHtml(t.name)}</span>
+              <span class="cmd-status-pill" style="font-size:9px;">${escapeHtml(t.type || 'Home Visit')}</span>
+            </div>
+            <div class="travel-route-badge">
+              ${escapeHtml(sourceStr)} ➔ ${escapeHtml(destStr)}
+            </div>
+          </div>
+          <div class="travel-status-badge ${status.badgeClass}">
+            ${status.badgeText}
+          </div>
+        </div>
+
+        <!-- TIMELINE GRID (60-Day General + 1-Day Reminder + Tatkal Contingency) -->
+        <div class="travel-timeline-grid">
+          <!-- BOX 1: JOURNEY DATE -->
+          <div class="travel-timeline-box">
+            <div class="travel-timeline-title">
+              <span>📅 Journey Date</span>
+              <span>Departure</span>
+            </div>
+            <div class="travel-timeline-date" style="color:var(--text);">${formatTravelDate(timeline ? timeline.journeyDate : null)}</div>
+            <div class="travel-timeline-desc">
+              ${t.trainNo ? '🚆 ' + escapeHtml(t.trainNo) + ' · ' : ''}${t.prefClass ? 'Class: ' + escapeHtml(t.prefClass) : 'Pref: 3A / SL'}
+            </div>
+          </div>
+
+          <!-- BOX 2: 60-DAY IRCTC BOOKING WINDOW -->
+          <div class="travel-timeline-box highlight">
+            <div class="travel-timeline-title">
+              <span>⚡ IRCTC 60-Day Booking</span>
+              <span style="color:var(--accent);">08:00 AM IST</span>
+            </div>
+            <div class="travel-timeline-date" style="color:var(--accent);">${formatTravelDate(timeline ? timeline.bookingDate : null)}</div>
+            <div class="travel-timeline-desc">
+              Opens at <strong>08:00 AM sharp</strong>. Log in 5 mins early with master list ready.
+            </div>
+          </div>
+
+          <!-- BOX 3: 1-DAY ADVANCE REMINDER -->
+          <div class="travel-timeline-box">
+            <div class="travel-timeline-title">
+              <span>⏰ 1-Day Advance Alert</span>
+              <span style="color:var(--status-warning);">Evening Prior</span>
+            </div>
+            <div class="travel-timeline-date" style="color:var(--status-warning);">${formatTravelDate(timeline ? timeline.reminderDate : null)}</div>
+            <div class="travel-timeline-desc">
+              Alarm: Set your phone alarm for <strong>07:55 AM</strong> tomorrow morning!
+            </div>
+          </div>
+
+          <!-- BOX 4: TATKAL CONTINGENCY -->
+          <div class="travel-timeline-box">
+            <div class="travel-timeline-title">
+              <span>🛡️ Tatkal Backup</span>
+              <span style="color:var(--mauve);">1 Day Before Journey</span>
+            </div>
+            <div class="travel-timeline-date" style="font-size:11px;">
+              AC: 10:00 AM &middot; Non-AC: 11:00 AM
+            </div>
+            <div class="travel-timeline-desc">
+              Opens: ${formatTravelDate(timeline ? timeline.tatkalAC : null)}
+            </div>
+          </div>
+        </div>
+
+        ${returnTimeline ? `
+        <!-- RETURN JOURNEY TIMELINE -->
+        <div style="background:var(--bg-elevated); border:1px dashed var(--border-subtle); border-radius:6px; padding:10px 14px; margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <span style="font-family:var(--font-mono); font-size:11px; font-weight:700; color:var(--text-primary);">
+              🔄 Return Journey: ${destStr} ➔ ${sourceStr}
+            </span>
+            <span style="font-family:var(--font-mono); font-size:10px; color:var(--accent);">
+              Return Date: ${formatTravelDate(returnTimeline.journeyDate)}
+            </span>
+          </div>
+          <div style="font-size:11px; color:var(--text-secondary);">
+            Return Booking Opens: <strong>${formatTravelDate(returnTimeline.bookingDate)} at 08:00 AM IST</strong> &middot; 
+            Reminder: <strong>${formatTravelDate(returnTimeline.reminderDate)} (Evening)</strong>
+          </div>
+        </div>
+        ` : ''}
+
+        <!-- ACTIONS ROW -->
+        <div class="travel-actions-bar">
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <a href="https://www.irctc.co.in/nget/train-search" target="_blank" rel="noopener noreferrer" class="cmd-override-btn" style="text-decoration:none; font-size:10px; padding:4px 10px;">
+              🚆 Open IRCTC ↗
+            </a>
+            <button class="cmd-override-btn" onclick="addTripToGoogleCalendar('${t.id}')" style="font-size:10px; padding:4px 10px; color:var(--text-primary);">
+              📅 Google Calendar
+            </button>
+            <button class="cmd-override-btn" onclick="downloadTripICS('${t.id}')" style="font-size:10px; padding:4px 10px; color:var(--text-primary);">
+              📲 Download .ICS
+            </button>
+            <button class="cmd-override-btn" onclick="toggleTripBooked('${t.id}')" style="font-size:10px; padding:4px 10px; color:${t.booked ? 'var(--status-optimal)' : 'var(--text-secondary)'};">
+              ${t.booked ? '✓ Booked' : '○ Mark Booked'}
+            </button>
+          </div>
+          <div style="display:flex; gap:6px; align-items:center;">
+            <button class="edit-btn" onclick="editTripDetails('${t.id}')" title="Edit Trip Details">✏️</button>
+            <button class="edit-btn" onclick="deleteTrip('${t.id}')" style="color:var(--red);" title="Delete Trip">🗑️</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// 1-Tap Google Calendar prefilled event
+function addTripToGoogleCalendar(tripId) {
+  const trip = (S.trips || []).find(t => t.id === tripId);
+  if (!trip) return;
+
+  const timeline = calculateIRCTCTimeline(trip.journeyDate, trip.advanceDays || 60);
+  if (!timeline) return;
+
+  const bDate = timeline.bookingDate;
+  // Format for Google Calendar: YYYYMMDDTHHmmSS
+  const pad = n => String(n).padStart(2, '0');
+  const startStr = `${bDate.getFullYear()}${pad(bDate.getMonth() + 1)}${pad(bDate.getDate())}T075500`;
+  const endStr = `${bDate.getFullYear()}${pad(bDate.getMonth() + 1)}${pad(bDate.getDate())}T083000`;
+
+  const title = encodeURIComponent(`🚆 IRCTC Ticket Booking: ${trip.name}`);
+  const details = encodeURIComponent(
+    `IRCTC 60-Day General Quota opens at 08:00 AM sharp!\n` +
+    `Journey Date: ${formatTravelDate(timeline.journeyDate)}\n` +
+    `Route: ${trip.source || 'Chennai (MAS)'} to ${trip.destination || trip.name}\n` +
+    `Train: ${trip.trainNo || 'Check IRCTC'} (Class: ${trip.prefClass || '3A'})\n` +
+    `Tatkal Backup: ${formatTravelDate(timeline.tatkalAC)} at 10 AM\n\n` +
+    `Direct Link: https://www.irctc.co.in/nget/train-search`
+  );
+  const location = encodeURIComponent('https://www.irctc.co.in');
+
+  const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startStr}/${endStr}&details=${details}&location=${location}`;
+  window.open(gcalUrl, '_blank');
+}
+
+// Universal .ICS Calendar File Download
+function downloadTripICS(tripId) {
+  const trip = (S.trips || []).find(t => t.id === tripId);
+  if (!trip) return;
+
+  const timeline = calculateIRCTCTimeline(trip.journeyDate, trip.advanceDays || 60);
+  if (!timeline) return;
+
+  const bDate = timeline.bookingDate;
+  const pad = n => String(n).padStart(2, '0');
+  const dStr = `${bDate.getFullYear()}${pad(bDate.getMonth() + 1)}${pad(bDate.getDate())}`;
+
+  const icsContent = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Abhishikth OS//Travel IRCTC Planner//EN',
+    'BEGIN:VEVENT',
+    `SUMMARY:🚆 IRCTC Ticket Booking: ${trip.name}`,
+    `DESCRIPTION:IRCTC 60-Day General Booking opens at 08:00 AM IST! Log in at 7:55 AM with master list saved.\nJourney Date: ${formatTravelDate(timeline.journeyDate)}\nRoute: ${trip.source || 'Chennai'} -> ${trip.destination || trip.name}`,
+    `DTSTART;TZID=Asia/Kolkata:${dStr}T075500`,
+    `DTEND;TZID=Asia/Kolkata:${dStr}T083000`,
+    'BEGIN:VALARM',
+    'TRIGGER:-PT12H',
+    'ACTION:DISPLAY',
+    'DESCRIPTION:IRCTC Booking opens tomorrow morning at 08:00 AM IST!',
+    'END:VALARM',
+    'BEGIN:VALARM',
+    'TRIGGER:-PT10M',
+    'ACTION:DISPLAY',
+    'DESCRIPTION:IRCTC Booking opens in 5 minutes! Log into IRCTC now.',
+    'END:VALARM',
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+
+  const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `irctc-booking-${trip.id}.ics`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('📲 Calendar .ICS file downloaded!');
+}
+
+// Toggle Booked Status
+function toggleTripBooked(tripId) {
+  const trip = (S.trips || []).find(t => t.id === tripId);
+  if (!trip) return;
+
+  if (trip.booked) {
+    trip.booked = false;
+    save();
+    renderTravelTimelines();
+    checkIRCTCAlerts();
+    showToast('Marked as not booked.');
+  } else {
+    const html = `
+      <div class="modal-form-group">
+        <label class="modal-form-label">PNR Number (Optional)</label>
+        <input type="text" class="modal-form-input" id="booked-pnr" placeholder="e.g. 4829103948" value="${escapeHtml(trip.pnr || '')}">
+      </div>
+      <div class="modal-form-group">
+        <label class="modal-form-label">Coach & Berth (Optional)</label>
+        <input type="text" class="modal-form-input" id="booked-berth" placeholder="e.g. B4 - 34 (Side Lower)" value="${escapeHtml(trip.notes || '')}">
+      </div>
+    `;
+    openModal('Mark Journey Booked ✓', html, () => {
+      const pnr = document.getElementById('booked-pnr').value.trim();
+      const berth = document.getElementById('booked-berth').value.trim();
+      trip.booked = true;
+      trip.pnr = pnr;
+      if (berth) trip.notes = berth;
+      save();
+      renderTravelTimelines();
+      checkIRCTCAlerts();
+      showToast('🎉 Ticket marked as booked!');
+      return true;
+    });
+  }
+}
+
+// Active Alert Check on Today View
+function checkIRCTCAlerts() {
+  const alertEl = document.getElementById('irctc-booking-alert');
+  if (!alertEl) return;
+
+  const trips = (S.trips || []).filter(t => !t.booked && t.journeyDate);
+  const now = new Date();
+  let activeAlertTrip = null;
+  let alertType = null;
+
+  for (const t of trips) {
+    const status = getTripBookingStatus(t);
+    if (status.type === 'open_now' || status.type === 'today_soon') {
+      activeAlertTrip = t;
+      alertType = 'today';
+      break;
+    } else if (status.type === 'tomorrow') {
+      activeAlertTrip = t;
+      alertType = 'tomorrow';
+      break;
+    }
+  }
+
+  if (activeAlertTrip) {
+    alertEl.style.display = 'flex';
+    if (alertType === 'today') {
+      alertEl.className = 'travel-today-alert open-today glass-card';
+      alertEl.innerHTML = `
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:20px;">🟢</span>
+          <div>
+            <div style="font-size:12px; font-weight:700; color:var(--status-optimal);">IRCTC BOOKING OPEN TODAY: ${escapeHtml(activeAlertTrip.name)}</div>
+            <div style="font-size:11px; color:var(--text-secondary);">General Quota opened at 08:00 AM IST. Book your ticket now before waitlist fills!</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <a href="https://www.irctc.co.in/nget/train-search" target="_blank" class="cmd-override-btn" style="text-decoration:none;">Open IRCTC ↗</a>
+          <button class="cmd-override-btn" onclick="gotoPage('trips')">View Planner</button>
+        </div>
+      `;
+    } else {
+      alertEl.className = 'travel-today-alert glass-card';
+      alertEl.innerHTML = `
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:20px;">🚨</span>
+          <div>
+            <div style="font-size:12px; font-weight:700; color:var(--status-warning);">IRCTC ALERT: Booking for "${escapeHtml(activeAlertTrip.name)}" opens TOMORROW at 08:00 AM!</div>
+            <div style="font-size:11px; color:var(--text-secondary);">Set your alarm for 7:55 AM tomorrow and keep your IRCTC passenger list ready.</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="cmd-override-btn" onclick="addTripToGoogleCalendar('${activeAlertTrip.id}')">📅 Add Alarm</button>
+          <button class="cmd-override-btn" onclick="gotoPage('trips')">View Details</button>
+        </div>
+      `;
+    }
+  } else {
+    alertEl.style.display = 'none';
+  }
+}
+
+// Add New Journey / Trip (Comprehensive Modal)
+function addNewTrip() {
+  const html = `
+    <div class="modal-form-group">
+      <label class="modal-form-label">Trip Name / Purpose</label>
+      <input type="text" class="modal-form-input" id="new-trip-name" placeholder="e.g. Going Home (Vijayawada) or Semester Break">
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+      <div class="modal-form-group">
+        <label class="modal-form-label">Trip Type</label>
+        <select class="form-select" id="new-trip-type" style="padding:8px 10px; font-size:12px; background:var(--bg1);">
+          <option value="Home Visit" selected>🏡 Home Visit</option>
+          <option value="Vacation">🏖️ Vacation / Holiday</option>
+          <option value="Hackathon">💻 Hackathon / Conf</option>
+          <option value="Exam / ODS">📝 Exam / ODS Travel</option>
+        </select>
+      </div>
+      <div class="modal-form-group">
+        <label class="modal-form-label">Budget Allocation (₹)</label>
+        <input type="number" class="modal-form-input" id="new-trip-budget" placeholder="e.g. 5000" min="0" value="4000">
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+      <div class="modal-form-group">
+        <label class="modal-form-label">From Station / City</label>
+        <input type="text" class="modal-form-input" id="new-trip-src" placeholder="e.g. Chennai Central (MAS)" value="Chennai Central (MAS)">
+      </div>
+      <div class="modal-form-group">
+        <label class="modal-form-label">To Station / City</label>
+        <input type="text" class="modal-form-input" id="new-trip-dest" placeholder="e.g. Vijayawada (BZA)">
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+      <div class="modal-form-group">
+        <label class="modal-form-label">📅 Journey Date (Outbound)</label>
+        <input type="date" class="modal-form-input" id="new-trip-jdate" required>
+      </div>
+      <div class="modal-form-group">
+        <label class="modal-form-label">🔄 Return Date (Optional)</label>
+        <input type="date" class="modal-form-input" id="new-trip-rdate">
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:2fr 1fr; gap:10px;">
+      <div class="modal-form-group">
+        <label class="modal-form-label">Train Name / Number (Optional)</label>
+        <input type="text" class="modal-form-input" id="new-trip-train" placeholder="e.g. 12603 / Hyderabad Exp">
+      </div>
+      <div class="modal-form-group">
+        <label class="modal-form-label">Class</label>
+        <select class="form-select" id="new-trip-class" style="padding:8px 10px; font-size:12px; background:var(--bg1);">
+          <option value="3A" selected>3A (AC 3-Tier)</option>
+          <option value="2A">2A (AC 2-Tier)</option>
+          <option value="1A">1A (First AC)</option>
+          <option value="SL">SL (Sleeper)</option>
+          <option value="CC">CC (Chair Car)</option>
+        </select>
+      </div>
+    </div>
+    <p style="font-size:10px; color:var(--accent); line-height:1.4; margin-top:4px;">
+      💡 IRCTC General Quota opens exactly <strong>60 days</strong> before journey at 08:00 AM IST. An automated 1-day reminder will be prepared for you!
+    </p>
+  `;
+
+  openModal('Plan Journey & IRCTC Timeline', html, () => {
+    const name = document.getElementById('new-trip-name').value.trim();
+    const type = document.getElementById('new-trip-type').value;
+    const budget = parseFloat(document.getElementById('new-trip-budget').value) || 0;
+    const src = document.getElementById('new-trip-src').value.trim();
+    const dest = document.getElementById('new-trip-dest').value.trim();
+    const jDate = document.getElementById('new-trip-jdate').value;
+    const rDate = document.getElementById('new-trip-rdate').value;
+    const train = document.getElementById('new-trip-train').value.trim();
+    const pClass = document.getElementById('new-trip-class').value;
+
+    if (!name) { showToast('Trip name is required!'); return false; }
+    if (!jDate) { showToast('Journey date is required for IRCTC timeline calculation!'); return false; }
+
+    const newTrip = {
+      id: 'trip-' + Date.now(),
+      name,
+      type,
+      budget,
+      source: src || 'Chennai Central (MAS)',
+      destination: dest || name,
+      journeyDate: jDate,
+      returnDate: rDate || '',
+      trainNo: train,
+      prefClass: pClass,
+      advanceDays: 60,
+      booked: false,
+      pnr: '',
+      notes: '',
+      expenses: []
+    };
+
+    if (!S.trips) S.trips = [];
+    S.trips.push(newTrip);
+    S.activeTripId = newTrip.id;
+    save();
+    renderTravelTimelines();
+    renderTrips();
+    checkIRCTCAlerts();
+    showToast(`Journey to ${dest || name} planned! 🚆`);
+    return true;
+  });
+}
+
+// Edit Trip Details
+function editTripDetails(tripId) {
+  const trip = (S.trips || []).find(t => t.id === tripId);
+  if (!trip) return;
+
+  const html = `
+    <div class="modal-form-group">
+      <label class="modal-form-label">Trip Name / Purpose</label>
+      <input type="text" class="modal-form-input" id="edit-trip-name" value="${escapeHtml(trip.name)}">
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+      <div class="modal-form-group">
+        <label class="modal-form-label">From Station / City</label>
+        <input type="text" class="modal-form-input" id="edit-trip-src" value="${escapeHtml(trip.source || 'Chennai Central (MAS)')}">
+      </div>
+      <div class="modal-form-group">
+        <label class="modal-form-label">To Station / City</label>
+        <input type="text" class="modal-form-input" id="edit-trip-dest" value="${escapeHtml(trip.destination || trip.name)}">
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+      <div class="modal-form-group">
+        <label class="modal-form-label">📅 Journey Date</label>
+        <input type="date" class="modal-form-input" id="edit-trip-jdate" value="${trip.journeyDate || ''}">
+      </div>
+      <div class="modal-form-group">
+        <label class="modal-form-label">🔄 Return Date</label>
+        <input type="date" class="modal-form-input" id="edit-trip-rdate" value="${trip.returnDate || ''}">
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:2fr 1fr; gap:10px;">
+      <div class="modal-form-group">
+        <label class="modal-form-label">Train Name / Number</label>
+        <input type="text" class="modal-form-input" id="edit-trip-train" value="${escapeHtml(trip.trainNo || '')}">
+      </div>
+      <div class="modal-form-group">
+        <label class="modal-form-label">Budget (₹)</label>
+        <input type="number" class="modal-form-input" id="edit-trip-budget" value="${trip.budget || 0}">
+      </div>
+    </div>
+  `;
+
+  openModal('Edit Journey Details', html, () => {
+    trip.name = document.getElementById('edit-trip-name').value.trim() || trip.name;
+    trip.source = document.getElementById('edit-trip-src').value.trim();
+    trip.destination = document.getElementById('edit-trip-dest').value.trim();
+    trip.journeyDate = document.getElementById('edit-trip-jdate').value;
+    trip.returnDate = document.getElementById('edit-trip-rdate').value;
+    trip.trainNo = document.getElementById('edit-trip-train').value.trim();
+    trip.budget = parseFloat(document.getElementById('edit-trip-budget').value) || 0;
+
+    save();
+    renderTravelTimelines();
+    renderTrips();
+    checkIRCTCAlerts();
+    showToast('Journey updated! ✓');
+    return true;
+  });
+}
+
+// Preserved Trip Expense Manager Functions
 function renderTrips() {
   const container = document.getElementById('trips-list-container');
   if (!container) return;
   const trips = S.trips || [];
   if (trips.length === 0) {
-    container.innerHTML = `<div class="empty-state">No trips planned yet. Click "+ Add New Trip" above! ✈️</div>`;
+    container.innerHTML = `<div class="empty-state">No trips planned yet. Click "+ Plan New Journey" above! ✈️</div>`;
   } else {
     container.innerHTML = trips.map(t => {
       const activeCls = S.activeTripId === t.id ? 'active' : '';
@@ -12699,37 +13609,6 @@ function renderTrips() {
   updateSelectedTripView();
 }
 
-function addNewTrip() {
-  const html = `
-    <div class="modal-form-group">
-      <label class="modal-form-label">Trip Name / Destination</label>
-      <input type="text" class="modal-form-input" id="new-trip-name" placeholder="e.g. Goa Vacation 2026">
-    </div>
-    <div class="modal-form-group">
-      <label class="modal-form-label">Budget Allocation (₹)</label>
-      <input type="number" class="modal-form-input" id="new-trip-budget" placeholder="e.g. 15000" min="0">
-    </div>
-  `;
-  openModal('Plan New Trip', html, () => {
-    const name = document.getElementById('new-trip-name').value.trim();
-    const budget = parseFloat(document.getElementById('new-trip-budget').value) || 0;
-    if (!name) { showToast('Trip name is required!'); return false; }
-    const newTrip = {
-      id: 'trip-' + Date.now(),
-      name,
-      budget,
-      expenses: []
-    };
-    if (!S.trips) S.trips = [];
-    S.trips.push(newTrip);
-    S.activeTripId = newTrip.id;
-    save();
-    renderTrips();
-    showToast(`Trip to ${name} created! ✈️`);
-    return true;
-  });
-}
-
 function selectTrip(id) {
   S.activeTripId = id;
   save();
@@ -12741,9 +13620,9 @@ function updateSelectedTripView() {
   const bannerEl = document.getElementById('trip-totals-banner');
   const btnEl = document.getElementById('add-trip-exp-btn');
   const expContainer = document.getElementById('trip-expenses-container');
-  
+
   if (!titleEl || !bannerEl || !btnEl || !expContainer) return;
-  
+
   const trip = (S.trips || []).find(t => t.id === S.activeTripId);
   if (!trip) {
     titleEl.textContent = 'Select a Trip';
@@ -12752,118 +13631,106 @@ function updateSelectedTripView() {
     expContainer.innerHTML = `<div class="empty-state">Select a trip from the left panel to view or log expenses.</div>`;
     return;
   }
-  
+
   titleEl.textContent = trip.name;
   bannerEl.style.display = 'flex';
   btnEl.style.display = 'block';
-  
+
   const spent = (trip.expenses || []).reduce((sum, e) => sum + e.amount, 0);
   document.getElementById('trip-total-spent').textContent = '₹' + spent.toFixed(0);
-  document.getElementById('trip-total-budget').textContent = '₹' + trip.budget.toFixed(0);
-  
-  const spentEl = document.getElementById('trip-total-spent');
-  const pct = trip.budget > 0 ? spent / trip.budget : 0;
-  if (spentEl) {
-    spentEl.style.color = pct >= 1 ? 'var(--red)' : pct >= 0.8 ? 'var(--yellow)' : 'var(--green)';
-  }
-  
-  if (trip.expenses.length === 0) {
-    expContainer.innerHTML = `<div class="empty-state">No expenses logged for this trip yet. Click "+ Log Trip Expense" to start!</div>`;
+  document.getElementById('trip-total-budget').textContent = '₹' + (trip.budget || 0).toFixed(0);
+
+  if (!trip.expenses || trip.expenses.length === 0) {
+    expContainer.innerHTML = `<div class="empty-state">No expenses logged for this trip yet. Click "+ Log Trip Expense" to add.</div>`;
   } else {
-    expContainer.innerHTML = trip.expenses.map((e, i) => ({ e, i })).reverse().map(({ e, i }) => {
-      // Carry the real array index through the reversal instead of recomputing it
-      // from the display position, which drifts if the list changes underneath.
-      const originalIdx = i;
-      return `
-        <div class="trip-expense-item">
-          <div>
-            <div style="font-weight:600;margin-bottom:2px;">${escapeHtml(e.description)}</div>
-            <div style="font-size:10px;color:var(--sub);font-family:var(--font-mono);">${escapeHtml(e.date)}</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:12px;">
-            <span style="font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--peach);">₹${e.amount}</span>
-            <button class="edit-btn" onclick="deleteTripExpense('${trip.id}', ${originalIdx})" style="color:var(--red);margin:0;opacity:0.7;">🗑️</button>
-          </div>
+    expContainer.innerHTML = trip.expenses.map((e, idx) => `
+      <div class="trip-expense-item">
+        <div>
+          <div style="font-weight:600; color:var(--text);">${escapeHtml(e.desc)}</div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted);">${escapeHtml(e.date || '')} &middot; ${escapeHtml(e.category || 'General')}</div>
         </div>
-      `;
-    }).join('');
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-family:var(--font-mono); font-weight:700; color:var(--red);">₹${e.amount}</span>
+          <button class="edit-btn" onclick="deleteTripExpense('${trip.id}', ${idx})" style="color:var(--muted);">✕</button>
+        </div>
+      </div>
+    `).join('');
   }
 }
 
 function addTripExpense() {
   const trip = (S.trips || []).find(t => t.id === S.activeTripId);
-  if (!trip) return;
-  
+  if (!trip) { showToast('Select a trip first!'); return; }
+
   const html = `
     <div class="modal-form-group">
       <label class="modal-form-label">Expense Description</label>
-      <input type="text" class="modal-form-input" id="trip-exp-name" placeholder="e.g. Flight ticket, Dinner at beach">
+      <input type="text" class="modal-form-input" id="trip-exp-desc" placeholder="e.g. IRCTC Train Ticket, Food, Auto">
     </div>
     <div class="modal-form-group">
       <label class="modal-form-label">Amount (₹)</label>
-      <input type="number" class="modal-form-input" id="trip-exp-amount" placeholder="0" min="0">
+      <input type="number" class="modal-form-input" id="trip-exp-amount" placeholder="e.g. 850" min="0">
     </div>
     <div class="modal-form-group">
-      <label class="modal-form-label">Date</label>
-      <input type="date" class="modal-form-input" id="trip-exp-date">
+      <label class="modal-form-label">Category</label>
+      <select class="form-select" id="trip-exp-cat" style="padding:8px 10px; font-size:12px; background:var(--bg1);">
+        <option value="Train / Transport">🚆 Train / Transport</option>
+        <option value="Food & Snacks">🍔 Food & Snacks</option>
+        <option value="Stay / Accommodation">🏨 Stay</option>
+        <option value="Local Auto / Cab">🛺 Auto / Cab</option>
+        <option value="Miscellaneous">📦 Misc</option>
+      </select>
     </div>
   `;
-  
-  openModal(`Log Expense for ${trip.name}`, html, () => {
-    const desc = document.getElementById('trip-exp-name').value.trim();
+
+  openModal(`Log Expense: ${trip.name}`, html, () => {
+    const desc = document.getElementById('trip-exp-desc').value.trim();
     const amount = parseFloat(document.getElementById('trip-exp-amount').value) || 0;
-    let date = document.getElementById('trip-exp-date').value;
+    const cat = document.getElementById('trip-exp-cat').value;
+
     if (!desc) { showToast('Description is required!'); return false; }
     if (amount <= 0) { showToast('Enter a valid amount!'); return false; }
-    if (!date) { date = getLocalISODate(); }
-    
-    trip.expenses.push({ description: desc, amount, date, tripId: trip.id });
-    if (!S.budget) S.budget = { monthly:{}, log:[] };
-    if (!S.budget.log) S.budget.log = [];
-    S.budget.log.push({ description: trip.name + ': ' + desc, amount, category: 'Trips', date, tripId: trip.id });
+
+    if (!trip.expenses) trip.expenses = [];
+    trip.expenses.push({
+      desc,
+      amount,
+      category: cat,
+      date: new Date().toISOString().slice(0, 10)
+    });
+
     save();
+    updateSelectedTripView();
     renderTrips();
-    if (typeof renderBudget === 'function') renderBudget();
-    showToast(`Logged ₹${amount} for ${trip.name}! (counts toward Trips budget)`);
+    showToast(`Added ₹${amount} expense to ${trip.name}!`);
     return true;
   });
-  
-  setTimeout(() => {
-    const expDate = document.getElementById('trip-exp-date');
-    if (expDate) expDate.value = getLocalISODate();
-  }, 50);
 }
 
 function deleteTripExpense(tripId, expIdx) {
   const trip = (S.trips || []).find(t => t.id === tripId);
-  if (!trip) return;
-  if (confirm('Delete this trip expense entry?')) {
-    const exp = trip.expenses[expIdx];
-    trip.expenses.splice(expIdx, 1);
-    if (exp && S.budget && S.budget.log) {
-      const bi = S.budget.log.findIndex(e => e.tripId === trip.id && e.amount === exp.amount && e.date === exp.date);
-      if (bi >= 0) S.budget.log.splice(bi, 1);
-    }
-    save();
-    renderTrips();
-    if (typeof renderBudget === 'function') renderBudget();
-    showToast('Trip expense deleted.');
-  }
+  if (!trip || !trip.expenses) return;
+  trip.expenses.splice(expIdx, 1);
+  save();
+  updateSelectedTripView();
+  renderTrips();
+  showToast('Expense removed.');
 }
 
 function deleteTrip(tripId) {
   const trip = (S.trips || []).find(t => t.id === tripId);
   if (!trip) return;
-  if (confirm(`Are you sure you want to delete the trip "${trip.name}" and all its logged expenses?`)) {
-    S.trips = S.trips.filter(t => t.id !== tripId);
-    if (S.budget && S.budget.log) S.budget.log = S.budget.log.filter(e => e.tripId !== tripId);
-    if (S.activeTripId === tripId) {
-      S.activeTripId = S.trips.length > 0 ? S.trips[0].id : '';
-    }
-    save();
-    renderTrips();
-    showToast('Trip deleted.');
+  if (!confirm(`Are you sure you want to delete "${trip.name}"?`)) return;
+
+  S.trips = (S.trips || []).filter(t => t.id !== tripId);
+  if (S.activeTripId === tripId) {
+    S.activeTripId = S.trips.length > 0 ? S.trips[0].id : '';
   }
+  save();
+  renderTravelTimelines();
+  renderTrips();
+  checkIRCTCAlerts();
+  showToast('Trip deleted.');
 }
 
 // ─── RESUME HQ JS ──────────────────────────────────────────
