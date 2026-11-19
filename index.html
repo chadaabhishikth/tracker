@@ -13672,9 +13672,20 @@ function applyRemoteBundle(remoteState, files) {
     }
   } catch (e) { console.warn(e); }
   save(true);
-  showToast('State updated from cloud! (Previous local copy saved as snapshot) Reloading...');
+  showToast('State synced from cloud! ☁️✓');
   updateSyncStatusMsg('Synced!');
-  setTimeout(() => window.location.reload(), 800);
+
+  // In-place UI re-render without reload loop
+  try {
+    renderSidebar();
+    renderToday();
+    updateStats();
+    renderHealthPages();
+    renderSemester();
+    restorePageFromHash();
+  } catch(e) {
+    console.warn('Post-sync UI refresh warning:', e);
+  }
 }
 
 // Restore the local snapshot taken just before the last cloud pull.
