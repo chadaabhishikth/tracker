@@ -4867,6 +4867,7 @@ html.light .dual-win-box {
       <div class="mobile-drawer-item" onclick="gotoMobilePage('routine')"><span class="mobile-drawer-icon">🏃</span>Vitality OS</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('resume')"><span class="mobile-drawer-icon">📄</span>Resume HQ</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('notes')"><span class="mobile-drawer-icon">📝</span>Folio Notes</div>
+      <div class="mobile-drawer-item" onclick="openShortcutIconsModal(); toggleMobileDrawer();" style="border: 1px dashed var(--accent);"><span class="mobile-drawer-icon">⚡</span>Shortcut Icons</div>
       <div class="mobile-drawer-item" onclick="openSettings(); toggleMobileDrawer();"><span class="mobile-drawer-icon">⚙️</span>Settings</div>
     </div>
   </div>
@@ -12382,25 +12383,74 @@ function openSettings() {
                 💬 Send to Phone on WhatsApp ↗
               </a>
             </div>
-        <div style="margin-top:14px; padding-top:10px; border-top:1px dashed var(--line2);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <span style="font-size:11px; font-weight:600; color:var(--text); font-family:var(--font-mono);">⚡ NOTHING OS SHORTCUT ICONS</span>
-            <button type="button" class="btn-secondary" onclick="openShortcutIconsModal()" style="font-size:10px; padding:4px 10px; cursor:pointer;">View & Download Icons</button>
-          </div>
-          <p style="font-size:10px; color:var(--sub); line-height:1.4;">Download high-contrast monochrome glyphs (₹, Train, Bolt, Shield) tailored for label-free black & white home screens.</p>
-        </div>
           </div>
         </div>
       </div>
 
+      <!-- CARD 2: NOTHING OS SHORTCUT ICONS -->
       <div style="border: 1px solid var(--line2); padding: 14px; border-radius: 8px; background: var(--bg2);">
-        <h4 style="font-size: 13px; font-weight:600; color:var(--text); margin-bottom: 6px; font-family: var(--font-mono); text-transform: uppercase;">2. Bake Custom Setup into HTML</h4>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+          <h4 style="font-size: 13px; font-weight:600; color:var(--text); font-family: var(--font-mono); text-transform: uppercase; margin:0;">
+            2. Nothing OS Shortcut Icons (B&W)
+          </h4>
+          <span style="font-family:var(--font-mono); font-size:10px; color:var(--accent); font-weight:700;">512×512 PNGs</span>
+        </div>
+        <p style="font-size: 11px; color: var(--sub); margin-bottom: 12px; line-height:1.4;">
+          High-contrast monochrome glyphs tailored for label-free black & white home screens. Tap <strong>⬇️ Save</strong> on any icon to save it directly to your phone's gallery, then pick it in the <strong>HTTP Shortcuts</strong> app.
+        </p>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; align-items:center; gap:10px; background:var(--bg1); border:1px solid var(--line2); border-radius:6px; padding:8px 10px;">
+            <img src="icons/shortcut-expense-512.png" alt="Expense" style="width:36px; height:36px; border-radius:50%; border:1px solid var(--line2); flex-shrink:0;">
+            <div style="flex:1; min-width:0;">
+              <div style="font-size:11px; font-weight:700; color:var(--text);">Quick Log Expense (₹)</div>
+              <div style="font-size:9px; color:var(--sub); font-family:var(--font-mono);">?page=quickExpense</div>
+            </div>
+            <a href="icons/shortcut-expense-512.png" download="shortcut-expense-512.png" class="btn-primary" style="padding:5px 9px; font-size:10px; font-family:var(--font-mono); text-decoration:none; white-space:nowrap;">⬇️ Save</a>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; background:var(--bg1); border:1px solid var(--line2); border-radius:6px; padding:8px 10px;">
+            <img src="icons/shortcut-irctc-512.png" alt="IRCTC" style="width:36px; height:36px; border-radius:50%; border:1px solid var(--line2); flex-shrink:0;">
+            <div style="flex:1; min-width:0;">
+              <div style="font-size:11px; font-weight:700; color:var(--text);">IRCTC Train Dispatch (🚆)</div>
+              <div style="font-size:9px; color:var(--sub); font-family:var(--font-mono);">?page=trips</div>
+            </div>
+            <a href="icons/shortcut-irctc-512.png" download="shortcut-irctc-512.png" class="btn-primary" style="padding:5px 9px; font-size:10px; font-family:var(--font-mono); text-decoration:none; white-space:nowrap;">⬇️ Save</a>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; background:var(--bg1); border:1px solid var(--line2); border-radius:6px; padding:8px 10px;">
+            <img src="icons/shortcut-today-512.png" alt="Today" style="width:36px; height:36px; border-radius:50%; border:1px solid var(--line2); flex-shrink:0;">
+            <div style="flex:1; min-width:0;">
+              <div style="font-size:11px; font-weight:700; color:var(--text);">Today Cockpit (⚡)</div>
+              <div style="font-size:9px; color:var(--sub); font-family:var(--font-mono);">?page=today</div>
+            </div>
+            <a href="icons/shortcut-today-512.png" download="shortcut-today-512.png" class="btn-primary" style="padding:5px 9px; font-size:10px; font-family:var(--font-mono); text-decoration:none; white-space:nowrap;">⬇️ Save</a>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; background:var(--bg1); border:1px solid var(--line2); border-radius:6px; padding:8px 10px;">
+            <img src="icons/shortcut-academic-512.png" alt="Academic" style="width:36px; height:36px; border-radius:50%; border:1px solid var(--line2); flex-shrink:0;">
+            <div style="flex:1; min-width:0;">
+              <div style="font-size:11px; font-weight:700; color:var(--text);">Academic HQ & Shield (🛡️)</div>
+              <div style="font-size:9px; color:var(--sub); font-family:var(--font-mono);">?page=semester</div>
+            </div>
+            <a href="icons/shortcut-academic-512.png" download="shortcut-academic-512.png" class="btn-primary" style="padding:5px 9px; font-size:10px; font-family:var(--font-mono); text-decoration:none; white-space:nowrap;">⬇️ Save</a>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; background:var(--bg1); border:1px solid var(--line2); border-radius:6px; padding:8px 10px;">
+            <img src="icons/shortcut-vitality-512.png" alt="Vitality" style="width:36px; height:36px; border-radius:50%; border:1px solid var(--line2); flex-shrink:0;">
+            <div style="flex:1; min-width:0;">
+              <div style="font-size:11px; font-weight:700; color:var(--text);">Vitality OS (🏃)</div>
+              <div style="font-size:9px; color:var(--sub); font-family:var(--font-mono);">?page=routine</div>
+            </div>
+            <a href="icons/shortcut-vitality-512.png" download="shortcut-vitality-512.png" class="btn-primary" style="padding:5px 9px; font-size:10px; font-family:var(--font-mono); text-decoration:none; white-space:nowrap;">⬇️ Save</a>
+          </div>
+        </div>
+        <button type="button" class="btn-secondary" onclick="openShortcutIconsModal()" style="width:100%; margin-top:10px; font-size:11px; padding:6px; cursor:pointer;">✨ Open Shortcut Guide & URLs Modal</button>
+      </div>
+
+      <div style="border: 1px solid var(--line2); padding: 14px; border-radius: 8px; background: var(--bg2);">
+        <h4 style="font-size: 13px; font-weight:600; color:var(--text); margin-bottom: 6px; font-family: var(--font-mono); text-transform: uppercase;">3. Bake Custom Setup into HTML</h4>
         <p style="font-size: 11px; color: var(--sub); margin-bottom: 10px;">Downloads a self-contained HTML dashboard file with all your custom schedules, subjects, and projects baked in. You can upload this file directly to Netlify or GitHub.</p>
         <button class="form-btn" onclick="exportBakedHTML()" style="background: var(--mauve); color: var(--bg);">Bake & Download index.html</button>
       </div>
       
       <div style="border: 1px solid var(--line2); padding: 14px; border-radius: 8px; background: var(--bg2);">
-        <h4 style="font-size: 13px; font-weight:600; color:var(--text); margin-bottom: 6px; font-family: var(--font-mono); text-transform: uppercase;">3. Data Backup & Recovery</h4>
+        <h4 style="font-size: 13px; font-weight:600; color:var(--text); margin-bottom: 6px; font-family: var(--font-mono); text-transform: uppercase;">4. Data Backup & Recovery</h4>
         <p style="font-size: 11px; color: var(--sub); margin-bottom: 10px;">Backup your progress logs (Leetcode history, checked tasks) and configs as a portable JSON file, or restore from a previous JSON backup.</p>
         <div style="display:flex; gap:10px;">
           <button class="btn-secondary" onclick="exportDataJSON()" style="flex:1; font-size:12px; padding: 8px; font-family: var(--font-body);">Backup Data (JSON)</button>
@@ -12411,13 +12461,13 @@ function openSettings() {
       </div>
       
       <div style="border: 1px solid var(--line2); padding: 14px; border-radius: 8px; background: var(--bg2);">
-        <h4 style="font-size: 13px; font-weight:600; color: var(--red); margin-bottom: 6px; font-family: var(--font-mono); text-transform: uppercase;">4. Reset System</h4>
+        <h4 style="font-size: 13px; font-weight:600; color: var(--red); margin-bottom: 6px; font-family: var(--font-mono); text-transform: uppercase;">5. Reset System</h4>
         <p style="font-size: 11px; color: var(--sub); margin-bottom: 10px;">Clears all your browser localStorage and resets the dashboard back to the defaults embedded in the file.</p>
         <button class="btn-secondary" onclick="resetData()" style="width:100%; border-color: var(--red); color: var(--red); font-size:12px; padding: 8px; font-family: var(--font-body);">Factory Reset Dashboard</button>
       </div>
 
       <div style="border: 1px solid var(--line2); padding: 14px; border-radius: 8px; background: var(--bg2);">
-        <h4 style="font-size: 13px; font-weight:600; color:var(--text); margin-bottom: 6px; font-family: var(--font-mono); text-transform: uppercase;">5. Accent Theme Color</h4>
+        <h4 style="font-size: 13px; font-weight:600; color:var(--text); margin-bottom: 6px; font-family: var(--font-mono); text-transform: uppercase;">6. Accent Theme Color</h4>
         <p style="font-size: 11px; color: var(--sub); margin-bottom: 10px;">Select your dashboard highlight color accent.</p>
         <select id="settings-accent-color" class="modal-form-input" style="padding:6px 8px; font-size:12px; background:var(--bg1); border-color:var(--line2); color:var(--text); width: 100%;">
           <option value="blue" ${S.accentColor === 'blue' ? 'selected' : ''}>Navy (Default)</option>
