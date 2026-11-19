@@ -3519,6 +3519,66 @@ html.light .dual-win-box {
   border-left-color: var(--status-optimal) !important;
   background: linear-gradient(135deg, rgba(52, 211, 153, 0.12), var(--bg-surface)) !important;
 }
+
+/* ─── MENTAL TASKS & CONVERSATION REMINDERS ────────────────── */
+.mental-task-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--r);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.mental-task-card:hover {
+  border-color: rgba(192, 132, 252, 0.4);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+.mental-task-card.done-task {
+  opacity: 0.6;
+  background: var(--bg-elevated);
+}
+.person-chip {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.category-chip {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.category-chip.talk { background: rgba(56, 189, 248, 0.15); color: var(--accent); }
+.category-chip.family { background: rgba(251, 191, 36, 0.15); color: var(--status-warning); }
+.category-chip.decompress { background: rgba(52, 211, 153, 0.15); color: var(--status-optimal); }
+.category-chip.clarity { background: rgba(192, 132, 252, 0.15); color: var(--mauve); }
+.reminder-chip {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  background: var(--bg-elevated);
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+}
+.mental-task-topic {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-top: 6px;
+  padding: 8px 12px;
+  background: var(--bg-elevated);
+  border-left: 2px solid var(--mauve);
+  border-radius: 4px;
+}
 </style>
 </head>
 <body class="booting">
@@ -4562,13 +4622,31 @@ html.light .dual-win-box {
   </div>
   <div id="page-mental" class="content">
     <div class="health-hero">
-      <div class="health-hero-kicker">Health OS · mind</div>
-      <div class="health-hero-title">Mental State</div>
-      <div class="health-hero-sub">Mood, focus, and check-ins — same four-band skin.</div>
+      <div class="health-hero-kicker">Health OS · mind & human connection</div>
+      <div class="health-hero-title">Mental State & Intentions</div>
+      <div class="health-hero-sub">Mood, mental clarity, and intentional human connections — set reminders of who to talk to, topics to converse about, and restorative intentions.</div>
     </div>
-    <div class="section-hdr">MENTAL STATE</div>
-    <div class="glass-card" style="padding:16px;" id="mental-metrics"></div>
-    <div class="section-hdr" style="margin-top:18px;">CHECKS</div>
+
+    <!-- MENTAL REFLECTION & METRICS -->
+    <div class="section-hdr">MENTAL STATE & REFLECTION</div>
+    <div class="glass-card" style="padding:16px; margin-bottom:20px;" id="mental-metrics"></div>
+
+    <!-- CONVERSATION, REMINDERS & INTENTIONS -->
+    <div class="section-hdr" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <span>💬 CONVERSATION REMINDERS & INTENTIONS</span>
+      <button class="cmd-override-btn" onclick="addMentalTaskPrompt()" style="font-size:10px; padding:4px 10px; color:var(--mauve); border-color:var(--mauve);">
+        + Add Reminder / Conversation
+      </button>
+    </div>
+    <div id="mental-intentions-container" style="margin-bottom:24px;">
+      <!-- Rendered dynamically by renderMentalTasks() -->
+    </div>
+
+    <!-- DAILY MENTAL CHECKS -->
+    <div class="section-hdr" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <span>DAILY MENTAL CHECKS</span>
+      <button class="edit-btn" onclick="customizeMentalChecks()" title="Customize Daily Checks">⚙️ Customize</button>
+    </div>
     <div class="quest-card glass-card" id="mental-checks"></div>
   </div>
 
@@ -10901,6 +10979,11 @@ function defaultHealth() {
         {id:'m-journ', name:'3 journal lines', done:false},
         {id:'m-fam', name:'Family time', done:false},
         {id:'m-deep', name:'One protected deep-work block', done:false}
+      ],
+      tasks:[
+        {id:'mtask-1', title:'Call Mom & check in on family', person:'Mom', topic:'Weekend updates, wedding prep, and how she is feeling', category:'family', reminderTime:'19:00', done:false, xp:15},
+        {id:'mtask-2', title:'Catch up with friend / roommate', person:'Squad', topic:'Converse about edge-AI ideas & decompress after classes', category:'talk', reminderTime:'17:30', done:false, xp:15},
+        {id:'mtask-3', title:'15-min screen-free reset walk', person:'Self', topic:'Decompress mental fatigue before evening deep work', category:'decompress', reminderTime:'18:00', done:false, xp:15}
       ]
     }
   };
@@ -10914,6 +10997,7 @@ function ensureHealthState() {
   if (!S.health.mental) S.health.mental = d.mental;
   if (!Array.isArray(S.health.physical.checks)) S.health.physical.checks = d.physical.checks;
   if (!Array.isArray(S.health.mental.checks)) S.health.mental.checks = d.mental.checks;
+  if (!Array.isArray(S.health.mental.tasks)) S.health.mental.tasks = d.mental.tasks;
   S.health.workouts.forEach(w => { if (!Array.isArray(w.setDone)) w.setDone = []; });
   const today = getLocalISODate();
   if (S.health.date !== today) resetHealthDay();
@@ -11029,6 +11113,7 @@ function renderHealthPages() {
   }
   const mc = document.getElementById('mental-checks');
   if (mc) mc.innerHTML = list(H.mental.checks, 'mcheck');
+  renderMentalTasks();
   const rail = document.getElementById('health-rail');
   if (rail) {
     const first = (H.routine||[]).slice(0,4);
@@ -11039,6 +11124,263 @@ function renderHealthPages() {
       </label>`).join('');
   }
 }
+// ─── MENTAL TASKS & CONVERSATION REMINDER ENGINE ──────────────
+function getMentalCategoryLabel(cat) {
+  const map = {
+    talk: '💬 Talk / Converse',
+    family: '📞 Family Check-In',
+    decompress: '🌿 Decompress',
+    clarity: '🧠 Mental Clarity'
+  };
+  return map[cat] || '💬 Intention';
+}
+
+function renderMentalTasks() {
+  const container = document.getElementById('mental-intentions-container');
+  if (!container) return;
+  ensureHealthState();
+  const tasks = S.health.mental.tasks || [];
+
+  if (tasks.length === 0) {
+    container.innerHTML = `
+      <div class="glass-card" style="padding:20px; text-align:center; border-radius:var(--r);">
+        <div style="font-size:24px; margin-bottom:6px;">💬</div>
+        <div style="font-size:13px; font-weight:600; color:var(--text); margin-bottom:4px;">No Conversation Reminders Yet</div>
+        <p style="font-size:11px; color:var(--sub); margin-bottom:12px;">Add who you want to talk to, topics to converse about, or things you intended to do!</p>
+        <button class="btn-primary" onclick="addMentalTaskPrompt()" style="padding:6px 14px; font-size:11px; font-family:var(--font-mono);">+ Add Intention</button>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = tasks.map(t => {
+    return `
+      <div class="mental-task-card glass-card ${t.done ? 'done-task' : ''}">
+        <div style="display:flex; align-items:flex-start; gap:12px;">
+          <button class="check-btn ${t.done ? 'checked' : ''}" onclick="toggleMentalTask('${t.id}')">
+            ${t.done ? '✓' : ''}
+          </button>
+          <div style="flex:1;">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px; margin-bottom:4px;">
+              <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <span style="font-size:13px; font-weight:600; color:${t.done ? 'var(--text-muted)' : 'var(--text)'}; text-decoration:${t.done ? 'line-through' : 'none'};">
+                  ${escapeHtml(t.title)}
+                </span>
+                ${t.person ? `<span class="person-chip">👤 ${escapeHtml(t.person)}</span>` : ''}
+                <span class="category-chip ${t.category || 'talk'}">${getMentalCategoryLabel(t.category)}</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:6px;">
+                ${t.reminderTime ? `<span class="reminder-chip">⏰ ${escapeHtml(t.reminderTime)}</span>` : ''}
+                <button class="edit-btn" onclick="editMentalTask('${t.id}')" title="Edit">✏️</button>
+                <button class="edit-btn" onclick="deleteMentalTask('${t.id}')" style="color:var(--red);" title="Delete">✕</button>
+              </div>
+            </div>
+            ${t.topic ? `
+              <div class="mental-task-topic">
+                <span style="color:var(--accent); font-weight:600;">Converse about:</span> ${escapeHtml(t.topic)}
+              </div>` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function toggleMentalTask(id) {
+  ensureHealthState();
+  const task = (S.health.mental.tasks || []).find(t => t.id === id);
+  if (!task) return;
+  task.done = !task.done;
+  if (task.done) {
+    grantXP(task.xp || 15);
+    playClickSound();
+    showToast(`✓ Completed intention: "${task.title}" (+${task.xp || 15} Cooling XP)`);
+  }
+  save();
+  renderMentalTasks();
+  updateStats();
+  renderSidebar();
+}
+
+function addMentalTaskPrompt() {
+  const html = `
+    <div class="modal-form-group">
+      <label class="modal-form-label">Task / Intention Title</label>
+      <input type="text" class="modal-form-input" id="new-mtask-title" placeholder="e.g. Talk to Ameya or Call Mom & update on campus">
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+      <div class="modal-form-group">
+        <label class="modal-form-label">Person / Who to Talk To (Optional)</label>
+        <input type="text" class="modal-form-input" id="new-mtask-person" placeholder="e.g. Mom, Ameya, Roommate">
+      </div>
+      <div class="modal-form-group">
+        <label class="modal-form-label">Category</label>
+        <select class="form-select" id="new-mtask-cat" style="padding:8px 10px; font-size:12px; background:var(--bg1);">
+          <option value="talk" selected>💬 Conversation / Chat</option>
+          <option value="family">📞 Family Check-In</option>
+          <option value="decompress">🌿 Decompress & Reset</option>
+          <option value="clarity">🧠 Mental Clarity</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-form-group">
+      <label class="modal-form-label">What to Converse About / Agenda Notes</label>
+      <textarea class="form-input" id="new-mtask-topic" style="min-height:70px;" placeholder="e.g. Ask how their week went, share Satyam payout news, discuss edge-AI project, or just laugh"></textarea>
+    </div>
+    <div class="modal-form-group">
+      <label class="modal-form-label">Reminder Target Time</label>
+      <input type="text" class="modal-form-input" id="new-mtask-time" placeholder="e.g. Today 19:00 or After classes (16:30)">
+    </div>
+  `;
+
+  openModal('Add Conversation & Mental Reminder', html, () => {
+    const title = document.getElementById('new-mtask-title').value.trim();
+    const person = document.getElementById('new-mtask-person').value.trim();
+    const cat = document.getElementById('new-mtask-cat').value;
+    const topic = document.getElementById('new-mtask-topic').value.trim();
+    const time = document.getElementById('new-mtask-time').value.trim();
+
+    if (!title) { showToast('Task title is required!'); return false; }
+
+    ensureHealthState();
+    if (!S.health.mental.tasks) S.health.mental.tasks = [];
+
+    S.health.mental.tasks.unshift({
+      id: 'mtask-' + Date.now(),
+      title,
+      person,
+      category: cat,
+      topic,
+      reminderTime: time,
+      done: false,
+      xp: 15
+    });
+
+    save();
+    renderMentalTasks();
+    showToast('Intention added to Mental State! 💬');
+    return true;
+  });
+}
+
+function editMentalTask(id) {
+  ensureHealthState();
+  const task = (S.health.mental.tasks || []).find(t => t.id === id);
+  if (!task) return;
+
+  const html = `
+    <div class="modal-form-group">
+      <label class="modal-form-label">Task / Intention Title</label>
+      <input type="text" class="modal-form-input" id="edit-mtask-title" value="${escapeHtml(task.title)}">
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+      <div class="modal-form-group">
+        <label class="modal-form-label">Person / Who to Talk To</label>
+        <input type="text" class="modal-form-input" id="edit-mtask-person" value="${escapeHtml(task.person || '')}">
+      </div>
+      <div class="modal-form-group">
+        <label class="modal-form-label">Category</label>
+        <select class="form-select" id="edit-mtask-cat" style="padding:8px 10px; font-size:12px; background:var(--bg1);">
+          <option value="talk" ${task.category === 'talk' ? 'selected' : ''}>💬 Conversation / Chat</option>
+          <option value="family" ${task.category === 'family' ? 'selected' : ''}>📞 Family Check-In</option>
+          <option value="decompress" ${task.category === 'decompress' ? 'selected' : ''}>🌿 Decompress & Reset</option>
+          <option value="clarity" ${task.category === 'clarity' ? 'selected' : ''}>🧠 Mental Clarity</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-form-group">
+      <label class="modal-form-label">What to Converse About / Agenda Notes</label>
+      <textarea class="form-input" id="edit-mtask-topic" style="min-height:70px;">${escapeHtml(task.topic || '')}</textarea>
+    </div>
+    <div class="modal-form-group">
+      <label class="modal-form-label">Reminder Target Time</label>
+      <input type="text" class="modal-form-input" id="edit-mtask-time" value="${escapeHtml(task.reminderTime || '')}">
+    </div>
+  `;
+
+  openModal('Edit Intention Reminder', html, () => {
+    task.title = document.getElementById('edit-mtask-title').value.trim() || task.title;
+    task.person = document.getElementById('edit-mtask-person').value.trim();
+    task.category = document.getElementById('edit-mtask-cat').value;
+    task.topic = document.getElementById('edit-mtask-topic').value.trim();
+    task.reminderTime = document.getElementById('edit-mtask-time').value.trim();
+
+    save();
+    renderMentalTasks();
+    showToast('Intention updated! ✓');
+    return true;
+  });
+}
+
+function deleteMentalTask(id) {
+  ensureHealthState();
+  S.health.mental.tasks = (S.health.mental.tasks || []).filter(t => t.id !== id);
+  save();
+  renderMentalTasks();
+  showToast('Intention removed.');
+}
+
+function customizeMentalChecks() {
+  ensureHealthState();
+  const checks = S.health.mental.checks || [];
+  const rows = checks.map((c, i) => `
+    <div class="resume-entry-card" style="margin-bottom:8px; display:flex; gap:8px; align-items:center;">
+      <input class="form-input" data-i="${i}" id="mcheck-name-${i}" value="${escapeHtml(c.name)}" placeholder="Check Name" style="flex:1;">
+      <button class="edit-btn" type="button" onclick="this.parentElement.remove()" style="color:var(--red);">🗑️</button>
+    </div>
+  `).join('');
+
+  const html = `
+    <div id="customize-mchecks-wrap">
+      ${rows}
+    </div>
+    <button class="cmd-override-btn" type="button" onclick="addMentalCheckRow()" style="margin-top:8px; width:100%; justify-content:center;">
+      + Add Another Check
+    </button>
+  `;
+
+  openModal('Customize Daily Mental Checks', html, () => {
+    const wrap = document.getElementById('customize-mchecks-wrap');
+    if (!wrap) return true;
+    const inputs = wrap.querySelectorAll('input');
+    const newChecks = [];
+    inputs.forEach((inp, idx) => {
+      const val = inp.value.trim();
+      if (val) {
+        newChecks.push({
+          id: 'm-custom-' + idx + '-' + Date.now(),
+          name: val,
+          done: false
+        });
+      }
+    });
+    if (newChecks.length > 0) {
+      S.health.mental.checks = newChecks;
+      save();
+      renderHealthPages();
+      showToast('Daily mental checks updated! ✓');
+    }
+    return true;
+  });
+}
+
+function addMentalCheckRow() {
+  const wrap = document.getElementById('customize-mchecks-wrap');
+  if (!wrap) return;
+  const idx = wrap.querySelectorAll('.resume-entry-card').length;
+  const div = document.createElement('div');
+  div.className = 'resume-entry-card';
+  div.style.marginBottom = '8px';
+  div.style.display = 'flex';
+  div.style.gap = '8px';
+  div.style.alignItems = 'center';
+  div.innerHTML = `
+    <input class="form-input" id="mcheck-name-${idx}" placeholder="e.g. 15-min meditation or gratitude note" style="flex:1;">
+    <button class="edit-btn" type="button" onclick="this.parentElement.remove()" style="color:var(--red);">🗑️</button>
+  `;
+  wrap.appendChild(div);
+}
+
 function editHealthList(kind) {
   ensureHealthState();
   const arr = kind === 'workouts' ? S.health.workouts : S.health.routine;

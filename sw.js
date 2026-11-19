@@ -1,4 +1,4 @@
-const CACHE_NAME = 'os-dashboard-v2-2';
+const CACHE_NAME = 'os-dashboard-v2-3';
 const NOTIFY_CACHE = 'abhi-notify-v1';
 const SNAPSHOT_URL = './__notify_snapshot__';
 const ASSETS = [
