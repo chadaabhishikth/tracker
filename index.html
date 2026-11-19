@@ -11257,27 +11257,107 @@ function saveSyncConfig(cfg) {
 let isSyncing = false;
 
 function copyMobilePairingLink() {
+  const tokenEl = document.getElementById('sync-token');
+  const gistEl = document.getElementById('sync-gist');
+  const userEl = document.getElementById('sync-github-username');
+
   const cfg = getSyncConfig();
-  if (!cfg.token) {
-    showToast('Enter your GitHub Token first to generate a pairing link!');
+  const token = (tokenEl && tokenEl.value.trim()) || cfg.token;
+  const gistId = (gistEl && gistEl.value.trim()) || cfg.gistId;
+  const ghUser = (userEl && userEl.value.trim()) || S.githubUsername || '';
+
+  if (!token) {
+    showToast('⚠️ Enter your GitHub Token in Box 1 above first!');
+    if (tokenEl) {
+      tokenEl.focus();
+      tokenEl.style.borderColor = 'var(--status-critical)';
+      setTimeout(() => { tokenEl.style.borderColor = ''; }, 2500);
+    }
     return;
   }
-  const payload = btoa(JSON.stringify({
-    token: cfg.token,
-    gistId: cfg.gistId || '',
-    u: S.githubUsername || ''
-  }));
-  const base = window.location.href.split('#')[0];
+
+  // Persist immediately to localStorage
+  saveSyncConfig({
+    token: token,
+    gistId: gistId,
+    auto: true,
+    rememberToken: true
+  });
+  if (ghUser) S.githubUsername = ghUser;
+
+  // Compute mobile target URL:
+  // If testing on local file:/// or localhost, the phone must open the live GitHub Pages URL!
+  let base = window.location.href.split('#')[0];
+  if (base.startsWith('file:') || base.includes('localhost') || base.includes('127.0.0.1')) {
+    base = 'https://chadaabhishikth.github.io/tracker/';
+  }
+
+  const payload = btoa(unescape(encodeURIComponent(JSON.stringify({
+    token: token,
+    gistId: gistId || '',
+    u: ghUser
+  }))));
+
   const pairUrl = `${base}#pair=${encodeURIComponent(payload)}`;
-  
+
+  // Update visible pairing box in modal
+  const box = document.getElementById('mobile-pair-result-box');
+  const input = document.getElementById('mobile-pair-url-input');
+  const waBtn = document.getElementById('mobile-pair-wa-btn');
+
+  if (box && input) {
+    box.style.display = 'block';
+    input.value = pairUrl;
+    input.select();
+    if (waBtn) {
+      waBtn.href = `https://api.whatsapp.com/send?text=${encodeURIComponent('Abhishikth OS Mobile Sync Link:\n' + pairUrl)}`;
+    }
+  }
+
+  // Multi-tier clipboard copy
+  let copied = false;
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(pairUrl).then(() => {
-      showToast('📋 Mobile Pairing Link copied! Send it to your phone.');
+      showToast('📋 Mobile Pairing Link copied to clipboard! ✓');
     }).catch(() => {
-      prompt('Copy your Mobile Pairing Link:', pairUrl);
+      execCopyFallback(pairUrl);
     });
   } else {
-    prompt('Copy your Mobile Pairing Link:', pairUrl);
+    execCopyFallback(pairUrl);
+  }
+
+  function execCopyFallback(text) {
+    try {
+      const t = document.createElement('textarea');
+      t.value = text;
+      t.style.position = 'fixed';
+      t.style.opacity = '0';
+      document.body.appendChild(t);
+      t.focus();
+      t.select();
+      copied = document.execCommand('copy');
+      document.body.removeChild(t);
+      if (copied) {
+        showToast('📋 Mobile Pairing Link copied to clipboard! ✓');
+      } else {
+        showToast('Link generated below — tap to copy or send via WhatsApp!');
+      }
+    } catch(err) {
+      showToast('Link generated below — tap to copy or send via WhatsApp!');
+    }
+  }
+}
+
+function selectAndCopyPairInput() {
+  const input = document.getElementById('mobile-pair-url-input');
+  if (input) {
+    input.select();
+    try {
+      navigator.clipboard.writeText(input.value);
+    } catch(_) {
+      document.execCommand('copy');
+    }
+    showToast('Copied link! ✓');
   }
 }
 
@@ -11500,9 +11580,22 @@ function openSettings() {
         <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--line2);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
             <span style="font-size:11px; font-weight:600; color:var(--accent); font-family:var(--font-mono);">📱 1-TAP MOBILE QUICK-PAIR</span>
-            <button class="btn-primary" onclick="copyMobilePairingLink()" style="font-size:10px; padding:4px 10px; background:var(--accent); color:var(--bg); border:none; border-radius:4px; cursor:pointer;">📋 Copy Mobile Link</button>
+            <button type="button" class="btn-primary" onclick="copyMobilePairingLink()" style="font-size:10px; padding:5px 12px; background:var(--accent); color:var(--bg); border:none; border-radius:4px; cursor:pointer; font-weight:700;">📋 Copy Mobile Link</button>
           </div>
-          <p style="font-size:10px; color:var(--sub); line-height:1.4;">Copy this link and send it to your phone (WhatsApp, Telegram, Notes). Opening it on your phone auto-pairs your GitHub Token & Gist ID in 1 second with zero typing!</p>
+          <p style="font-size:10px; color:var(--sub); line-height:1.4;">Creates a 1-tap setup link for your phone. Opening it on mobile auto-configures your token & Gist without typing!</p>
+          
+          <div id="mobile-pair-result-box" style="margin-top:10px; display:none; background:var(--bg1); border:1px solid var(--border-focus); border-radius:6px; padding:10px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <span style="font-family:var(--font-mono); font-size:10px; font-weight:700; color:var(--status-optimal);" id="mobile-pair-status-text">✓ PAIRING LINK READY</span>
+              <button type="button" class="cmd-override-btn" onclick="selectAndCopyPairInput()" style="font-size:9px; padding:2px 8px;">Copy Link</button>
+            </div>
+            <input type="text" id="mobile-pair-url-input" class="modal-form-input" readonly onclick="this.select()" style="font-family:var(--font-mono); font-size:10px; padding:6px 8px; background:var(--bg2); color:var(--text); width:100%; border:1px solid var(--line2); cursor:text; margin-bottom:8px;">
+            <div style="display:flex; gap:8px; align-items:center;">
+              <a id="mobile-pair-wa-btn" href="#" target="_blank" rel="noopener noreferrer" class="cmd-override-btn" style="text-decoration:none; font-size:10px; padding:4px 10px; color:var(--status-optimal); border-color:var(--status-optimal); display:inline-flex; align-items:center; gap:4px;">
+                💬 Send to Phone on WhatsApp ↗
+              </a>
+            </div>
+          </div>
         </div>
       </div>
 
