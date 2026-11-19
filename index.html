@@ -7137,13 +7137,20 @@ function quickLogExpense() {
 }
 
 function checkQuickExpenseHash() {
-  if (window.location.hash && window.location.hash.includes('quickExpense')) {
+  if (window.location.hash && (window.location.hash.includes('quickExpense') || window.location.hash.includes('quick-spent') || window.location.hash.includes('expense'))) {
     setTimeout(() => {
-      toggleBudgetQuickAdd();
+      const pop = document.getElementById('budget-quick-popover');
+      if (pop) {
+        pop.classList.add('show');
+        setTimeout(() => {
+          const inp = document.getElementById('quick-exp-name');
+          if (inp) inp.focus();
+        }, 150);
+      }
       if (window.history && window.history.replaceState) {
         window.history.replaceState(null, '', window.location.pathname + '#today');
       }
-    }, 350);
+    }, 300);
   }
 }
 window.addEventListener('hashchange', checkQuickExpenseHash);
