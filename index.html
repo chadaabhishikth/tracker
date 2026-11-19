@@ -3596,6 +3596,12 @@ html.light .dual-win-box {
   border-left: 2px solid var(--mauve);
   border-radius: 4px;
 }
+
+@media (max-width: 900px) {
+  .vitality-grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+}
 </style>
 </head>
 <body class="booting">
@@ -3678,9 +3684,7 @@ html.light .dual-win-box {
       <span>04 / VITALITY</span><span class="ws-nav-shortcut">Alt+4</span>
     </div>
     <div class="nav-group">
-      <div class="nav-item" onclick="gotoPage('routine',this)"><span class="nav-icon">🏃</span>3-Run/3-Gym & Derma</div>
-      <div class="nav-item ws-nav-subitem" onclick="gotoPage('physical',this)"><span class="nav-icon">🩺</span>Physical Metrics</div>
-      <div class="nav-item ws-nav-subitem" onclick="gotoPage('mental',this)"><span class="nav-icon">🧠</span>Mental State</div>
+      <div class="nav-item" onclick="gotoPage('routine',this)"><span class="nav-icon">🏃</span>Vitality OS (Run/Gym · Derma · Mind)</div>
     </div>
 
     <!-- 05 / CIRCLE & CHARTER (Alt+5) -->
@@ -4191,32 +4195,6 @@ html.light .dual-win-box {
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;" id="competency-tracker-container"></div>
   </div>
 
-  <!-- GAMING -->
-  <div id="page-gaming" class="content">
-    <div class="section-hdr" style="display:flex; justify-content:space-between; align-items:center;">
-      <span>GAMING PLANNER</span>
-      <button class="btn-primary" onclick="editGamingRules()" style="padding: 4px 10px; font-size: 11px; font-family: var(--font-mono);">⚙️ EDIT RULES & VERDICT</button>
-    </div>
-    
-    <div class="gaming-hero" id="gaming-verdict-card"></div>
-    
-    <div class="section-hdr">THREE NON-NEGOTIABLE RULES</div>
-    <div class="rules-grid" id="gaming-rules-container"></div>
-    
-    <div class="section-hdr" style="margin-top:20px; display:flex; justify-content:space-between; align-items:center;">
-      <span>GAMING SLOTS</span>
-      <button class="btn-primary" onclick="editGamingSlots()" style="padding: 4px 10px; font-size: 11px; font-family: var(--font-mono);">⚙️ EDIT SLOTS</button>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;" id="gaming-slots-container"></div>
-    <div class="section-hdr" style="margin-top:20px;">LOG TODAY'S GAMING SESSION</div>
-    <div style="display:flex;gap:10px;align-items:center;background:var(--bg1);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;flex-wrap:wrap;">
-      <span style="font-size:12px;color:var(--sub);">How many minutes did you game today?</span>
-      <input type="number" id="gaming-log-mins" placeholder="mins" min="0" max="480" class="lc-input" style="max-width:90px;">
-      <button class="lc-btn" onclick="logGamingSession()" style="white-space:nowrap;">+ Log</button>
-      <div id="gaming-log-today" style="font-family:var(--font-mono);font-size:12px;color:var(--yellow);margin-left:auto;"></div>
-    </div>
-  </div>
-
   <!-- NOTES -->
   <div id="page-notes" class="content">
     <div class="notes-layout">
@@ -4615,59 +4593,76 @@ html.light .dual-win-box {
   <!-- ACADEMIC CALENDAR -->
 
   <div id="page-routine" class="content">
-    <div class="health-hero">
-      <div class="health-hero-kicker">Health OS · sunrise amber</div>
-      <div class="health-hero-title">Daily Routine</div>
-      <div class="health-hero-sub">Warm amber palette for daily momentum — check the non-negotiables, then hit the arena.</div>
-    </div>
-    <div class="section-hdr">DAILY ROUTINE <button class="edit-btn" onclick="editHealthList('routine')">⚙️</button></div>
-    <div class="quest-card glass-card" id="routine-list"></div>
-    <div style="height:18px"></div>
-    <div class="workout-arena">
-      <div class="arena-title">Workout Arena</div>
-      <div id="workout-list"></div>
-      <button class="btn-primary" onclick="editHealthList('workouts')" style="margin-top:8px;background:var(--volt);color:#111;">Edit movements</button>
-    </div>
-  </div>
-  <div id="page-physical" class="content">
-    <div class="health-hero">
-      <div class="health-hero-kicker">Health OS · body</div>
-      <div class="health-hero-title">Physical Metrics</div>
-      <div class="health-hero-sub">Track weight, sleep, and recovery on the blue band.</div>
-    </div>
-    <div class="section-hdr">PHYSICAL METRICS</div>
-    <div class="health-metric-grid" id="physical-metrics"></div>
-    <div class="section-hdr" style="margin-top:18px;">CHECKS</div>
-    <div class="quest-card glass-card" id="physical-checks"></div>
-  </div>
-  <div id="page-mental" class="content">
-    <div class="health-hero">
-      <div class="health-hero-kicker">Health OS · mind & human connection</div>
-      <div class="health-hero-title">Mental State & Intentions</div>
-      <div class="health-hero-sub">Mood, mental clarity, and intentional human connections — set reminders of who to talk to, topics to converse about, and restorative intentions.</div>
+    <div class="health-hero" style="background: linear-gradient(135deg, rgba(255,196,107,0.12), rgba(77,230,180,0.08), rgba(192,168,255,0.12)); border: 1px solid var(--line2); border-radius: var(--r); padding: 18px 20px; margin-bottom: 20px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+        <div>
+          <div class="health-hero-kicker" style="color:var(--yellow); font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase;">04 / VITALITY OS · BODY, BIOMETRICS & MIND</div>
+          <div class="health-hero-title" style="font-size:22px; font-weight:700; color:var(--text); margin:4px 0;">Vitality Command Center</div>
+          <div class="health-hero-sub" style="font-size:12px; color:var(--sub); max-width:600px;">Physical energy is the biological fuel for algorithmic performance. 3-Run / 3-Gym split, precision derma, biometrics, and mental clarity.</div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <button class="calendar-toggle-btn active" id="btn-vit-all" onclick="switchVitalityView('all')">⚡ All-in-One</button>
+          <button class="calendar-toggle-btn" id="btn-vit-workout" onclick="switchVitalityView('workout')">🏃 3-Run / 3-Gym</button>
+          <button class="calendar-toggle-btn" id="btn-vit-physical" onclick="switchVitalityView('physical')">🩺 Biometrics</button>
+          <button class="calendar-toggle-btn" id="btn-vit-mental" onclick="switchVitalityView('mental')">🧠 Mind & Circle</button>
+        </div>
+      </div>
     </div>
 
-    <!-- MENTAL REFLECTION & METRICS -->
-    <div class="section-hdr">MENTAL STATE & REFLECTION</div>
-    <div class="glass-card" style="padding:16px; margin-bottom:20px;" id="mental-metrics"></div>
+    <!-- VITALITY SECTION 1: WORKOUT ARENA & DERMA NON-NEGOTIABLES -->
+    <div id="vitality-sec-workout" class="vitality-section" style="margin-bottom:24px;">
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:18px;" class="vitality-grid-2">
+        <div>
+          <div class="section-hdr" style="display:flex; justify-content:space-between; align-items:center;">
+            <span>☀️ DAILY DERMA & NON-NEGOTIABLES</span>
+            <button class="edit-btn" onclick="editHealthList('routine')" title="Edit Derma Routine">⚙️</button>
+          </div>
+          <div class="quest-card glass-card" id="routine-list"></div>
+        </div>
+        <div>
+          <div class="workout-arena" style="height:100%; border-radius:var(--r); padding:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <div class="arena-title" style="margin-bottom:0; font-size:14px;">⚡ Workout Arena (3-Run / 3-Gym)</div>
+              <button class="cmd-override-btn" onclick="editHealthList('workouts')" style="font-size:10px; padding:3px 8px; color:var(--volt); border-color:var(--volt);">Edit Movements</button>
+            </div>
+            <div id="workout-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <!-- CONVERSATION, REMINDERS & INTENTIONS -->
-    <div class="section-hdr" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <span>💬 CONVERSATION REMINDERS & INTENTIONS</span>
-      <button class="cmd-override-btn" onclick="addMentalTaskPrompt()" style="font-size:10px; padding:4px 10px; color:var(--mauve); border-color:var(--mauve);">
-        + Add Reminder / Conversation
-      </button>
-    </div>
-    <div id="mental-intentions-container" style="margin-bottom:24px;">
-      <!-- Rendered dynamically by renderMentalTasks() -->
+    <!-- VITALITY SECTION 2: PHYSICAL BIOMETRICS & RECOVERY -->
+    <div id="vitality-sec-physical" class="vitality-section" style="margin-bottom:24px;">
+      <div class="section-hdr">PHYSICAL BIOMETRICS & RECOVERY</div>
+      <div class="health-metric-grid" id="physical-metrics" style="margin-bottom:16px;"></div>
+      <div class="section-hdr" style="margin-top:14px;">DAILY PHYSICAL CHECKS</div>
+      <div class="quest-card glass-card" id="physical-checks"></div>
     </div>
 
-    <!-- DAILY MENTAL CHECKS -->
-    <div class="section-hdr" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <span>DAILY MENTAL CHECKS</span>
-      <button class="edit-btn" onclick="customizeMentalChecks()" title="Customize Daily Checks">⚙️ Customize</button>
+    <!-- VITALITY SECTION 3: MENTAL STATE, CONVERSATIONS & JOURNAL -->
+    <div id="vitality-sec-mental" class="vitality-section" style="margin-bottom:24px;">
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:18px;" class="vitality-grid-2">
+        <div>
+          <div class="section-hdr">MENTAL STATE & REFLECTION</div>
+          <div class="glass-card" style="padding:16px; margin-bottom:18px; border-radius:var(--r);" id="mental-metrics"></div>
+          
+          <div class="section-hdr" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span>DAILY MENTAL CHECKS</span>
+            <button class="edit-btn" onclick="customizeMentalChecks()" title="Customize Daily Checks">⚙️ Customize</button>
+          </div>
+          <div class="quest-card glass-card" id="mental-checks"></div>
+        </div>
+        <div>
+          <div class="section-hdr" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span>💬 CONVERSATION REMINDERS & INTENTIONS</span>
+            <button class="cmd-override-btn" onclick="addMentalTaskPrompt()" style="font-size:10px; padding:4px 10px; color:var(--mauve); border-color:var(--mauve);">
+              + Add Intention
+            </button>
+          </div>
+          <div id="mental-intentions-container"></div>
+        </div>
+      </div>
     </div>
-    <div class="quest-card glass-card" id="mental-checks"></div>
   </div>
 
   <div id="page-calendar" class="content">
@@ -4822,12 +4817,9 @@ html.light .dual-win-box {
       <div class="mobile-drawer-item" onclick="gotoMobilePage('applications')"><span class="mobile-drawer-icon">💼</span>Applications</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('budget')"><span class="mobile-drawer-icon">💳</span>Expense Tracker</div>
 
-      <div class="mobile-drawer-item" onclick="gotoMobilePage('routine')"><span class="mobile-drawer-icon">🤸</span>Routine & Derma</div>
-      <div class="mobile-drawer-item" onclick="gotoMobilePage('physical')"><span class="mobile-drawer-icon">🩺</span>Physical Metrics</div>
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('routine')"><span class="mobile-drawer-icon">🏃</span>Vitality OS</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('resume')"><span class="mobile-drawer-icon">📄</span>Resume HQ</div>
-
       <div class="mobile-drawer-item" onclick="gotoMobilePage('notes')"><span class="mobile-drawer-icon">📝</span>Folio Notes</div>
-      <div class="mobile-drawer-item" onclick="gotoMobilePage('gaming')"><span class="mobile-drawer-icon">🎮</span>Gaming Lounge</div>
       <div class="mobile-drawer-item" onclick="openSettings(); toggleMobileDrawer();"><span class="mobile-drawer-icon">⚙️</span>Settings</div>
     </div>
   </div>
@@ -11116,6 +11108,39 @@ function setHealthField(path, val) {
   if (S.health[a]) S.health[a][b] = val;
   save();
 }
+function switchVitalityView(view) {
+  playClickSound();
+  const btns = ['btn-vit-all', 'btn-vit-workout', 'btn-vit-physical', 'btn-vit-mental'];
+  btns.forEach(b => {
+    const el = document.getElementById(b);
+    if (el) el.classList.remove('active');
+  });
+  const targetBtn = document.getElementById('btn-vit-' + (view === 'routine' ? 'workout' : view));
+  if (targetBtn) targetBtn.classList.add('active');
+
+  const secWorkout = document.getElementById('vitality-sec-workout');
+  const secPhysical = document.getElementById('vitality-sec-physical');
+  const secMental = document.getElementById('vitality-sec-mental');
+
+  if (view === 'all') {
+    if (secWorkout) secWorkout.style.display = 'block';
+    if (secPhysical) secPhysical.style.display = 'block';
+    if (secMental) secMental.style.display = 'block';
+  } else if (view === 'workout' || view === 'routine') {
+    if (secWorkout) secWorkout.style.display = 'block';
+    if (secPhysical) secPhysical.style.display = 'none';
+    if (secMental) secMental.style.display = 'none';
+  } else if (view === 'physical') {
+    if (secWorkout) secWorkout.style.display = 'none';
+    if (secPhysical) secPhysical.style.display = 'block';
+    if (secMental) secMental.style.display = 'none';
+  } else if (view === 'mental') {
+    if (secWorkout) secWorkout.style.display = 'none';
+    if (secPhysical) secPhysical.style.display = 'none';
+    if (secMental) secMental.style.display = 'block';
+  }
+}
+
 function renderHealthPages() {
   ensureHealthState();
   const H = S.health;
@@ -11501,7 +11526,7 @@ function applyNavFolds() {
 }
 
 // ─── NAVIGATION ───────────────────────────────────────────
-const pageTitles={today:'Today',roadmap:'Systems Roadmap',semester:'Semester 4 (AB-302)',circle:'Circle & Charter',calendar:'Academic Calendar',dsa:'DSA Track',projects:'Projects',targets:'Quant Funnel',gaming:'Gaming',notes:'Notes',tasks:'Mission Board',applications:'Applications',budget:'Expense Tracker',trips:'Travel & IRCTC Planner',resume:'Resume HQ',schedule:'Daily Matrix',audit:'Weekly Audit',routine:'Daily Routine',physical:'Physical Metrics',mental:'Mental State'};
+const pageTitles={today:'Today',roadmap:'Systems Roadmap',semester:'Semester 4 (AB-302)',circle:'Circle & Charter',calendar:'Academic Calendar',dsa:'DSA Track',projects:'Projects',targets:'Quant Funnel',notes:'Notes',tasks:'Mission Board',applications:'Applications',budget:'Expense Tracker',trips:'Travel & IRCTC Planner',resume:'Resume HQ',schedule:'Daily Matrix',audit:'Weekly Audit',routine:'Vitality Command Center',physical:'Vitality · Biometrics',mental:'Vitality · Mind & Intentions',vitality:'Vitality Command Center'};
 
 /* Per-section health palettes: each page gets its own skin class,
    accent color, and browser chrome tint. */
@@ -11531,6 +11556,12 @@ function applyHealthSkin(id) {
 
 function gotoPage(id,el){
   playClickSound();
+  if (id === 'physical' || id === 'mental' || id === 'vitality') {
+    id = 'routine';
+  }
+  if (id === 'gaming') {
+    id = 'today';
+  }
   const page = document.getElementById('page-'+id);
   if (!page) { showToast('Unknown page: '+id, true); return; }
   document.querySelectorAll('.content').forEach(c=>c.classList.remove('active'));
@@ -11564,7 +11595,12 @@ function gotoPage(id,el){
   if(id==='gaming'){renderGaming();updateGamingLogDisplay();}
   if(id==='circle'){renderCircleTasks(); renderDualWinHistory();}
   applyHealthSkin(id);
-  if(id==='routine'||id==='physical'||id==='mental'){renderHealthPages();}
+  if(id==='routine'||id==='physical'||id==='mental'||id==='vitality'){
+    renderHealthPages();
+    renderMentalTasks();
+    if (id==='physical'||id==='mental') switchVitalityView(id);
+    else switchVitalityView('all');
+  }
   if(id==='dsa'){renderSRSQueue();renderDSALog();}
   if(id==='applications'){renderKanban();}
   if(id==='budget'){renderBudget();}
