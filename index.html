@@ -3602,6 +3602,17 @@ html.light .dual-win-box {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Bunk Shield Badges */
+.bunk-badge-clean { background: color-mix(in srgb, var(--blue) 20%, var(--bg2)); color: var(--blue); border: 1px solid color-mix(in srgb, var(--blue) 40%, transparent); }
+.bunk-badge-safe { background: color-mix(in srgb, var(--green) 20%, var(--bg2)); color: var(--green); border: 1px solid color-mix(in srgb, var(--green) 40%, transparent); }
+.bunk-badge-edge { background: color-mix(in srgb, var(--yellow) 20%, var(--bg2)); color: var(--yellow); border: 1px solid color-mix(in srgb, var(--yellow) 40%, transparent); }
+.bunk-badge-danger { background: color-mix(in srgb, var(--red) 22%, var(--bg2)); color: var(--red); border: 1px solid color-mix(in srgb, var(--red) 50%, transparent); animation: pulseDanger 2s infinite; }
+@keyframes pulseDanger {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
 </style>
 </head>
 <body class="booting">
@@ -3663,8 +3674,7 @@ html.light .dual-win-box {
       <span>02 / ACADEMICS</span><span class="ws-nav-shortcut">Alt+2</span>
     </div>
     <div class="nav-group">
-      <div class="nav-item" onclick="gotoPage('semester',this)"><span class="nav-icon">📚</span>Sem 4 Courses (11)</div>
-      <div class="nav-item ws-nav-subitem" onclick="gotoPage('calendar',this)"><span class="nav-icon">📅</span>Academic Calendar</div>
+      <div class="nav-item" onclick="gotoPage('semester',this)"><span class="nav-icon">📚</span>Academic HQ (Courses · Bunk Shield · Cal)</div>
       <div class="nav-item ws-nav-subitem" onclick="gotoPage('roadmap',this)"><span class="nav-icon">🗺</span>Systems Roadmap</div>
       <div class="nav-item ws-nav-subitem" onclick="gotoPage('notes',this)"><span class="nav-icon">📝</span>Folio Notes</div>
     </div>
@@ -4086,13 +4096,94 @@ html.light .dual-win-box {
     <div id="phase-content"></div>
   </div>
 
-  <!-- SEMESTER -->
+  <!-- ACADEMIC HQ -->
   <div id="page-semester" class="content">
-    <div class="section-hdr" style="display:flex; justify-content:space-between; align-items:center;">
-      <span>SEMESTER 3 — SUBJECT PRIORITY</span>
-      <button class="btn-primary" onclick="addNewSubject()" style="padding: 4px 10px; font-size: 11px; font-family: var(--font-mono);">+ ADD SUBJECT</button>
+    <div class="academic-hero" style="background: linear-gradient(135deg, rgba(69,137,255,0.12), rgba(0,245,255,0.08), rgba(200,255,0,0.06)); border: 1px solid var(--line2); border-radius: var(--r); padding: 18px 20px; margin-bottom: 20px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+        <div>
+          <div style="color:var(--blue); font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase;">02 / ACADEMIC COMMAND HQ · AB-302</div>
+          <div style="font-size:22px; font-weight:700; color:var(--text); margin:4px 0;">Semester 4 & Bunk Shield</div>
+          <div style="font-size:12px; color:var(--sub); max-width:620px;">
+            Target: <strong>9.37+ CGPA</strong>. Real-time attendance margin calculations, exam readiness PYQ meters, and synchronized Amrita academic calendar.
+          </div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <button class="calendar-toggle-btn active" id="btn-acad-all" onclick="switchAcademicView('all')">⚡ All-in-One</button>
+          <button class="calendar-toggle-btn" id="btn-acad-courses" onclick="switchAcademicView('courses')">📚 Courses & Shield</button>
+          <button class="calendar-toggle-btn" id="btn-acad-calendar" onclick="switchAcademicView('calendar')">📅 Academic Cal</button>
+        </div>
+      </div>
     </div>
-    <div class="sub-list" id="subject-list"></div>
+
+    <!-- ACADEMIC SECTION 1: COURSES & BUNK SHIELD -->
+    <div id="academic-sec-courses" class="academic-section" style="margin-bottom:24px;">
+      <!-- Bunk Shield Global Stats & Threshold Selector -->
+      <div class="glass-card" style="padding:14px 18px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; border-radius:var(--r);">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="font-size:26px;">🛡️</div>
+          <div>
+            <div style="font-size:13px; font-weight:700; color:var(--text);" id="bunk-shield-overall-title">BUNK SHIELD: REAL-TIME ATTENDANCE BUFFER</div>
+            <div style="font-size:11px; color:var(--sub);" id="bunk-shield-overall-sub">Overall Semester Attendance: calculating...</div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-family:var(--font-mono); font-size:10px; color:var(--muted); letter-spacing:1px;">POLICY TARGET:</span>
+          <button class="calendar-toggle-btn active" id="btn-target-75" onclick="setBunkShieldThreshold(0.75)" style="padding:4px 10px; font-size:10px;">75% Min</button>
+          <button class="calendar-toggle-btn" id="btn-target-80" onclick="setBunkShieldThreshold(0.80)" style="padding:4px 10px; font-size:10px;">80% Safe</button>
+          <button class="btn-primary" onclick="addNewSubject()" style="padding: 5px 12px; font-size: 11px; font-family: var(--font-mono); margin-left:6px;">+ ADD SUBJECT</button>
+        </div>
+      </div>
+
+      <div class="sub-list" id="subject-list"></div>
+    </div>
+
+    <!-- ACADEMIC SECTION 2: CALENDAR & TIMELINES -->
+    <div id="academic-sec-calendar" class="academic-section" style="margin-bottom:24px;">
+      <div class="section-hdr" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span>ACADEMIC CALENDAR & EXAM TIMELINES</span>
+      </div>
+
+      <div class="calendar-view-toggles">
+      <button class="calendar-toggle-btn active" id="btn-view-grid" onclick="switchCalendarView('grid')">Monthly Grid View</button>
+      <button class="calendar-toggle-btn" id="btn-view-timeline" onclick="switchCalendarView('timeline')">Timeline List View</button>
+    </div>
+
+    <!-- Countdown Milestones Row -->
+    <div class="calendar-countdown-row" id="calendar-countdown-row"></div>
+
+    <!-- Monthly Grid Container -->
+    <div id="calendar-grid-container-wrap" style="display: block;">
+      <div class="month-selector-bar">
+        <button class="month-nav-btn" onclick="navigateMonth(-1)">‹</button>
+        <span class="month-selector-title" id="month-selector-title">June 2026</span>
+        <button class="month-nav-btn" onclick="navigateMonth(1)">›</button>
+      </div>
+      <div class="calendar-grid-wrap">
+        <div class="calendar-grid" id="calendar-grid-body"></div>
+      </div>
+    </div>
+
+    <!-- Timeline List Container -->
+    <div id="calendar-timeline-container-wrap" style="display: none;">
+      <div class="calendar-timeline-wrap" id="calendar-timeline-body"></div>
+    </div>
+
+    <!-- Smart Academic & Placement Recommendations -->
+    <div class="calendar-recs-panel" style="margin-top: 24px; background: var(--bg1); border: 1px solid var(--line); border-radius: var(--r); padding: 18px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--line); padding-bottom:8px;">
+        <span style="font-family:var(--font-mono); font-size:12px; font-weight:700; color:var(--mauve); text-transform:uppercase; display:flex; align-items:center; gap:6px;">
+          💡 Smart Study & Placement Planner
+        </span>
+        <span style="font-size:10px; color:var(--muted); font-family:var(--font-mono);">Click to quick-schedule tasks</span>
+      </div>
+      <div class="calendar-recs-grid" id="calendar-recs-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:12px;">
+        <!-- Dynamically rendered study recommendations -->
+      </div>
+    </div>
+  </div>
+
+</div>
+    </div>
   </div>
 
   <!-- DSA -->
@@ -4665,50 +4756,7 @@ html.light .dual-win-box {
     </div>
   </div>
 
-  <div id="page-calendar" class="content">
-    <div class="calendar-view-toggles">
-      <button class="calendar-toggle-btn active" id="btn-view-grid" onclick="switchCalendarView('grid')">Monthly Grid View</button>
-      <button class="calendar-toggle-btn" id="btn-view-timeline" onclick="switchCalendarView('timeline')">Timeline List View</button>
-    </div>
-
-    <!-- Countdown Milestones Row -->
-    <div class="calendar-countdown-row" id="calendar-countdown-row"></div>
-
-    <!-- Monthly Grid Container -->
-    <div id="calendar-grid-container-wrap" style="display: block;">
-      <div class="month-selector-bar">
-        <button class="month-nav-btn" onclick="navigateMonth(-1)">‹</button>
-        <span class="month-selector-title" id="month-selector-title">June 2026</span>
-        <button class="month-nav-btn" onclick="navigateMonth(1)">›</button>
-      </div>
-      <div class="calendar-grid-wrap">
-        <div class="calendar-grid" id="calendar-grid-body"></div>
-      </div>
-    </div>
-
-    <!-- Timeline List Container -->
-    <div id="calendar-timeline-container-wrap" style="display: none;">
-      <div class="calendar-timeline-wrap" id="calendar-timeline-body"></div>
-    </div>
-
-    <!-- Smart Academic & Placement Recommendations -->
-    <div class="calendar-recs-panel" style="margin-top: 24px; background: var(--bg1); border: 1px solid var(--line); border-radius: var(--r); padding: 18px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--line); padding-bottom:8px;">
-        <span style="font-family:var(--font-mono); font-size:12px; font-weight:700; color:var(--mauve); text-transform:uppercase; display:flex; align-items:center; gap:6px;">
-          💡 Smart Study & Placement Planner
-        </span>
-        <span style="font-size:10px; color:var(--muted); font-family:var(--font-mono);">Click to quick-schedule tasks</span>
-      </div>
-      <div class="calendar-recs-grid" id="calendar-recs-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:12px;">
-        <!-- Dynamically rendered study recommendations -->
-      </div>
-    </div>
-  </div>
-
-</div>
-</div>
-
-<!-- SRS Full-Screen Flip Card -->
+  <!-- SRS Full-Screen Flip Card -->
 <div class="srs-fullscreen" id="srs-fullscreen">
   <button class="srs-close-fab" onclick="closeSRSFlip()">✕ Close</button>
   <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;">Spaced Repetition Review</div>
@@ -4805,8 +4853,7 @@ html.light .dual-win-box {
       <div class="mobile-drawer-item" onclick="gotoMobilePage('circle')"><span class="mobile-drawer-icon">🌿</span>Circle & Charter</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('mental')"><span class="mobile-drawer-icon">🧠</span>Mental State</div>
 
-      <div class="mobile-drawer-item" onclick="gotoMobilePage('semester')"><span class="mobile-drawer-icon">📚</span>Sem 4 Courses</div>
-      <div class="mobile-drawer-item" onclick="gotoMobilePage('calendar')"><span class="mobile-drawer-icon">📅</span>Academic Cal</div>
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('semester')"><span class="mobile-drawer-icon">📚</span>Academic HQ</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('roadmap')"><span class="mobile-drawer-icon">🗺</span>Systems Roadmap</div>
 
       <div class="mobile-drawer-item" onclick="gotoMobilePage('dsa')"><span class="mobile-drawer-icon">🧩</span>DSA Track</div>
@@ -9563,11 +9610,156 @@ function cycleUnitReady(subIdx, unitIdx) {
   showToast(`${s.code || s.name} Unit ${unitIdx + 1}: ${stateLabels[s.unitsReady[unitIdx]]}`);
 }
 
+
+// ─── BUNK SHIELD & ACADEMIC HQ LOGIC ──────────────────────
+let BUNK_THRESHOLD = 0.75;
+
+function setBunkShieldThreshold(val) {
+  playClickSound();
+  BUNK_THRESHOLD = val;
+  if (!S.academic) S.academic = {};
+  S.academic.bunkThreshold = val;
+  save();
+  const b75 = document.getElementById('btn-target-75');
+  const b80 = document.getElementById('btn-target-80');
+  if (b75 && b80) {
+    b75.classList.toggle('active', val === 0.75);
+    b80.classList.toggle('active', val === 0.80);
+  }
+  renderSemester();
+}
+
+function calculateBunkShield(attended, totalHeld, threshold) {
+  const target = threshold || BUNK_THRESHOLD || 0.75;
+  const att = parseInt(attended) || 0;
+  const tot = parseInt(totalHeld) || 0;
+  
+  if (tot === 0) {
+    return {
+      pct: 100,
+      status: 'clean',
+      badgeClass: 'bunk-badge-clean',
+      text: '🛡️ Clean Record · 0 Held',
+      safeToMiss: 0,
+      mustAttend: 0
+    };
+  }
+  
+  const pct = (att / tot) * 100;
+  const targetPct = target * 100;
+  
+  if (pct >= targetPct) {
+    // How many can miss: att / (tot + k) >= target
+    const safeToMiss = Math.floor((att - target * tot) / target);
+    if (safeToMiss > 0) {
+      return {
+        pct: Math.round(pct * 10) / 10,
+        status: 'safe',
+        badgeClass: 'bunk-badge-safe',
+        text: `🛡️ Safe to miss: ${safeToMiss} class${safeToMiss > 1 ? 'es' : ''}`,
+        safeToMiss: safeToMiss,
+        mustAttend: 0
+      };
+    } else {
+      return {
+        pct: Math.round(pct * 10) / 10,
+        status: 'edge',
+        badgeClass: 'bunk-badge-edge',
+        text: `⚠️ On the edge (${Math.round(pct)}%) · Cannot miss`,
+        safeToMiss: 0,
+        mustAttend: 0
+      };
+    }
+  } else {
+    // Under threshold: (att + m) / (tot + m) >= target
+    const mustAttend = Math.ceil((target * tot - att) / (1 - target));
+    return {
+      pct: Math.round(pct * 10) / 10,
+      status: 'danger',
+      badgeClass: 'bunk-badge-danger',
+      text: `🚨 Must attend next ${mustAttend} class${mustAttend > 1 ? 'es' : ''}`,
+      safeToMiss: 0,
+      mustAttend: mustAttend
+    };
+  }
+}
+
+function quickMarkAttendance(idx, deltaAttended, deltaTotal) {
+  playClickSound();
+  const s = S.subjects[idx];
+  if (!s) return;
+  s.attended = Math.max(0, (s.attended || 0) + deltaAttended);
+  s.totalHeld = Math.max(0, (s.totalHeld || 0) + deltaTotal);
+  if (s.attended > s.totalHeld) s.totalHeld = s.attended;
+  save();
+  renderSemester();
+  showToast(`${s.name}: ${s.attended}/${s.totalHeld} attended (${Math.round((s.attended/s.totalHeld)*100||100)}%)`);
+}
+
+function switchAcademicView(view) {
+  playClickSound();
+  const btns = ['btn-acad-all', 'btn-acad-courses', 'btn-acad-calendar'];
+  btns.forEach(b => {
+    const el = document.getElementById(b);
+    if (el) el.classList.remove('active');
+  });
+  const activeBtn = document.getElementById('btn-acad-' + view);
+  if (activeBtn) activeBtn.classList.add('active');
+
+  const secCourses = document.getElementById('academic-sec-courses');
+  const secCal = document.getElementById('academic-sec-calendar');
+
+  if (view === 'all') {
+    if (secCourses) secCourses.style.display = 'block';
+    if (secCal) secCal.style.display = 'block';
+  } else if (view === 'courses') {
+    if (secCourses) secCourses.style.display = 'block';
+    if (secCal) secCal.style.display = 'none';
+  } else if (view === 'calendar') {
+    if (secCourses) secCourses.style.display = 'none';
+    if (secCal) secCal.style.display = 'block';
+  }
+}
+
 function renderSemester(){
   const container = document.getElementById('subject-list');
   if(!container) return;
   const subjects = S.subjects || [];
   const readiness = calculateExamReadiness();
+  
+  if (S.academic && S.academic.bunkThreshold) {
+    BUNK_THRESHOLD = S.academic.bunkThreshold;
+  }
+  const b75 = document.getElementById('btn-target-75');
+  const b80 = document.getElementById('btn-target-80');
+  if (b75 && b80) {
+    b75.classList.toggle('active', BUNK_THRESHOLD === 0.75);
+    b80.classList.toggle('active', BUNK_THRESHOLD === 0.80);
+  }
+
+  // Calculate Overall Attendance Stats
+  let totalAttended = 0;
+  let totalHeld = 0;
+  let dangerCount = 0;
+  subjects.forEach(s => {
+    totalAttended += (s.attended || 0);
+    totalHeld += (s.totalHeld || 0);
+    const shield = calculateBunkShield(s.attended || 0, s.totalHeld || 0, BUNK_THRESHOLD);
+    if (shield.status === 'danger') dangerCount++;
+  });
+  const overallPct = totalHeld > 0 ? Math.round((totalAttended / totalHeld) * 1000) / 10 : 100;
+
+  const overallTitleEl = document.getElementById('bunk-shield-overall-title');
+  const overallSubEl = document.getElementById('bunk-shield-overall-sub');
+  if (overallTitleEl) {
+    overallTitleEl.textContent = dangerCount > 0 
+      ? `BUNK SHIELD: ${dangerCount} COURSE${dangerCount > 1 ? 'S' : ''} NEED ATTENDANCE RECOVERY` 
+      : `BUNK SHIELD: ALL COURSES PROTECTED (≥ ${Math.round(BUNK_THRESHOLD*100)}%)`;
+    overallTitleEl.style.color = dangerCount > 0 ? 'var(--red)' : 'var(--green)';
+  }
+  if (overallSubEl) {
+    overallSubEl.textContent = `Overall Semester Rate: ${overallPct}% (${totalAttended}/${totalHeld} total hours attended) · Target: ${Math.round(BUNK_THRESHOLD*100)}%`;
+  }
   
   // Header with Readiness Meter
   const headerHtml = `
@@ -9600,8 +9792,15 @@ function renderSemester(){
       return `<span class="unit-pill ${cls}" onclick="cycleUnitReady(${idx}, ${uIdx})">${icon} U${uIdx+1}: ${label}</span>`;
     }).join('');
 
+    const att = s.attended || 0;
+    const tot = s.totalHeld || 0;
+    const shield = calculateBunkShield(att, tot, BUNK_THRESHOLD);
+    const attPct = tot > 0 ? Math.round((att / tot) * 100) : 100;
+    const barColor = shield.status === 'danger' ? 'var(--red)' : shield.status === 'edge' ? 'var(--yellow)' : 'var(--green)';
+
     return `
-      <div class="sub-item" style="display:flex; flex-direction:column; gap:8px; padding:16px;">
+      <div class="sub-item" style="display:flex; flex-direction:column; gap:10px; padding:16px;">
+        <!-- Top Row: Name, Faculty & Priority -->
         <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
           <div>
             <div class="sub-name" style="font-size:15px; font-weight:600;">
@@ -9613,6 +9812,27 @@ function renderSemester(){
             </div>
           </div>
           <span class="pri ${escapeHtml(s.pclass || 'pri-h')}">${escapeHtml(s.pri || 'High')}</span>
+        </div>
+
+        <!-- BUNK SHIELD REAL-TIME ATTENDANCE ROW -->
+        <div style="background:var(--bg1); border:1px solid var(--line2); border-radius:8px; padding:10px 12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:6px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="${shield.badgeClass}" style="font-family:var(--font-mono); font-size:11px; font-weight:700; padding:2px 8px; border-radius:4px; letter-spacing:0.5px;">
+                ${shield.text}
+              </span>
+              <span style="font-family:var(--font-mono); font-size:12px; color:var(--text); font-weight:600;">
+                ${att} / ${tot} attended (${attPct}%)
+              </span>
+            </div>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <button onclick="quickMarkAttendance(${idx}, 1, 1)" style="background:color-mix(in srgb, var(--green) 18%, var(--bg2)); border:1px solid color-mix(in srgb, var(--green) 40%, transparent); color:var(--green); font-family:var(--font-mono); font-size:10px; font-weight:700; padding:3px 8px; border-radius:4px; cursor:pointer;" title="Mark attended">+ Present</button>
+              <button onclick="quickMarkAttendance(${idx}, 0, 1)" style="background:color-mix(in srgb, var(--red) 18%, var(--bg2)); border:1px solid color-mix(in srgb, var(--red) 40%, transparent); color:var(--red); font-family:var(--font-mono); font-size:10px; font-weight:700; padding:3px 8px; border-radius:4px; cursor:pointer;" title="Mark missed">+ Absent</button>
+            </div>
+          </div>
+          <div class="prog-track" style="height:6px; background:var(--bg2);">
+            <div class="prog-fill" style="width:${Math.min(100, attPct)}%; background:${barColor};"></div>
+          </div>
         </div>
         
         <div style="font-size:12px; color:var(--text-secondary); line-height:1.4;">
@@ -9670,6 +9890,16 @@ function editSubjectCard(idx) {
     </div>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
       <div>
+        <label class="modal-form-label">Attended Hours (Bunk Shield)</label>
+        <input type="number" min="0" class="modal-form-input" id="edit-sub-attended" value="${s.attended || 0}">
+      </div>
+      <div>
+        <label class="modal-form-label">Total Held Hours</label>
+        <input type="number" min="0" class="modal-form-input" id="edit-sub-total" value="${s.totalHeld || 0}">
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+      <div>
         <label class="modal-form-label">Priority Label</label>
         <input type="text" class="modal-form-input" id="edit-sub-pri" value="${escapeHtml(s.pri)}">
       </div>
@@ -9699,6 +9929,9 @@ function editSubjectCard(idx) {
   openModal('Edit Semester Subject', html, () => {
     s.name = document.getElementById('edit-sub-name').value.trim();
     s.code = document.getElementById('edit-sub-code').value.trim();
+    s.attended = Math.max(0, parseInt(document.getElementById('edit-sub-attended').value) || 0);
+    s.totalHeld = Math.max(0, parseInt(document.getElementById('edit-sub-total').value) || 0);
+    if (s.attended > s.totalHeld) s.totalHeld = s.attended;
     s.pri = document.getElementById('edit-sub-pri').value.trim();
     s.pclass = document.getElementById('edit-sub-pclass').value;
     s.res = document.getElementById('edit-sub-res').value.trim();
@@ -11526,7 +11759,7 @@ function applyNavFolds() {
 }
 
 // ─── NAVIGATION ───────────────────────────────────────────
-const pageTitles={today:'Today',roadmap:'Systems Roadmap',semester:'Semester 4 (AB-302)',circle:'Circle & Charter',calendar:'Academic Calendar',dsa:'DSA Track',projects:'Projects',targets:'Quant Funnel',notes:'Notes',tasks:'Mission Board',applications:'Applications',budget:'Expense Tracker',trips:'Travel & IRCTC Planner',resume:'Resume HQ',schedule:'Daily Matrix',audit:'Weekly Audit',routine:'Vitality Command Center',physical:'Vitality · Biometrics',mental:'Vitality · Mind & Intentions',vitality:'Vitality Command Center'};
+const pageTitles={today:'Today',roadmap:'Systems Roadmap',semester:'Academic Command HQ',circle:'Circle & Charter',calendar:'Academic Command HQ · Calendar',dsa:'DSA Track',projects:'Projects',targets:'Quant Funnel',notes:'Notes',tasks:'Mission Board',applications:'Applications',budget:'Expense Tracker',trips:'Travel & IRCTC Planner',resume:'Resume HQ',schedule:'Daily Matrix',audit:'Weekly Audit',routine:'Vitality Command Center',physical:'Vitality · Biometrics',mental:'Vitality · Mind & Intentions',vitality:'Vitality Command Center'};
 
 /* Per-section health palettes: each page gets its own skin class,
    accent color, and browser chrome tint. */
@@ -11556,7 +11789,13 @@ function applyHealthSkin(id) {
 
 function gotoPage(id,el){
   playClickSound();
+  let requestedSubView = null;
+  if (id === 'calendar') {
+    requestedSubView = 'calendar';
+    id = 'semester';
+  }
   if (id === 'physical' || id === 'mental' || id === 'vitality') {
+    requestedSubView = id;
     id = 'routine';
   }
   if (id === 'gaming') {
@@ -11589,7 +11828,15 @@ function gotoPage(id,el){
   if(id==='tasks'){renderMissions();}
   if(id==='notes'){renderNotesSidebar();}
   if(id==='projects'){renderProjects();}
-  if(id==='semester'){renderSemester();}
+  if(id==='semester'){
+    renderSemester();
+    renderAcademicCalendar();
+    if (requestedSubView === 'calendar') {
+      switchAcademicView('calendar');
+    } else {
+      switchAcademicView('all');
+    }
+  }
   if(id==='calendar'){renderAcademicCalendar();}
   if(id==='targets'){renderTargets(); renderCompetencyTracker();}
   if(id==='gaming'){renderGaming();updateGamingLogDisplay();}
