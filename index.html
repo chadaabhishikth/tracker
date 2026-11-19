@@ -7674,6 +7674,8 @@ function init(){
   S.lastVisitedTimestamp = Date.now();
   if (!S.lastLoggedTimestamp) S.lastLoggedTimestamp = Date.now();
 
+  try { restorePageFromHash(); } catch(e) { console.warn('Early route restore:', e); }
+
   precomputeCDs();
   checkDailyReset();
   checkStreak();
@@ -7763,9 +7765,12 @@ function updateClock(){
 function updateDate(){
   const n=new Date();
   const d=n.toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  document.getElementById('topbar-date').textContent=d;
-  document.getElementById('schedule-day-name').textContent=DAYS[n.getDay()];
-  document.getElementById('schedule-date-sub').textContent=n.toLocaleDateString('en-IN',{month:'short',day:'numeric',year:'numeric'});
+  const topbarDate = document.getElementById('topbar-date');
+  if (topbarDate) topbarDate.textContent = d;
+  const schedDay = document.getElementById('schedule-day-name');
+  if (schedDay) schedDay.textContent = DAYS[n.getDay()];
+  const schedDateSub = document.getElementById('schedule-date-sub');
+  if (schedDateSub) schedDateSub.textContent = n.toLocaleDateString('en-IN',{month:'short',day:'numeric',year:'numeric'});
 }
 
 function checkStreak(){
@@ -11895,9 +11900,33 @@ function gotoMobilePage(id, el) {
 function restorePageFromHash() {
   const urlParams = new URLSearchParams(window.location.search);
   const paramPage = urlParams.get('page') || urlParams.get('p') || urlParams.get('action');
-  const rawHash = (window.location.hash || '').replace('#', '');
+  const rawHash = (window.location.hash || '').replace('#', '').trim();
   
-  const id = paramPage || rawHash;
+  let id = (paramPage || rawHash || '').trim();
+  
+  // Fuzzy match fallback if user or launcher typed space/dash or standalone flag (e.g. ?page -trips or ?trips)
+  if (!id && window.location.search) {
+    const rawSearch = window.location.search.toLowerCase();
+    if (rawSearch.includes('trip') || rawSearch.includes('irctc') || rawSearch.includes('travel')) id = 'trips';
+    else if (rawSearch.includes('quickexpense') || rawSearch.includes('expense') || rawSearch.includes('spent')) id = 'quickExpense';
+    else if (rawSearch.includes('semester') || rawSearch.includes('academic') || rawSearch.includes('bunk') || rawSearch.includes('shield')) id = 'semester';
+    else if (rawSearch.includes('routine') || rawSearch.includes('vitality') || rawSearch.includes('gym') || rawSearch.includes('workout') || rawSearch.includes('derma')) id = 'routine';
+    else if (rawSearch.includes('circle') || rawSearch.includes('charter')) id = 'circle';
+    else if (rawSearch.includes('dsa') || rawSearch.includes('leetcode')) id = 'dsa';
+    else if (rawSearch.includes('task') || rawSearch.includes('mission')) id = 'tasks';
+    else if (rawSearch.includes('budget')) id = 'budget';
+    else if (rawSearch.includes('resume')) id = 'resume';
+    else if (rawSearch.includes('note')) id = 'notes';
+    else if (rawSearch.includes('roadmap')) id = 'roadmap';
+    else if (rawSearch.includes('project')) id = 'projects';
+    else if (rawSearch.includes('audit')) id = 'audit';
+    else if (rawSearch.includes('schedule') || rawSearch.includes('matrix')) id = 'schedule';
+  }
+
+  // Aliases
+  if (id === 'irctc' || id === 'travel') id = 'trips';
+  if (id === 'academic' || id === 'bunk' || id === 'shield') id = 'semester';
+  if (id === 'vitality' || id === 'gym' || id === 'physical' || id === 'mental') id = 'routine';
   
   if (id === 'quickExpense' || id === 'quick-spent' || id === 'expense') {
     gotoPage('today');
