@@ -1,4 +1,4 @@
-const CACHE_NAME = 'os-dashboard-v2-8';
+const CACHE_NAME = 'os-dashboard-v2-9';
 const NOTIFY_CACHE = 'abhi-notify-v1';
 const SNAPSHOT_URL = './__notify_snapshot__';
 const ASSETS = [
@@ -7,6 +7,14 @@ const ASSETS = [
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
+  './icons/shortcut-irctc-192.png',
+  './icons/shortcut-irctc-512.png',
+  './icons/shortcut-expense-192.png',
+  './icons/shortcut-expense-512.png',
+  './icons/shortcut-today-192.png',
+  './icons/shortcut-today-512.png',
+  './icons/shortcut-circle-192.png',
+  './icons/shortcut-circle-512.png',
   'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap'
 ];
 

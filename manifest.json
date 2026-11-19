@@ -38,28 +38,40 @@
       "short_name": "IRCTC",
       "description": "Check 60-day train booking countdowns & reminders",
       "url": "./index.html?page=trips#trips",
-      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        { "src": "icons/shortcut-irctc-192.png", "sizes": "192x192", "type": "image/png" },
+        { "src": "icons/shortcut-irctc-512.png", "sizes": "512x512", "type": "image/png" }
+      ]
     },
     {
       "name": "Quick Log Expense",
       "short_name": "Log ₹",
       "description": "Quickly record money spent in 3 seconds",
       "url": "./index.html?page=quickExpense#quickExpense",
-      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        { "src": "icons/shortcut-expense-192.png", "sizes": "192x192", "type": "image/png" },
+        { "src": "icons/shortcut-expense-512.png", "sizes": "512x512", "type": "image/png" }
+      ]
     },
     {
       "name": "Today Command Cockpit",
       "short_name": "Today",
       "description": "Check Today schedule & live AB-302 class",
       "url": "./index.html?page=today#today",
-      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        { "src": "icons/shortcut-today-192.png", "sizes": "192x192", "type": "image/png" },
+        { "src": "icons/shortcut-today-512.png", "sizes": "512x512", "type": "image/png" }
+      ]
     },
     {
       "name": "Circle & Life Charter",
       "short_name": "Circle",
       "description": "Family, friendships & grounded anti-burnout ledger",
       "url": "./index.html?page=circle#circle",
-      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        { "src": "icons/shortcut-circle-192.png", "sizes": "192x192", "type": "image/png" },
+        { "src": "icons/shortcut-circle-512.png", "sizes": "512x512", "type": "image/png" }
+      ]
     }
   ]
 }
