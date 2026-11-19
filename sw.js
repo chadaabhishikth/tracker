@@ -1,9 +1,10 @@
-const CACHE_NAME = 'os-dashboard-v3-8';
+const CACHE_NAME = 'os-dashboard-v3-9';
 const NOTIFY_CACHE = 'abhi-notify-v1';
 const SNAPSHOT_URL = './__notify_snapshot__';
 const ASSETS = [
   './',
   './index.html',
+  './data.js',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',

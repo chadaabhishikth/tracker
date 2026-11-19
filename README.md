@@ -272,15 +272,16 @@ sequenceDiagram
 
 ```
 c:\PROJECTS\VIBE\ROADMAP\tracker\
-├── index.html          # Monolithic application (Markup, CSS design system, and logic)
-├── sw.js               # Service Worker (Cache management & background sync)
+├── index.html          # Application shell (UI markup, layout, CSS, and reactive engine)
+├── data.js             # Data Layer (DEFAULT_SCHEDULE, DEFAULT_SUBJECTS, targets, projects, calendar)
+├── sw.js               # Service Worker (Offline asset caching v3.9 & background sync)
 ├── manifest.json       # Progressive Web App manifest (Icons, themes, orientation)
 ├── icons/              # PWA app icons (192x192, 512x512)
 └── README.md           # System documentation and architecture blueprint
 ```
 
 ### How to Update Schedule & Time-Blocks
-Locate `DEFAULT_SCHEDULE` in [`index.html`](file:///c:/PROJECTS/VIBE/ROADMAP/tracker/index.html) (approx. line 3950). Days are mapped from `Monday` through `Sunday`:
+Locate `DEFAULT_SCHEDULE` in [`data.js`](file:///c:/PROJECTS/VIBE/ROADMAP/tracker/data.js) (approx. line 3950). Days are mapped from `Monday` through `Sunday`:
 ```javascript
 {
   t: '08:25–09:15',
@@ -293,7 +294,7 @@ Locate `DEFAULT_SCHEDULE` in [`index.html`](file:///c:/PROJECTS/VIBE/ROADMAP/tra
 ```
 
 ### How to Add / Edit Semester Courses
-Locate `DEFAULT_SUBJECTS` in [`index.html`](file:///c:/PROJECTS/VIBE/ROADMAP/tracker/index.html) (approx. line 4100):
+Locate `DEFAULT_SUBJECTS` in [`data.js`](file:///c:/PROJECTS/VIBE/ROADMAP/tracker/data.js) (approx. line 4100):
 ```javascript
 {
   name: 'Operating Systems',
