@@ -34,31 +34,31 @@
   ],
   "shortcuts": [
     {
+      "name": "Travel & IRCTC Tickets",
+      "short_name": "IRCTC",
+      "description": "Check 60-day train booking countdowns & reminders",
+      "url": "./index.html?page=trips#trips",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
       "name": "Quick Log Expense",
       "short_name": "Log ₹",
       "description": "Quickly record money spent in 3 seconds",
-      "url": "./index.html#quickExpense",
+      "url": "./index.html?page=quickExpense#quickExpense",
       "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Today Command Cockpit",
       "short_name": "Today",
       "description": "Check Today schedule & live AB-302 class",
-      "url": "./index.html#today",
+      "url": "./index.html?page=today#today",
       "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Travel & IRCTC Tickets",
-      "short_name": "IRCTC",
-      "description": "Check 60-day train booking countdowns & reminders",
-      "url": "./index.html#trips",
-      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "Mental & Conversations",
-      "short_name": "Mental",
-      "description": "Check intentional conversations & mental reminders",
-      "url": "./index.html#mental",
+      "name": "Circle & Life Charter",
+      "short_name": "Circle",
+      "description": "Family, friendships & grounded anti-burnout ledger",
+      "url": "./index.html?page=circle#circle",
       "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
     }
   ]

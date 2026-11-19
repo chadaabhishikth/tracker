@@ -1017,11 +1017,13 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
   left: 0;
   right: 0;
   background: var(--bg1);
-  border-top: 1px solid var(--line);
-  border-radius: 16px 16px 0 0;
-  padding: 20px;
-  max-height: 70%;
+  border-top: 1px solid var(--line2);
+  border-radius: 20px 20px 0 0;
+  padding: 18px 16px 28px;
+  max-height: 84vh;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.6);
   transform: translateY(100%);
   transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -4783,25 +4785,49 @@ html.light .dual-win-box {
 <!-- MOBILE MENU DRAWER OVERLAY -->
 <div class="mobile-drawer-overlay" id="mobile-drawer-overlay" onclick="toggleMobileDrawer()">
   <div class="mobile-drawer" onclick="event.stopPropagation()">
-    <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted); text-transform:uppercase; margin-bottom:12px; letter-spacing:1px; text-align:center;">Navigation Menu</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--line2);">
+      <div style="font-family:var(--font-mono); font-size:11px; color:var(--text); text-transform:uppercase; letter-spacing:1px; font-weight:700;">Navigation Hub · Sem 4</div>
+      <button onclick="toggleMobileDrawer()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:0 6px;line-height:1;">&times;</button>
+    </div>
+
+    <!-- Quick Action Bar for Instant Access -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+      <button onclick="toggleMobileDrawer(); setTimeout(toggleBudgetQuickAdd, 150);" style="display:flex;align-items:center;justify-content:center;gap:6px;background:color-mix(in srgb, var(--green) 16%, var(--bg2));border:1px solid color-mix(in srgb, var(--green) 40%, transparent);color:var(--green);padding:10px 8px;border-radius:8px;font-family:var(--font-mono);font-size:11px;font-weight:700;cursor:pointer;">
+        <span>💳</span> +₹ Quick Expense
+      </button>
+      <button onclick="gotoMobilePage('trips');" style="display:flex;align-items:center;justify-content:center;gap:6px;background:color-mix(in srgb, var(--accent) 16%, var(--bg2));border:1px solid color-mix(in srgb, var(--accent) 40%, transparent);color:var(--accent);padding:10px 8px;border-radius:8px;font-family:var(--font-mono);font-size:11px;font-weight:700;cursor:pointer;">
+        <span>🚆</span> IRCTC 60-Day Desk
+      </button>
+    </div>
+
+    <!-- Full OS Modules Grid -->
     <div class="mobile-drawer-grid">
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('today')"><span class="mobile-drawer-icon">⚡</span>Today Cockpit</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('schedule')"><span class="mobile-drawer-icon">⏰</span>Daily Matrix</div>
       <div class="mobile-drawer-item" onclick="gotoMobilePage('audit')"><span class="mobile-drawer-icon">📊</span>Weekly Audit</div>
-      <div class="mobile-drawer-item" onclick="gotoMobilePage('roadmap')"><span class="mobile-drawer-icon">🗺</span>Systems Roadmap</div>
-      <div class="mobile-drawer-item" onclick="gotoMobilePage('calendar')"><span class="mobile-drawer-icon">📅</span>Calendar</div>
-      <div class="mobile-drawer-item" onclick="gotoMobilePage('semester')"><span class="mobile-drawer-icon">📚</span>Sem 3</div>
-      <div class="mobile-drawer-item" onclick="gotoMobilePage('dsa')"><span class="mobile-drawer-icon">🧩</span>DSA Track</div>
-      <div class="mobile-drawer-item" onclick="gotoMobilePage('projects')"><span class="mobile-drawer-icon">🛠</span>Projects</div>
-      <div class="mobile-drawer-item" onclick="gotoMobilePage('targets')"><span class="mobile-drawer-icon">🎯</span>Quant Funnel</div>
-      <div class="mobile-drawer-item" onclick="gotoMobilePage('gaming')"><span class="mobile-drawer-icon">🎮</span>Gaming</div>
-      <div class="mobile-drawer-item" onclick="gotoMobilePage('notes')"><span class="mobile-drawer-icon">📝</span>Notes</div>
-      <div class="mobile-drawer-item" onclick="gotoMobilePage('applications')"><span class="mobile-drawer-icon">💼</span>Applications</div>
-      <div class="mobile-drawer-item" onclick="gotoMobilePage('trips')"><span class="mobile-drawer-icon">✈️</span>Trips</div>
-      <div class="mobile-drawer-item" onclick="gotoMobilePage('resume')"><span class="mobile-drawer-icon">📄</span>Resume</div>
-      <div class="mobile-drawer-item" onclick="gotoMobilePage('routine')"><span class="mobile-drawer-icon">🤸</span>Routine</div>
-      <div class="mobile-drawer-item" onclick="gotoMobilePage('physical')"><span class="mobile-drawer-icon">🩺</span>Physical</div>
-      <div class="mobile-drawer-item" onclick="gotoMobilePage('mental')"><span class="mobile-drawer-icon">🧠</span>Mental</div>
 
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('trips')"><span class="mobile-drawer-icon">🚆</span>Travel & IRCTC</div>
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('circle')"><span class="mobile-drawer-icon">🌿</span>Circle & Charter</div>
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('mental')"><span class="mobile-drawer-icon">🧠</span>Mental State</div>
+
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('semester')"><span class="mobile-drawer-icon">📚</span>Sem 4 Courses</div>
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('calendar')"><span class="mobile-drawer-icon">📅</span>Academic Cal</div>
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('roadmap')"><span class="mobile-drawer-icon">🗺</span>Systems Roadmap</div>
+
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('dsa')"><span class="mobile-drawer-icon">🧩</span>DSA Track</div>
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('tasks')"><span class="mobile-drawer-icon">⚔️</span>Missions</div>
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('projects')"><span class="mobile-drawer-icon">🛠</span>R&D Vault</div>
+
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('targets')"><span class="mobile-drawer-icon">🎯</span>Quant Funnel</div>
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('applications')"><span class="mobile-drawer-icon">💼</span>Applications</div>
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('budget')"><span class="mobile-drawer-icon">💳</span>Expense Tracker</div>
+
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('routine')"><span class="mobile-drawer-icon">🤸</span>Routine & Derma</div>
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('physical')"><span class="mobile-drawer-icon">🩺</span>Physical Metrics</div>
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('resume')"><span class="mobile-drawer-icon">📄</span>Resume HQ</div>
+
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('notes')"><span class="mobile-drawer-icon">📝</span>Folio Notes</div>
+      <div class="mobile-drawer-item" onclick="gotoMobilePage('gaming')"><span class="mobile-drawer-icon">🎮</span>Gaming Lounge</div>
       <div class="mobile-drawer-item" onclick="openSettings(); toggleMobileDrawer();"><span class="mobile-drawer-icon">⚙️</span>Settings</div>
     </div>
   </div>
@@ -11583,15 +11609,46 @@ function gotoMobilePage(id, el) {
 }
 
 function restorePageFromHash() {
-  const id = (location.hash || '#today').replace('#','');
-  if (!id || id === 'today') return;
-  if (!document.getElementById('page-' + id)) return;
-  const nav = Array.from(document.querySelectorAll('.sidebar .nav-item')).find(item => {
-    const onclickAttr = item.getAttribute('onclick') || '';
-    return onclickAttr.includes(`'${id}'`);
-  });
-  gotoPage(id, nav || document.querySelector('.sidebar .nav-item'));
+  const urlParams = new URLSearchParams(window.location.search);
+  const paramPage = urlParams.get('page') || urlParams.get('p') || urlParams.get('action');
+  const rawHash = (window.location.hash || '').replace('#', '');
+  
+  const id = paramPage || rawHash;
+  
+  if (id === 'quickExpense' || id === 'quick-spent' || id === 'expense') {
+    gotoPage('today');
+    setTimeout(() => {
+      const pop = document.getElementById('budget-quick-popover');
+      if (pop) {
+        pop.classList.add('show');
+        setTimeout(() => document.getElementById('quick-exp-name')?.focus(), 150);
+      }
+    }, 250);
+    return;
+  }
+  
+  if (!id || id === 'today') {
+    gotoPage('today');
+    return;
+  }
+  
+  if (document.getElementById('page-' + id)) {
+    const nav = Array.from(document.querySelectorAll('.sidebar .nav-item')).find(item => {
+      const onclickAttr = item.getAttribute('onclick') || '';
+      return onclickAttr.includes(`'${id}'`);
+    });
+    gotoPage(id, nav || null);
+    syncMobileActiveTab(id);
+  }
 }
+
+// Ensure background resumes and shortcut intents trigger immediate page restore
+window.addEventListener('popstate', restorePageFromHash);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    restorePageFromHash();
+  }
+});
 
 function initNotesAutosave() {
   const area = document.getElementById('notes-area');
