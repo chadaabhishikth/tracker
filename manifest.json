@@ -34,16 +34,6 @@
   ],
   "shortcuts": [
     {
-      "name": "Travel & IRCTC Tickets",
-      "short_name": "IRCTC",
-      "description": "Check 60-day train booking countdowns & reminders",
-      "url": "./index.html?page=trips#trips",
-      "icons": [
-        { "src": "icons/shortcut-irctc-192.png", "sizes": "192x192", "type": "image/png" },
-        { "src": "icons/shortcut-irctc-512.png", "sizes": "512x512", "type": "image/png" }
-      ]
-    },
-    {
       "name": "Quick Log Expense",
       "short_name": "Log ₹",
       "description": "Quickly record money spent in 3 seconds",
@@ -51,6 +41,16 @@
       "icons": [
         { "src": "icons/shortcut-expense-192.png", "sizes": "192x192", "type": "image/png" },
         { "src": "icons/shortcut-expense-512.png", "sizes": "512x512", "type": "image/png" }
+      ]
+    },
+    {
+      "name": "Travel & IRCTC Tickets",
+      "short_name": "IRCTC",
+      "description": "Check 60-day train booking countdowns & reminders",
+      "url": "./index.html?page=trips#trips",
+      "icons": [
+        { "src": "icons/shortcut-irctc-192.png", "sizes": "192x192", "type": "image/png" },
+        { "src": "icons/shortcut-irctc-512.png", "sizes": "512x512", "type": "image/png" }
       ]
     },
     {
@@ -64,13 +64,13 @@
       ]
     },
     {
-      "name": "Circle & Life Charter",
-      "short_name": "Circle",
-      "description": "Family, friendships & grounded anti-burnout ledger",
-      "url": "./index.html?page=circle#circle",
+      "name": "Academic HQ & Bunk Shield",
+      "short_name": "Academics",
+      "description": "Sem 4 courses, attendance margins & calendar",
+      "url": "./index.html?page=semester#semester",
       "icons": [
-        { "src": "icons/shortcut-circle-192.png", "sizes": "192x192", "type": "image/png" },
-        { "src": "icons/shortcut-circle-512.png", "sizes": "512x512", "type": "image/png" }
+        { "src": "icons/shortcut-academic-192.png", "sizes": "192x192", "type": "image/png" },
+        { "src": "icons/shortcut-academic-512.png", "sizes": "512x512", "type": "image/png" }
       ]
     }
   ]

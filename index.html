@@ -12268,6 +12268,72 @@ function updateSyncStatusMsg(status) {
   if (el) el.textContent = 'Status: ' + status;
 }
 
+
+function openShortcutIconsModal() {
+  const icons = [
+    {
+      title: "Quick Log Expense",
+      glyph: "₹",
+      src: "icons/shortcut-expense-512.png",
+      url: "https://chadaabhishikth.github.io/tracker/?page=quickExpense",
+      desc: "Bold Indian Rupee sign for 3-second expense logging"
+    },
+    {
+      title: "IRCTC Train Dispatch",
+      glyph: "🚆",
+      src: "icons/shortcut-irctc-512.png",
+      url: "https://chadaabhishikth.github.io/tracker/?page=trips",
+      desc: "Front locomotive silhouette for 60-day train countdowns"
+    },
+    {
+      title: "Today Command Cockpit",
+      glyph: "⚡",
+      src: "icons/shortcut-today-512.png",
+      url: "https://chadaabhishikth.github.io/tracker/?page=today",
+      desc: "High-voltage lightning bolt for Today schedule & Pomodoro"
+    },
+    {
+      title: "Academic HQ & Bunk Shield",
+      glyph: "🛡️",
+      src: "icons/shortcut-academic-512.png",
+      url: "https://chadaabhishikth.github.io/tracker/?page=semester",
+      desc: "Defense shield for real-time 75% attendance buffer"
+    },
+    {
+      title: "Vitality OS (Run & Gym)",
+      glyph: "🏃",
+      src: "icons/shortcut-vitality-512.png",
+      url: "https://chadaabhishikth.github.io/tracker/?page=routine",
+      desc: "Pulse wave for 3-Run/3-Gym workouts and derma non-negotiables"
+    }
+  ];
+
+  const html = `
+    <div style="max-height:500px; overflow-y:auto; padding-right:4px;">
+      <p style="font-size:11px; color:var(--sub); margin-bottom:14px; line-height:1.4;">
+        Since your Nothing phone is in black & white without app labels, each shortcut uses an unmistakable geometric white glyph on deep obsidian black. Download each icon to select it in the <strong>HTTP Shortcuts</strong> app or your phone launcher!
+      </p>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        ${icons.map(it => `
+          <div style="display:flex; align-items:center; gap:12px; background:var(--bg1); border:1px solid var(--line2); border-radius:8px; padding:10px 12px;">
+            <img src="${it.src}" alt="${it.title}" style="width:44px; height:44px; border-radius:50%; border:1px solid var(--line2); flex-shrink:0;">
+            <div style="flex:1; min-width:0;">
+              <div style="font-size:12px; font-weight:700; color:var(--text);">${it.title}</div>
+              <div style="font-size:10px; color:var(--sub); margin:2px 0;">${it.desc}</div>
+              <div style="font-family:var(--font-mono); font-size:9px; color:var(--accent); word-break:break-all;">${it.url}</div>
+            </div>
+            <a href="${it.src}" download="${it.src.split('/').pop()}" class="btn-primary" style="padding:6px 10px; font-size:10px; font-family:var(--font-mono); text-decoration:none; white-space:nowrap;">
+              ⬇️ Save
+            </a>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  openModal('Nothing OS Shortcut Icons', html, () => true);
+}
+
 function openSettings() {
   const cfg = getSyncConfig();
   const html = `
@@ -12316,6 +12382,13 @@ function openSettings() {
                 💬 Send to Phone on WhatsApp ↗
               </a>
             </div>
+        <div style="margin-top:14px; padding-top:10px; border-top:1px dashed var(--line2);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span style="font-size:11px; font-weight:600; color:var(--text); font-family:var(--font-mono);">⚡ NOTHING OS SHORTCUT ICONS</span>
+            <button type="button" class="btn-secondary" onclick="openShortcutIconsModal()" style="font-size:10px; padding:4px 10px; cursor:pointer;">View & Download Icons</button>
+          </div>
+          <p style="font-size:10px; color:var(--sub); line-height:1.4;">Download high-contrast monochrome glyphs (₹, Train, Bolt, Shield) tailored for label-free black & white home screens.</p>
+        </div>
           </div>
         </div>
       </div>
