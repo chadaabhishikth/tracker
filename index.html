@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#3A2525" id="theme-color-meta">
+<meta name="theme-color" content="#090A0F" id="theme-color-meta">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -13,51 +13,76 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.json">
 <style>
-/* ─── TOKENS ─────────────────────────────────────────── */
+/* ─── TOKENS v2.0 — Clean Carbon/Alabaster Precision System ─── */
 :root {
-  --navy:     #000080;
-  --blood:    #FF0000;
-  --wine:     #9E2A3A;
-  --umber:    #3A2525;
-  --salmon:   #FF8F8F;
-  --cream:    #FFF1CB;
-  --ice:      #C2E2FA;
-  --lilac:    #B7A3E3;
-  --bg:       #241616;
-  --bg1:      #3A2525;
-  --bg2:      #4a2e2e;
-  --bg3:      #5c3838;
-  --line:     #9E2A3A;
-  --line2:    #6e3538;
-  --text:     #FFF1CB;
-  --sub:      #e8c4b0;
-  --muted:    #c48a7a;
-  --blue:     #7ea6ff;
-  --accent:   #7ea6ff;
-  --lavender: #B7A3E3;
-  --green:    #C2E2FA;
-  --yellow:   #FFF1CB;
-  --red:      #FF0000;
-  --peach:    #FF8F8F;
-  --mauve:    #B7A3E3;
-  --teal:     #C2E2FA;
-  --sky:      #C2E2FA;
-  --ink:      #FFF1CB;
-  --paper:    #3A2525;
+  /* ── Backgrounds (Deep Obsidian OLED Slate — rich depth & crisp separation) ── */
+  --bg-canvas:   #08090E;
+  --bg-surface:  #10131D;
+  --bg-elevated: #161B29;
+  --bg:          #08090E;
+  --bg1:         #10131D;
+  --bg2:         #161B29;
+  --bg3:         #1E253A;
+
+  /* ── Borders (Crisp Specular Edge Light) ── */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-focus:  rgba(56, 189, 248, 0.45);
+  --line:          rgba(255, 255, 255, 0.08);
+  --line2:         #2A344C;
+
+  /* ── Text (High-Legibility Alabaster & Silver Slate) ── */
+  --text-primary:   #FFFFFF;
+  --text-secondary: #CBD5E1;
+  --text-muted:     #8B9BB4;
+  --text:    #FFFFFF;
+  --sub:     #CBD5E1;
+  --muted:   #8B9BB4;
+  --ink:     #FFFFFF;
+  --paper:   #10131D;
+
+  /* ── Accent & Status (Vibrant Cyber/OLED Radiance) ── */
+  --accent-primary:  #38BDF8; /* Electric Sky Cyan */
+  --status-optimal:  #34D399; /* Radiant Mint Emerald */
+  --status-warning:  #FBBF24; /* Radiant Warm Gold */
+  --status-critical: #F87171; /* Vivid Coral Ruby */
+  --accent:   #38BDF8;
+  --blue:     #38BDF8;
+  --green:    #34D399;
+  --yellow:   #FBBF24;
+  --red:      #F87171;
+  --mauve:    #C084FC; /* Electric Neon Violet */
+  --lavender: #C084FC;
+  --peach:    #FB923C; /* Electric Tangerine Amber */
+  --teal:     #2DD4BF;
+  --sky:      #38BDF8;
+  --salmon:   #FB923C;
+  --lilac:    #C084FC;
+
+  /* ── Legacy compat ── */
+  --navy:  #2563EB;
+  --blood: #F87171;
+  --wine:  #475569;
+  --umber: #1E253A;
+  --cream: #FFFFFF;
+  --ice:   #38BDF8;
+
+  /* ── Typography ── */
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --r: 12px;
+
+  /* ── Layout & Depth ── */
+  --r: 8px;
   --ease: cubic-bezier(.22, 1, .36, 1);
   --ease-out: cubic-bezier(.16, 1, .3, 1);
-  --shadow: 0 10px 30px rgba(26,10,10,.48);
-  --shadow-lg: 0 24px 60px rgba(18,6,6,.58);
-  --glow: 0 0 0 1px color-mix(in srgb, var(--blue) 28%, transparent), 0 10px 28px color-mix(in srgb, var(--blood) 16%, transparent);
+  --shadow: 0 4px 18px rgba(0,0,0,.45), 0 1px 3px rgba(0,0,0,.35);
+  --shadow-lg: 0 12px 36px rgba(0,0,0,.65), 0 2px 8px rgba(0,0,0,.45);
+  --glow: 0 0 12px rgba(56, 189, 248, 0.25);
 }
 
 html.light {
-  --shadow: 0 10px 28px color-mix(in srgb, var(--wine) 16%, transparent);
-  --shadow-lg: 0 20px 50px color-mix(in srgb, var(--navy) 12%, transparent);
-  --glow: 0 0 0 1px color-mix(in srgb, var(--navy) 18%, transparent), 0 8px 24px color-mix(in srgb, var(--lilac) 22%, transparent);
+  --shadow: 0 1px 3px rgba(15,23,42,.08), 0 4px 16px rgba(15,23,42,.06);
+  --shadow-lg: 0 4px 24px rgba(15,23,42,.12);
+  --glow: 0 0 0 1px var(--border-focus);
 }
 
 /* ─── CUSTOM SCROLLBARS ──────────────────────────────────── */
@@ -97,29 +122,49 @@ html.light {
 }
 
 
-/* ─── LIGHT THEME ─────────────────────────────────────── */
+/* ─── LIGHT THEME v2.0 — Alabaster ─── */
 html.light {
-  --bg:       #FFF1CB;
-  --bg1:      #fff8e0;
-  --bg2:      #ffe4d4;
-  --bg3:      #ffd0c6;
-  --line:     #B7A3E3;
-  --line2:    #FF8F8F;
-  --text:     #3A2525;
-  --sub:      #6b3535;
-  --muted:    #9E2A3A;
-  --blue:     #000080;
-  --accent:   #000080;
-  --lavender: #B7A3E3;
-  --green:    #000080;
-  --yellow:   #9E2A3A;
-  --red:      #FF0000;
-  --peach:    #FF8F8F;
-  --mauve:    #B7A3E3;
-  --teal:     #000080;
-  --sky:      #C2E2FA;
-  --ink:      #3A2525;
-  --paper:    #FFF1CB;
+  --bg-canvas:   #F8FAFC;
+  --bg-surface:  #FFFFFF;
+  --bg-elevated: #F1F5F9;
+  --bg:   #F8FAFC;
+  --bg1:  #FFFFFF;
+  --bg2:  #F1F5F9;
+  --bg3:  #E2E8F0;
+  --border-subtle: #E2E8F0;
+  --border-focus:  #94A3B8;
+  --line:  #E2E8F0;
+  --line2: #94A3B8;
+  --text-primary:   #0F172A;
+  --text-secondary: #475569;
+  --text-muted:     #94A3B8;
+  --text:  #0F172A;
+  --sub:   #475569;
+  --muted: #94A3B8;
+  --ink:   #0F172A;
+  --paper: #FFFFFF;
+  --accent-primary: #2563EB;
+  --accent: #2563EB;
+  --blue:   #2563EB;
+  --green:  #10B981;
+  --yellow: #F59E0B;
+  --red:    #EF4444;
+  --mauve:  #7C3AED;
+  --lavender: #7C3AED;
+  --peach:  #EA580C;
+  --teal:   #0D9488;
+  --sky:    #0284C7;
+  --salmon: #EA580C;
+  --lilac:  #7C3AED;
+  --navy:   #1D4ED8;
+  --blood:  #DC2626;
+  --wine:   #94A3B8;
+  --umber:  #E2E8F0;
+  --cream:  #0F172A;
+  --ice:    #0284C7;
+  --shadow: 0 1px 3px rgba(15,23,42,.08), 0 4px 16px rgba(15,23,42,.06);
+  --shadow-lg: 0 4px 24px rgba(15,23,42,.12);
+  --glow: 0 0 0 1px var(--border-focus);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
@@ -134,18 +179,14 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 body::before{
+  display:none !important;
   content:'';
   position:fixed; inset:0; pointer-events:none; z-index:0;
-  background:
-    radial-gradient(900px 480px at 8% -10%, color-mix(in srgb, var(--blood) 16%, transparent), transparent 60%),
-    radial-gradient(700px 420px at 100% 0%, color-mix(in srgb, var(--navy) 28%, transparent), transparent 55%),
-    radial-gradient(600px 360px at 80% 110%, color-mix(in srgb, var(--lilac) 14%, transparent), transparent 50%);
+  background: var(--bg-canvas);
 }
 html.light body::before{
-  background:
-    radial-gradient(900px 480px at 6% -8%, color-mix(in srgb, var(--salmon) 38%, transparent), transparent 58%),
-    radial-gradient(720px 420px at 100% 0%, color-mix(in srgb, var(--ice) 42%, transparent), transparent 55%),
-    radial-gradient(560px 340px at 70% 110%, color-mix(in srgb, var(--lilac) 28%, transparent), transparent 50%);
+  display:none !important;
+  background: var(--bg-canvas);
 }
 body::after{
   content:'';
@@ -1509,11 +1550,21 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
 
 /* ─── GLASSMORPHIC GLASS CLASSES ────────────────────────── */
 .glass-card {
-  backdrop-filter: blur(14px) saturate(1.15) !important;
-  background: color-mix(in srgb, var(--bg1) 78%, transparent) !important;
-  border: 1px solid color-mix(in srgb, var(--line) 55%, transparent) !important;
+  backdrop-filter: blur(14px) saturate(1.2) !important;
+  background: color-mix(in srgb, var(--bg1) 85%, transparent) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
   box-shadow: var(--shadow) !important;
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+}
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+}
+html.light .glass-card {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  border-top: 1px solid #E2E8F0 !important;
+  box-shadow: 0 1px 3px rgba(15,23,42,.08), 0 4px 16px rgba(15,23,42,.06) !important;
 }
 .glass-card:hover {
   border-color: color-mix(in srgb, var(--blue) 42%, transparent) !important;
@@ -2301,10 +2352,7 @@ html.light .cursor-glow{ mix-blend-mode:multiply; opacity:0; }
 .lock-screen{
   position:fixed; inset:0; z-index:10000; display:none;
   align-items:center; justify-content:center;
-  background:
-    radial-gradient(700px 420px at 20% 0%, color-mix(in srgb, var(--blood) 18%, transparent), transparent 55%),
-    radial-gradient(700px 420px at 90% 100%, color-mix(in srgb, var(--navy) 30%, transparent), transparent 50%),
-    var(--bg);
+  background: var(--bg-canvas);
   flex-direction:column; gap:16px; padding:28px;
 }
 .lock-screen.show{ display:flex; }
@@ -2804,6 +2852,498 @@ html.skin-mental #page-mental .glass-card{
 .layout.sidebar-collapsed .nav-item.nav-skin-physical::after,
 .layout.sidebar-collapsed .nav-item.nav-skin-mental::after{ display:none; }
 
+
+/* ─── v2.0 COMMAND COCKPIT & PRECISION DESIGN SYSTEM ─── */
+.cmd-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r);
+  margin-bottom: 16px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.cmd-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.cmd-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--accent-primary);
+  background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 25%, transparent);
+}
+.cmd-clock {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.cmd-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.cmd-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  background: var(--bg-elevated);
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border-subtle);
+}
+.cmd-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--status-optimal);
+  box-shadow: 0 0 6px var(--status-optimal);
+}
+.cmd-override-btn {
+  background: color-mix(in srgb, var(--yellow) 15%, transparent);
+  color: var(--yellow);
+  border: 1px solid var(--yellow);
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.cmd-override-btn:hover {
+  background: var(--yellow);
+  color: #000;
+}
+.cmd-override-btn.active {
+  background: var(--status-optimal);
+  border-color: var(--status-optimal);
+  color: #000;
+}
+
+/* 3-Column Cockpit Grid */
+.cockpit-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 0.95fr;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+@media (max-width: 1200px) {
+  .cockpit-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 800px) {
+  .cockpit-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.cockpit-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Period Live Tracker Banner */
+.period-live-indicator {
+  padding: 10px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--accent-primary);
+  border-radius: var(--r);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.period-live-now {
+  color: var(--accent-primary);
+  font-weight: 600;
+}
+.period-live-next {
+  color: var(--text-muted);
+}
+
+/* Sweep button */
+.sweep-btn {
+  background: transparent;
+  color: var(--accent-primary);
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 30%, transparent);
+  border-radius: 4px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sweep-btn:hover {
+  background: color-mix(in srgb, var(--accent-primary) 15%, transparent);
+}
+
+/* Pillar sections */
+.pillar-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r);
+  padding: 14px;
+}
+.pillar-hdr {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-subtle);
+  text-transform: uppercase;
+}
+.pillar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.pillar-check-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.pillar-check-item:hover {
+  border-color: var(--border-focus);
+}
+.pillar-check-item.done {
+  opacity: 0.6;
+}
+.pillar-check-item.done span.text {
+  text-decoration: line-through;
+}
+.pillar-tag {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--bg-canvas);
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+/* Telemetry & Limiters Cards */
+.telem-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r);
+  padding: 14px;
+}
+.limiter-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--border-subtle);
+}
+.limiter-row:last-child {
+  border-bottom: none;
+}
+.limiter-label {
+  color: var(--text-secondary);
+}
+.limiter-val {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Proof of Execution Mini-Cards */
+.proof-anchor-item {
+  padding: 8px 10px;
+  background: var(--bg-elevated);
+  border-left: 2px solid var(--status-optimal);
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+.proof-anchor-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.proof-anchor-sub {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Unit Readiness Pills */
+.unit-pills-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.unit-pill {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.unit-pending {
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+}
+.unit-locked {
+  background: color-mix(in srgb, var(--accent-primary) 15%, transparent);
+  color: var(--accent-primary);
+  border: 1px solid var(--accent-primary);
+}
+.unit-ready {
+  background: color-mix(in srgb, var(--status-optimal) 18%, transparent);
+  color: var(--status-optimal);
+  border: 1px solid var(--status-optimal);
+}
+
+/* Wins Vault Full Grid */
+.wins-vault-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+.win-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.2s;
+}
+.win-card:hover {
+  border-color: var(--border-focus);
+}
+.win-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+.win-cat {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.win-metric-pill {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--status-optimal);
+  background: color-mix(in srgb, var(--status-optimal) 12%, transparent);
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--status-optimal) 30%, transparent);
+}
+.win-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.win-proof {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+.win-reflection {
+  font-size: 11px;
+  font-style: italic;
+  color: var(--text-muted);
+  background: var(--bg-elevated);
+  padding: 8px 10px;
+  border-radius: 4px;
+  border-left: 2px solid var(--accent-primary);
+}
+
+
+/* ─── SPRINT 3: 6-PILLAR WORKSPACES & CIRCLE/CHARTER ─── */
+.ws-nav-section {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  padding: 8px 12px 4px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+.ws-nav-section:hover {
+  color: var(--text-primary);
+  background: color-mix(in srgb, var(--accent-primary) 8%, transparent);
+}
+.ws-nav-shortcut {
+  font-size: 9px;
+  opacity: 0.6;
+  font-family: var(--font-mono);
+}
+.ws-nav-subitem {
+  padding-left: 28px !important;
+  font-size: 11px !important;
+}
+
+/* Present Mode Ambient Overlay / Banner */
+.present-mode-banner {
+  background: color-mix(in srgb, var(--status-optimal) 14%, var(--bg-surface));
+  border: 1px solid var(--status-optimal);
+  border-radius: var(--r);
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  animation: fadeIn 0.3s ease;
+}
+.present-mode-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--status-optimal);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.present-mode-sub {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* Charter Tenet Cards */
+.charter-tenet-card {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.05), var(--bg-surface));
+  border: 1px solid var(--border-subtle);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 3px solid var(--accent-primary);
+  border-radius: var(--r);
+  padding: 14px 18px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.6;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s ease;
+}
+.charter-tenet-card:hover {
+  border-color: rgba(56, 189, 248, 0.35);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35), 0 0 12px rgba(56, 189, 248, 0.08);
+  transform: translateY(-1px);
+}
+.charter-tenet-card strong {
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+html.light .charter-tenet-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-left: 3px solid var(--accent-primary);
+  box-shadow: 0 1px 3px rgba(15,23,42,.06);
+}
+html.light .charter-tenet-card strong {
+  color: var(--text-primary);
+}
+
+/* Dual-Win Form */
+.dual-win-box {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--r);
+  padding: 18px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+html.light .dual-win-box {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+}
+.dual-win-input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 12px;
+  font-family: var(--font-body);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.dual-win-input:focus {
+  border-color: var(--accent-primary);
+}
+.dual-win-entry {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r);
+  padding: 12px 16px;
+  margin-bottom: 10px;
+}
+.dual-win-date {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.dual-win-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
 </style>
 </head>
 <body class="booting">
@@ -2840,7 +3380,7 @@ html.skin-mental #page-mental .glass-card{
 <aside class="sidebar" id="sidebar">
   <button class="sidebar-toggle" id="sidebar-toggle-btn" onclick="toggleSidebar()" title="Toggle sidebar">‹</button>
   <div class="sid-top">
-    <div class="sid-rank" id="rank-display">E-RANK · SEM 3</div>
+    <div class="sid-rank" id="rank-display">SEM 4 · AB-302</div>
     <div class="sid-name" id="sidebar-name">Abhishikth <button class="edit-btn" onclick="editProfile()">✏️</button></div>
     <div class="sid-branch" id="sidebar-branch">AIE · Amrita Chennai</div>
     <div class="xp-bar-wrap">
@@ -2850,39 +3390,64 @@ html.skin-mental #page-mental .glass-card{
   </div>
   <div class="sid-sep"></div>
   <nav class="sid-nav">
-    <div class="nav-section nav-fold" data-fold="hq" onclick="toggleNavFold('hq',event)">HQ <span class="fold-chev">▾</span></div>
-    <div class="nav-group" data-group="hq">
-    <div class="nav-item active" onclick="gotoPage('today',this)"><span class="nav-icon">⚡</span>Today</div>
-    <div class="nav-item" onclick="gotoPage('schedule',this)"><span class="nav-icon">⏰</span>Daily Matrix</div>
-    <div class="nav-item" onclick="gotoPage('audit',this)"><span class="nav-icon">📊</span>Weekly Audit</div>
-    <div class="nav-item" onclick="gotoPage('roadmap',this)"><span class="nav-icon">🗺</span>Systems Roadmap</div>
-    <div class="nav-item" onclick="gotoPage('semester',this)"><span class="nav-icon">📚</span>Semester 3</div>
-    <div class="nav-item" onclick="gotoPage('calendar',this)"><span class="nav-icon">📅</span>Academic Calendar</div>
+    <!-- 01 / COMMAND (Alt+1) -->
+    <div class="ws-nav-section" data-workspace="1" onclick="gotoWorkspace(1)">
+      <span>01 / COMMAND</span><span class="ws-nav-shortcut">Alt+1</span>
     </div>
-    <div class="nav-section nav-fold" data-fold="grind" onclick="toggleNavFold('grind',event)">GRIND <span class="fold-chev">▾</span></div>
-    <div class="nav-group" data-group="grind">
-    <div class="nav-item" onclick="gotoPage('dsa',this)"><span class="nav-icon">🧩</span>DSA Track<span class="nav-badge" id="dsa-badge">0</span></div>
-    <div class="nav-item" onclick="gotoPage('projects',this)"><span class="nav-icon">🛠</span>Projects</div>
-    <div class="nav-item" onclick="gotoPage('tasks',this)"><span class="nav-icon">⚔️</span>Missions</div>
+    <div class="nav-group">
+      <div class="nav-item active" onclick="gotoPage('today',this)"><span class="nav-icon">⚡</span>Today Cockpit</div>
+      <div class="nav-item ws-nav-subitem" onclick="gotoPage('schedule',this)"><span class="nav-icon">⏰</span>Daily Matrix</div>
+      <div class="nav-item ws-nav-subitem" onclick="gotoPage('audit',this)"><span class="nav-icon">📊</span>Weekly Audit</div>
     </div>
-    <div class="nav-section nav-fold" data-fold="intel" onclick="toggleNavFold('intel',event)">INTEL <span class="fold-chev">▾</span></div>
-    <div class="nav-group" data-group="intel">
-    <div class="nav-item" onclick="gotoPage('targets',this)"><span class="nav-icon">🎯</span>Quant Funnel</div>
-    <div class="nav-item" onclick="gotoPage('gaming',this)"><span class="nav-icon">🎮</span>Gaming</div>
-    <div class="nav-item" onclick="gotoPage('notes',this)"><span class="nav-icon">📝</span>Notes</div>
+
+    <!-- 02 / ACADEMICS (Alt+2) -->
+    <div class="ws-nav-section" data-workspace="2" onclick="gotoWorkspace(2)">
+      <span>02 / ACADEMICS</span><span class="ws-nav-shortcut">Alt+2</span>
     </div>
-    <div class="nav-section nav-fold" data-fold="career" onclick="toggleNavFold('career',event)">CAREER <span class="fold-chev">▾</span></div>
-    <div class="nav-group" data-group="career">
-    <div class="nav-item" onclick="gotoPage('applications',this)"><span class="nav-icon">💼</span>Applications<span class="nav-badge green" id="app-badge">0</span></div>
-    <div class="nav-item" onclick="gotoPage('budget',this)"><span class="nav-icon">💳</span>Budget</div>
-    <div class="nav-item" onclick="gotoPage('trips',this)"><span class="nav-icon">✈️</span>Trips</div>
-    <div class="nav-item" onclick="gotoPage('resume',this)"><span class="nav-icon">📄</span>Resume</div>
+    <div class="nav-group">
+      <div class="nav-item" onclick="gotoPage('semester',this)"><span class="nav-icon">📚</span>Sem 4 Courses (11)</div>
+      <div class="nav-item ws-nav-subitem" onclick="gotoPage('calendar',this)"><span class="nav-icon">📅</span>Academic Calendar</div>
+      <div class="nav-item ws-nav-subitem" onclick="gotoPage('roadmap',this)"><span class="nav-icon">🗺</span>Systems Roadmap</div>
+      <div class="nav-item ws-nav-subitem" onclick="gotoPage('notes',this)"><span class="nav-icon">📝</span>Folio Notes</div>
     </div>
-    <div class="nav-section nav-fold" data-fold="health" onclick="toggleNavFold('health',event)">HEALTH <span class="fold-chev">▾</span></div>
-    <div class="nav-group" data-group="health">
-    <div class="nav-item" onclick="gotoPage('routine',this)"><span class="nav-icon">🤸</span>Daily Routine</div>
-    <div class="nav-item" onclick="gotoPage('physical',this)"><span class="nav-icon">🩺</span>Physical Metrics</div>
-    <div class="nav-item" onclick="gotoPage('mental',this)"><span class="nav-icon">🧠</span>Mental State</div>
+
+    <!-- 03 / FORGE (Alt+3) -->
+    <div class="ws-nav-section" data-workspace="3" onclick="gotoWorkspace(3)">
+      <span>03 / FORGE</span><span class="ws-nav-shortcut">Alt+3</span>
+    </div>
+    <div class="nav-group">
+      <div class="nav-item" onclick="gotoPage('projects',this)"><span class="nav-icon">🛠</span>R&D & Wins Vault</div>
+      <div class="nav-item ws-nav-subitem" onclick="gotoPage('dsa',this)"><span class="nav-icon">🧩</span>DSA Track<span class="nav-badge" id="dsa-badge">0</span></div>
+      <div class="nav-item ws-nav-subitem" onclick="gotoPage('tasks',this)"><span class="nav-icon">⚔️</span>Missions</div>
+    </div>
+
+    <!-- 04 / VITALITY (Alt+4) -->
+    <div class="ws-nav-section" data-workspace="4" onclick="gotoWorkspace(4)">
+      <span>04 / VITALITY</span><span class="ws-nav-shortcut">Alt+4</span>
+    </div>
+    <div class="nav-group">
+      <div class="nav-item" onclick="gotoPage('routine',this)"><span class="nav-icon">🏃</span>3-Run/3-Gym & Derma</div>
+      <div class="nav-item ws-nav-subitem" onclick="gotoPage('physical',this)"><span class="nav-icon">🩺</span>Physical Metrics</div>
+      <div class="nav-item ws-nav-subitem" onclick="gotoPage('mental',this)"><span class="nav-icon">🧠</span>Mental State</div>
+    </div>
+
+    <!-- 05 / CIRCLE & CHARTER (Alt+5) -->
+    <div class="ws-nav-section" data-workspace="5" onclick="gotoWorkspace(5)">
+      <span>05 / CIRCLE</span><span class="ws-nav-shortcut">Alt+5</span>
+    </div>
+    <div class="nav-group">
+      <div class="nav-item" onclick="gotoPage('circle',this)"><span class="nav-icon">🌿</span>Circle & Charter</div>
+    </div>
+
+    <!-- 06 / INTEL & ASSETS (Alt+6) -->
+    <div class="ws-nav-section" data-workspace="6" onclick="gotoWorkspace(6)">
+      <span>06 / INTEL</span><span class="ws-nav-shortcut">Alt+6</span>
+    </div>
+    <div class="nav-group">
+      <div class="nav-item" onclick="gotoPage('targets',this)"><span class="nav-icon">🎯</span>Quant Funnel</div>
+      <div class="nav-item ws-nav-subitem" onclick="gotoPage('applications',this)"><span class="nav-icon">💼</span>Applications</div>
+      <div class="nav-item ws-nav-subitem" onclick="gotoPage('budget',this)"><span class="nav-icon">💳</span>Budget</div>
+      <div class="nav-item ws-nav-subitem" onclick="gotoPage('resume',this)"><span class="nav-icon">📄</span>Resume</div>
     </div>
     <div id="health-rail"></div>
   </nav>
@@ -2923,7 +3488,7 @@ html.skin-mental #page-mental .glass-card{
       </div>
     </div>
     <div class="topbar-right">
-      <span class="phase-pill" id="topbar-phase-pill">Phase 1 · System Internals & C++ Pivot</span>
+      <span class="phase-pill" id="topbar-phase-pill">Phase 2 · Algo Complexity & Edge-AI</span>
       <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()">
         <span class="theme-toggle-icon" id="theme-icon">🌙</span>
         <span id="theme-label">Dark</span>
@@ -2960,64 +3525,85 @@ html.skin-mental #page-mental .glass-card{
 
   <!-- TODAY -->
   <div id="page-today" class="content active">
-    <div class="funnel-widget glass-card" id="funnel-widget"></div>
-    <!-- XP History Chart -->
-    <div class="xp-chart-card glass-card">
-      <div class="xp-chart-header">
-        <div class="section-hdr" style="margin:0;">XP TREND — 30 DAYS</div>
-        <span style="font-family:var(--font-mono);font-size:10px;color:var(--sub);" id="xp-chart-total"></span>
+    <!-- COMMAND COCKPIT HEADER -->
+    <div class="cmd-bar">
+      <div class="cmd-bar-left">
+        <div class="cmd-badge">01 / COMMAND</div>
+        <div class="cmd-clock" id="cmd-clock">Thursday, 19 Nov 2026 · 08:30 AM</div>
       </div>
-      <div class="chart-canvas-wrap">
-        <canvas id="xp-chart-canvas"></canvas>
+      <div class="cmd-bar-right">
+        <span class="cmd-status-pill"><span class="cmd-status-dot"></span> Campus AB-302 · Sem IV</span>
+        <button class="cmd-override-btn" id="btn-exam-override" onclick="toggleExamOverride()">⚡ 1-Tap Exam / Field Log</button>
       </div>
-    </div>
-    <div id="heatmap-card" class="heatmap-card glass-card"></div>
-    <div id="github-card" class="github-card glass-card" style="display:none; margin-top:14px;"></div>
-    <!-- Achievements -->
-    <div class="achievements-card glass-card">
-      <div class="section-hdr" style="margin-bottom:12px;">ACHIEVEMENTS</div>
-      <div class="achievement-grid" id="achievements-grid"></div>
-    </div>
-    <div class="stat-row">
-      <div class="stat blue glass-card"><div class="stat-label">Tasks Done</div><div class="stat-val" id="stat-tasks">0/0</div><div class="stat-sub">today</div></div>
-      <div class="stat green glass-card"><div class="stat-label">Leetcode</div><div class="stat-val" id="stat-lc">0</div><div class="stat-sub">problems total</div></div>
-      <div class="stat yellow glass-card"><div class="stat-label">Streak</div><div class="stat-val" id="stat-streak">0</div><div class="stat-sub">days</div></div>
-      <div class="stat mauve glass-card"><div class="stat-label">XP Today</div><div class="stat-val" id="stat-xp">+0</div><div class="stat-sub">earned</div></div>
     </div>
 
-    <div class="today-grid">
-      <div>
-        <div class="section-hdr" id="day-label">TODAY'S SCHEDULE</div>
+    <!-- 3-COLUMN OPERATIONAL COCKPIT -->
+    <div class="cockpit-grid">
+      <!-- COLUMN 1: LIVE TIMETABLE (AB-302) -->
+      <div class="cockpit-col">
+        <div class="period-live-indicator" id="period-live-banner">
+          <span class="period-live-now" id="period-live-now">▶ NOW: Classes in Session</span>
+          <span class="period-live-next" id="period-live-next">⏭ NEXT: P8 Folio Lock</span>
+        </div>
         <div class="schedule-card glass-card">
-          <div class="card-hdr">
-            <div class="card-title"><span id="schedule-day-name">Monday</span> <button class="edit-btn" onclick="editSchedule()">⚙️</button></div>
-            <div class="card-sub" id="schedule-date-sub"></div>
+          <div class="card-hdr" style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="card-title">
+              <span id="schedule-day-name">Today</span>'s Matrix
+              <button class="edit-btn" onclick="editSchedule()">⚙️</button>
+            </div>
+            <button class="sweep-btn" onclick="sweepMorningClasses()" title="Mark all morning classes complete">✓ Sweep Morning</button>
           </div>
           <div id="schedule-list"></div>
         </div>
-        
-        <!-- Delayed Daily Tasks Section -->
-        <div class="section-hdr" id="delayed-tasks-hdr" style="margin-top:14px; display:none;">DELAYED DAILY TASKS</div>
-        <div id="delayed-tasks-container" style="display:none; flex-direction:column; gap:8px;"></div>
 
-        <!-- Retroactive Logging Section -->
-        <div class="section-hdr" style="margin-top:14px;">RETROACTIVE LOGS (PAST 3 DAYS)</div>
-        <div class="glass-card" style="padding:16px;">
-          <div style="font-size:12px; color:var(--sub); margin-bottom:12px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-            <span style="font-weight:600; color:var(--lavender);">Select Day:</span>
-            <select id="past-date-select" onchange="renderPastDoneTasks()" style="background:var(--bg2); color:var(--text); border:1px solid var(--line2); border-radius:4px; padding:4px 8px; font-size:12px; outline:none; cursor:pointer;">
-            </select>
-            <span id="past-tasks-count" style="font-family:var(--font-mono); font-size:11px; background:color-mix(in srgb, var(--lavender) 10%, transparent); padding:2px 6px; border-radius:4px; color:var(--lavender); margin-left:auto;">0/3 logged</span>
+        <!-- Delayed Daily Tasks Container -->
+        <div class="section-hdr" id="delayed-tasks-hdr" style="margin-top:10px; display:none;">DELAYED DAILY TASKS</div>
+        <div id="delayed-tasks-container" style="display:none; flex-direction:column; gap:8px;"></div>
+      </div>
+
+      <!-- COLUMN 2: TODAY'S 4 CORE PILLARS -->
+      <div class="cockpit-col" id="cockpit-pillars-container">
+        <!-- Rendered by JS: Vitality/Derma + Academic Folio + R&D Sprint + Anti-Burnout -->
+      </div>
+
+      <!-- COLUMN 3: TELEMETRY & WINS -->
+      <div class="cockpit-col" id="cockpit-telemetry-container">
+        <!-- Rendered by JS: Proof Anchors + Limiters + Telemetry -->
+      </div>
+    </div>
+
+    <!-- STAT ROW -->
+    <div class="stat-row">
+      <div class="stat blue glass-card"><div class="stat-label">Tasks Done</div><div class="stat-val" id="stat-tasks">0/0</div><div class="stat-sub">today</div></div>
+      <div class="stat green glass-card"><div class="stat-label">Leetcode / CF</div><div class="stat-val" id="stat-lc">0</div><div class="stat-sub">problems total</div></div>
+      <div class="stat yellow glass-card"><div class="stat-label">Streak</div><div class="stat-val" id="stat-streak">0</div><div class="stat-sub">days active</div></div>
+      <div class="stat mauve glass-card"><div class="stat-label">XP Today</div><div class="stat-val" id="stat-xp">+0</div><div class="stat-sub">earned</div></div>
+    </div>
+
+    <!-- COLLAPSIBLE DEEP ANALYTICS ACCORDION -->
+    <div class="glass-card" style="margin-bottom:20px; padding:16px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="toggleAnalyticsAccordion()">
+        <span class="section-hdr" style="margin:0;">📊 SYSTEM ANALYTICS & STUDY TIMER</span>
+        <span id="analytics-accord-icon" style="font-family:var(--font-mono); font-size:12px; color:var(--text-muted);">▾ EXPAND</span>
+      </div>
+      <div id="analytics-accordion-body" style="display:none; margin-top:16px;">
+        <div class="xp-chart-card glass-card" style="margin-bottom:14px;">
+          <div class="xp-chart-header">
+            <div class="section-hdr" style="margin:0;">XP TREND — 30 DAYS</div>
+            <span style="font-family:var(--font-mono);font-size:10px;color:var(--sub);" id="xp-chart-total"></span>
           </div>
-          <div id="past-tasks-list" style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;"></div>
-          <div id="past-task-form" style="display:flex; gap:8px; align-items:center;">
-            <input type="text" id="past-task-name" placeholder="What did you complete?" style="flex:1; height:34px; padding:0 10px; font-size:12px; background:var(--bg2); border:1px solid var(--line2); border-radius:4px; color:var(--text); outline:none; transition:border-color 0.2s;" />
-            <input type="number" id="past-task-xp" placeholder="XP" style="width:60px; height:34px; padding:0 8px; font-size:12px; background:var(--bg2); border:1px solid var(--line2); border-radius:4px; color:var(--text); font-family:var(--font-mono); outline:none;" value="15" />
-            <button class="lc-btn" onclick="addPastDoneTask()" style="height:34px; width:44px; display:flex; align-items:center; justify-content:center; padding:0; font-size:16px; font-weight:700; background:var(--lavender); color:var(--bg); border:none; border-radius:4px; cursor:pointer;">+</button>
+          <div class="chart-canvas-wrap">
+            <canvas id="xp-chart-canvas"></canvas>
           </div>
         </div>
+        <div id="heatmap-card" class="heatmap-card glass-card" style="margin-bottom:14px;"></div>
+        <div class="achievements-card glass-card" style="margin-bottom:14px;">
+          <div class="section-hdr" style="margin-bottom:12px;">ACHIEVEMENTS</div>
+          <div class="achievement-grid" id="achievements-grid"></div>
+        </div>
       </div>
-      <div class="right-col">
+    </div>
+    <div class="right-col" style="display:none;">
         <div class="section-hdr">STUDY TIMER <button class="edit-btn" onclick="editPomoDurations()" title="Configure Durations & Sound">⚙️</button></div>
         <div class="pomo-card glass-card">
           <div class="pomo-ring-container">
@@ -3087,7 +3673,6 @@ html.skin-mental #page-mental .glass-card{
         </div>
       </div>
     </div>
-  </div>
 
   <!-- DAILY MATRIX (TIME-BLOCKING SCHEDULE) -->
   <div id="page-schedule" class="content">
@@ -3557,6 +4142,9 @@ html.skin-mental #page-mental .glass-card{
         <button class="btn-primary" onclick="exportResumePDF()" style="padding:6px 12px;font-size:11px;font-family:var(--font-mono);cursor:pointer;border-radius:4px;border:none;">🖨️ PRINT / PDF</button>
         <button class="btn-secondary" onclick="resetResumeData()" style="padding:6px 12px;font-size:11px;font-family:var(--font-mono);cursor:pointer;border-radius:4px;border:1px solid var(--line2);background:var(--bg2);color:var(--text);">♻️ RESET</button>
       </div>
+
+
+
     </div>
     <div class="resume-builder-layout">
       <!-- Left: Editor Panel -->
@@ -3655,6 +4243,71 @@ html.skin-mental #page-mental .glass-card{
       <div class="resume-preview-panel glass-card">
         <div id="resume-preview-document"></div>
       </div>
+    </div>
+  </div>
+
+  <!-- 05 / CIRCLE & CHARTER -->
+  <div id="page-circle" class="content">
+    <div class="section-hdr" style="display:flex; justify-content:space-between; align-items:center;">
+      <span>05 / CIRCLE & CHARTER — ANTI-BURNOUT & GROUNDED LIFE VIEW</span>
+      <button class="cmd-override-btn" id="btn-present-mode" onclick="togglePresentMode()">🌿 Toggle Present Mode</button>
+    </div>
+
+    <!-- Present Mode Active Banner (when enabled) -->
+    <div id="present-mode-active-banner" style="display:none;" class="present-mode-banner">
+      <div>
+        <div class="present-mode-title">🌿 Present Mode Active · Living in the Moment</div>
+        <div class="present-mode-sub">All grind and academic alerts are muted. Soak in time with friends and family with zero guilt.</div>
+      </div>
+      <span style="font-family:var(--font-mono); font-size:11px; font-weight:700; color:var(--status-optimal);">+25 COOLING XP</span>
+    </div>
+
+    <!-- SECTION 1: PERSONAL IDENTITY CHARTER -->
+    <div style="margin-bottom:20px;">
+      <div class="pillar-hdr">
+        <span>Personal Philosophy & Identity Anchors</span>
+        <span style="font-family:var(--font-mono); font-size:10px; color:var(--accent-primary);">NON-NEGOTIABLE</span>
+      </div>
+      <div class="charter-tenet-card">
+        <strong>1. Emotional & Practical Thinker:</strong> I am both an emotional and a practical thinker. My ambition in AI, systems, and quant finance is fueled by my groundedness in family, friendships, and self-care — never at the expense of them.
+      </div>
+      <div class="charter-tenet-card">
+        <strong>2. No Moving Goalposts:</strong> I do not move goalposts without honoring what I have already achieved. At 18, I have earned commercial revenue (₹20,000 for Satyam), deployed vision models for Home Minister field testing, collaborated with IIT Madras, and topped my class with a 9.37 CGPA.
+      </div>
+      <div class="charter-tenet-card">
+        <strong>3. The Cooling Engine:</strong> Spending unhurried time with friends and family is not "lost work time" — it is the primary biological cooling system that prevents mental burnout.
+      </div>
+      <div class="charter-tenet-card">
+        <strong>4. Longevity & Self-Care:</strong> Daily commitment to my dermatology protocol and 3-Run/3-Gym split is an investment in self-respect, physical energy, and lifelong longevity.
+      </div>
+    </div>
+
+    <!-- SECTION 2: FRIENDSHIP & FAMILY TASK LEDGER -->
+    <div style="margin-bottom:20px;">
+      <div class="pillar-hdr">
+        <span>Friendship & Family Task Ledger (Circle)</span>
+        <button class="sweep-btn" onclick="addFriendshipTaskPrompt()">+ Add Task</button>
+      </div>
+      <div id="circle-tasks-list" class="pillar-list"></div>
+    </div>
+
+    <!-- SECTION 3: DUAL-WIN EVENING JOURNAL -->
+    <div>
+      <div class="pillar-hdr">
+        <span>Evening Dual-Win Journal (10-Second Reflection)</span>
+        <span style="font-family:var(--font-mono); font-size:10px; color:var(--status-optimal);">+20 XP</span>
+      </div>
+      <div class="dual-win-box">
+        <div style="font-size:12px; color:var(--text-secondary); margin-bottom:10px;">
+          Every day closes with two wins: one practical systems win and one human connection win.
+        </div>
+        <input type="text" id="dw-practical" class="dual-win-input" placeholder="🛠️ Practical Execution Win (e.g. Fixed AeroSynapse tracker jitter & locked Math 4 Folio note)" />
+        <input type="text" id="dw-emotional" class="dual-win-input" placeholder="❤️ Human / Emotional Win (e.g. Great 1-hour laugh with squad after dinner & completed derma routine)" />
+        <button class="cmd-override-btn" onclick="submitDualWin()" style="width:100%; justify-content:center; padding:10px;">
+          Log Dual-Win Journal Entry ✓
+        </button>
+      </div>
+      <div id="dual-win-history"></div>
     </div>
   </div>
 
@@ -3894,79 +4547,93 @@ html.skin-mental #page-mental .glass-card{
 <script>
 // ─── STATE & DEFAULTS ─────────────────────────────────────
 // START_DEFAULTS
-const DEFAULT_PROFILE = { name: "Abhishikth", branch: "AIE · Amrita Chennai", sem: "SEM 3" };
+const DEFAULT_PROFILE = { name: "Abhishikth", branch: "AIE · Amrita Chennai · Room AB-302", sem: "SEM 4" };
 const DEFAULT_SCHEDULE = {
   Monday:[
-    {t:'08:25–09:15',n:'22AIE204 Computer Networks',d:'P1 — Computer Networks lecture',tags:['blue'],xp:15,id:'mon-0'},
-    {t:'09:15–10:05',n:'22AIE205 Intro to Python',d:'P2 — Python programming basics',tags:['green'],xp:15,id:'mon-1'},
-    {t:'10:20–11:10',n:'22AIE201 Fundamentals of AI',d:'P3 — AI lecture search & logic',tags:['mauve'],xp:15,id:'mon-2'},
-    {t:'11:10–12:00',n:'22MAT220 Mathematics 3',d:'P4 — Convex optimization / MC3',tags:['yellow'],xp:15,id:'mon-3'},
-    {t:'12:00–12:50',n:'Lunch Break',d:'',tags:[],xp:0,id:'mon-4'},
-    {t:'12:50–14:30',n:'22AIE202 OS Lab',d:'P5-P6 — Operating Systems lab',tags:['red'],xp:20,id:'mon-5'},
-    {t:'14:30–16:10',n:'Remedial / Free Study',d:'P7-P8 — Free review / Study time',tags:[],xp:10,id:'mon-6'},
-    {t:'18:00–19:00',n:'Leetcode — Daily Problem',d:'Daily Leetcode problem grind',tags:['green'],xp:20,id:'mon-7'},
-    {t:'19:30–20:30',n:'AIMA Reading',d:'AI reading assignment',tags:['mauve'],xp:15,id:'mon-8'},
+    {t:'05:45–06:45',n:'🏃 Morning Run #1 (2.5–3 km) + Pushups',d:'Hybrid Split: Run Day 1/3 · Mobility warm-up',tags:['green'],xp:25,id:'mon-run'},
+    {t:'07:30–07:45',n:'🧴 AM Dermatology & Tablet Protocol',d:'Cleanser → AM Topical Cream → SPF 50 → AM Oral Tablet (Post-Breakfast)',tags:['mauve'],xp:15,id:'mon-derm-am'},
+    {t:'08:25–10:05',n:'22AIE213 Machine Learning (AI-DISC Lab)',d:'P1 & P2 — Dr. G. Bharathi Mohan / Dr. E. Narayanan · Finish lab work inside lab window',tags:['red'],xp:25,id:'mon-p1-p2'},
+    {t:'10:20–12:00',n:'22AIE212 Design & Analysis of Algorithms (AI-DISC Lab)',d:'P3 & P4 — Dr. E. Narayanan · Master DP/Graphs/Greedy in-lab — zero carry-over',tags:['red'],xp:25,id:'mon-p3-p4'},
+    {t:'12:50–13:40',n:'22MAT230 Mathematics for Computing 4',d:'P5 — Room AB-302 · Dr. K. Anitha',tags:['red'],xp:15,id:'mon-p5'},
+    {t:'13:40–15:20',n:'22AIE214 Intro to AI Robotics (RACE Lab)',d:'P6 & P7 — Dr. Dev Kunwar Singh Chauhan · Complete robotics lab tasks before walking out',tags:['blue'],xp:25,id:'mon-p6-p7'},
+    {t:'15:20–16:10',n:'⚡ P8 Golden Window: Folio Pre-Exam Lock',d:'Compress today ML + DAA + Math 4 notes into Folio MD->PDF before leaving campus',tags:['yellow'],xp:25,id:'mon-p8-folio'},
+    {t:'17:30–19:30',n:'🚀 R&D Deep Work Block 1 (2.0h / 4.5h Cap)',d:'AeroSynapse Phase 2 stabilization or Alloy Tattvasar IITM deliverables',tags:['red'],xp:35,id:'mon-dw1'},
+    {t:'19:30–21:00',n:'🌿 Anti-Burnout Social / Dinner / Decompression',d:'Unhurried time with campus friends, evening walk, or call home - Cooling Engine',tags:['green'],xp:20,id:'mon-social'},
+    {t:'21:00–22:30',n:'🧩 Quant / CP Block 2 (1.5h / 4.5h Cap)',d:'1 Codeforces Div2 C/D or DAA problem + Math 4 concept check',tags:['blue'],xp:30,id:'mon-dw2'},
+    {t:'22:30–22:45',n:'🌙 PM Dermatology & Night Tablet + Dual-Win Log',d:'PM Wash -> PM Prescribed Cream -> PM Oral Tablet -> Log 1 Practical Win + 1 Human Win',tags:['mauve'],xp:20,id:'mon-derm-pm'},
   ],
   Tuesday:[
-    {t:'08:25–09:15',n:'22AIE203 DSA 2',d:'P1 — Data Structures & Algorithms',tags:['green'],xp:15,id:'tue-0'},
-    {t:'09:15–10:05',n:'22AIE202 Operating Systems',d:'P2 — OS lecture core processes',tags:['red'],xp:15,id:'tue-1'},
-    {t:'10:20–12:00',n:'22MAT220 Mathematics 3',d:'P3-P4 — MC3 lecture block',tags:['yellow'],xp:20,id:'tue-2'},
-    {t:'12:00–12:50',n:'Lunch Break',d:'',tags:[],xp:0,id:'tue-3'},
-    {t:'12:50–14:30',n:'22AIE201 FAI Lab',d:'P5-P6 — AI lab assignment',tags:['mauve'],xp:20,id:'tue-4'},
-    {t:'14:30–16:10',n:'Placement Prep / Free Study',d:'P7-P8 — Placement prep & review',tags:[],xp:10,id:'tue-5'},
-    {t:'18:00–19:00',n:'OS Problem Tracing',d:'Trace scheduling algorithms on paper',tags:['red'],xp:20,id:'tue-6'},
-    {t:'19:30–20:00',n:'Leetcode Problem',d:'Solve 1 medium problem',tags:['green'],xp:20,id:'tue-7'},
+    {t:'06:00–07:15',n:'🏋️ Gym Session #1 (Pull: Back, Biceps & Rear Delts)',d:'Hybrid Split: Gym Day 1/3 - Strength & Hypertrophy',tags:['green'],xp:25,id:'tue-gym'},
+    {t:'07:30–07:45',n:'🧴 AM Dermatology & Tablet Protocol',d:'Cleanser -> AM Topical Cream -> SPF 50 -> AM Oral Tablet (Post-Breakfast)',tags:['mauve'],xp:15,id:'tue-derm-am'},
+    {t:'08:25–09:15',n:'22AIE211 Intro to Communication & IoT',d:'P1 - Room AB-302 - Dr. Jinka Venkata Aravind',tags:['blue'],xp:15,id:'tue-p1'},
+    {t:'09:15–10:05',n:'22BIO211 Intelligence of Biological Systems 2',d:'P2 - Room AB-302 - Dr. I. R. Oviya',tags:['yellow'],xp:15,id:'tue-p2'},
+    {t:'10:20–11:10',n:'23GER230 German for Beginners I',d:'P3 - Room AB-302 - Ms. T. S. Swathi',tags:['yellow'],xp:15,id:'tue-p3'},
+    {t:'11:10–12:00',n:'23ADM211 Leadership Lessons from Ramayana',d:'P4 - Room AB-302 - Dr. S. Thiagarajan - attend, reflect, easy A+',tags:['green'],xp:10,id:'tue-p4'},
+    {t:'12:50–13:40',n:'22AIE213 Machine Learning',d:'P5 - Room AB-302 - Dr. G. Bharathi Mohan',tags:['red'],xp:15,id:'tue-p5'},
+    {t:'13:40–15:20',n:'22MAT230 Mathematics for Computing 4 (Tutorial Block)',d:'P6 & P7 - Dr. K. Anitha / Dr. B. Krithika (Project/Tutorial)',tags:['red'],xp:25,id:'tue-p6-p7'},
+    {t:'15:20–16:10',n:'⚡ P8 Golden Window: Folio Pre-Exam Lock',d:'Lock Math 4 & ML lecture concepts into Folio PDF before leaving campus',tags:['yellow'],xp:25,id:'tue-p8-folio'},
+    {t:'17:30–19:30',n:'🚀 R&D Deep Work Block 1 (2.0h / 4.5h Cap)',d:'Alloy Tattvasar IITM deliverables or AeroSynapse Phase 2 execution',tags:['red'],xp:35,id:'tue-dw1'},
+    {t:'19:30–21:00',n:'🌿 Anti-Burnout Social / Dinner / Friends Time',d:'Spend intentional time with friends or call family - Cooling Engine',tags:['green'],xp:20,id:'tue-social'},
+    {t:'21:00–22:30',n:'🧩 Quant / CP & Coursework Block 2 (1.5h / 4.5h Cap)',d:'Codeforces problem + IoT/German quick vocab review',tags:['blue'],xp:30,id:'tue-dw2'},
+    {t:'22:30–22:45',n:'🌙 PM Dermatology & Night Tablet + Dual-Win Log',d:'PM Wash -> PM Prescribed Cream -> PM Oral Tablet + Log wins',tags:['mauve'],xp:20,id:'tue-derm-pm'},
   ],
   Wednesday:[
-    {t:'08:25–09:15',n:'22AIE201 FAI Lecture',d:'P1 — AI lecture core search',tags:['mauve'],xp:15,id:'wed-0'},
-    {t:'09:15–10:05',n:'22MAT220 Mathematics 3',d:'P2 — Math MC3 lecture',tags:['yellow'],xp:15,id:'wed-1'},
-    {t:'10:20–11:10',n:'22BIO201 Bio Systems',d:'P3 — Biology systems basics',tags:[],xp:5,id:'wed-2'},
-    {t:'11:10–12:00',n:'22AIE203 DSA 2',d:'P4 — Data Structures lecture',tags:['green'],xp:15,id:'wed-3'},
-    {t:'12:00–12:50',n:'Lunch Break',d:'',tags:[],xp:0,id:'wed-4'},
-    {t:'12:50–14:30',n:'22AIE204 ICN Lab',d:'P5-P6 — Networks Lab',tags:['blue'],xp:20,id:'wed-5'},
-    {t:'14:30–16:10',n:'Placement Prep / Free Study',d:'P7-P8 — Self study',tags:[],xp:10,id:'wed-6'},
-    {t:'18:00–19:00',n:'AIMA Chapter Study',d:'Read chapter matching lecture',tags:['mauve'],xp:20,id:'wed-7'},
-    {t:'19:30–20:00',n:'Leetcode Problem',d:'Daily Leetcode problem',tags:['green'],xp:20,id:'wed-8'},
+    {t:'05:45–06:45',n:'🏃 Morning Run #2 (2.5–3 km) + Core',d:'Hybrid Split: Run Day 2/3 - Cardiovascular endurance',tags:['green'],xp:25,id:'wed-run'},
+    {t:'07:30–07:45',n:'🧴 AM Dermatology & Tablet Protocol',d:'Cleanser -> AM Topical Cream -> SPF 50 -> AM Oral Tablet (Post-Breakfast)',tags:['mauve'],xp:15,id:'wed-derm-am'},
+    {t:'08:25–09:15',n:'22MAT230 Mathematics for Computing 4',d:'P1 - Room AB-302 - Dr. K. Anitha',tags:['red'],xp:15,id:'wed-p1'},
+    {t:'09:15–10:05',n:'22AIE214 Intro to AI Robotics',d:'P2 - Room AB-302 - Dr. Dev Kunwar Singh Chauhan',tags:['blue'],xp:15,id:'wed-p2'},
+    {t:'10:20–12:00',n:'CARE Placement Training',d:'P3 & P4 - Dr. J. Umamageswaran - Solve timed DSA/OA problems during session',tags:['green'],xp:20,id:'wed-p3-p4'},
+    {t:'12:50–13:40',n:'22AIE212 Design & Analysis of Algorithms',d:'P5 - Room AB-302 - Dr. E. Narayanan',tags:['red'],xp:15,id:'wed-p5'},
+    {t:'13:40–15:20',n:'22AIE211 Intro to Comm & IoT (AI-DISC Lab)',d:'P6 & P7 - Dr. Jinka Venkata Aravind / Dr. S. Krishnakumar - Finish lab inside lab window',tags:['blue'],xp:25,id:'wed-p6-p7'},
+    {t:'15:20–16:10',n:'⚡ P8 Golden Window: Folio Pre-Exam Lock',d:'Update DAA & Math 4 Folio study sheets before leaving campus',tags:['yellow'],xp:25,id:'wed-p8-folio'},
+    {t:'17:30–19:30',n:'🚀 R&D Deep Work Block 1 (2.0h / 4.5h Cap)',d:'AeroSynapse Phase 2 tracking or Alloy Tattvasar IITM pipeline',tags:['red'],xp:35,id:'wed-dw1'},
+    {t:'19:30–21:00',n:'🌿 Anti-Burnout Social / Dinner / Recharge',d:'Unhurried friend or family connection - mental cooling',tags:['green'],xp:20,id:'wed-social'},
+    {t:'21:00–22:30',n:'🧩 Quant / CP Block 2 (1.5h / 4.5h Cap)',d:'DAA algorithmic implementation + CF practice',tags:['blue'],xp:30,id:'wed-dw2'},
+    {t:'22:30–22:45',n:'🌙 PM Dermatology & Night Tablet + Dual-Win Log',d:'PM Wash -> PM Prescribed Cream -> PM Oral Tablet + Log wins',tags:['mauve'],xp:20,id:'wed-derm-pm'},
   ],
   Thursday:[
-    {t:'08:25–09:15',n:'22AIE204 CN Lecture',d:'P1 — Networks lecture OSI & TCP/IP',tags:['blue'],xp:15,id:'thu-0'},
-    {t:'09:15–10:05',n:'APT / VER Sessions',d:'P2 — Aptitude verbal placement prep',tags:[],xp:10,id:'thu-1'},
-    {t:'10:20–11:10',n:'B1-SSK / B2-APT',d:'P3 — Soft Skills & Aptitude',tags:[],xp:10,id:'thu-2'},
-    {t:'11:10–12:00',n:'B1-VER / B2-SSK',d:'P4 — Verbal & Soft Skills',tags:[],xp:10,id:'thu-3'},
-    {t:'12:00–12:50',n:'Lunch Break',d:'',tags:[],xp:0,id:'thu-4'},
-    {t:'12:50–14:30',n:'22AIE205-IPy Lab',d:'P5-P6 — Python lab NumPy/Pandas',tags:['green'],xp:20,id:'thu-5'},
-    {t:'14:30–16:10',n:'Placement Prep / Free Study',d:'P7-P8 — Focus on active projects',tags:[],xp:10,id:'thu-6'},
-    {t:'18:00–19:00',n:'Leetcode — Graph Problem',d:'BFS/DFS/Dijkstra algorithms',tags:['green'],xp:20,id:'thu-7'},
-    {t:'19:30–20:30',n:'CN Reading',d:'Kurose & Ross book review',tags:['blue'],xp:15,id:'thu-8'},
+    {t:'06:00–07:15',n:'🏋️ Gym Session #2 (Push: Chest, Shoulders & Triceps)',d:'Hybrid Split: Gym Day 2/3 - Strength & Hypertrophy',tags:['green'],xp:25,id:'thu-gym'},
+    {t:'07:30–07:45',n:'🧴 AM Dermatology & Tablet Protocol',d:'Cleanser -> AM Topical Cream -> SPF 50 -> AM Oral Tablet (Post-Breakfast)',tags:['mauve'],xp:15,id:'thu-derm-am'},
+    {t:'08:25–09:15',n:'22AIE213 Machine Learning',d:'P1 - Room AB-302 - Dr. G. Bharathi Mohan',tags:['red'],xp:15,id:'thu-p1'},
+    {t:'09:15–12:00',n:'19SSK211 Soft Skills I (APT/VER/SSK Rotation)',d:'P2-P4 - B1: APT->SSK->VER | B2: VER->APT->SSK - Treat APT as timed Quant speed-math drills',tags:['green'],xp:25,id:'thu-p2-p4'},
+    {t:'12:50–13:40',n:'22AIE211 Intro to Communication & IoT',d:'P5 - Room AB-302 - Dr. Jinka Venkata Aravind',tags:['blue'],xp:15,id:'thu-p5'},
+    {t:'13:40–15:20',n:'22AIE214 Intro to AI Robotics (RACE Lab)',d:'P6 & P7 - Dr. Dev Kunwar Singh Chauhan - Complete in-lab, zero carry-over',tags:['blue'],xp:25,id:'thu-p6-p7'},
+    {t:'15:20–16:10',n:'⚡ P8 Golden Window: Folio Pre-Exam Lock',d:'Lock ML & IoT notes into Folio PDF before leaving campus',tags:['yellow'],xp:25,id:'thu-p8-folio'},
+    {t:'17:30–19:30',n:'🚀 R&D Deep Work Block 1 (2.0h / 4.5h Cap)',d:'Alloy Tattvasar IITM or AeroSynapse Phase 2 progress',tags:['red'],xp:35,id:'thu-dw1'},
+    {t:'19:30–21:00',n:'🌿 Anti-Burnout Social / Dinner / Friendship Tasks',d:'Check CIRCLE ledger - spend quality time with friends',tags:['green'],xp:20,id:'thu-social'},
+    {t:'21:00–22:30',n:'🧩 Quant / CP Block 2 (1.5h / 4.5h Cap)',d:'Codeforces problem set + C++ systems practice',tags:['blue'],xp:30,id:'thu-dw2'},
+    {t:'22:30–22:45',n:'🌙 PM Dermatology & Night Tablet + Dual-Win Log',d:'PM Wash -> PM Prescribed Cream -> PM Oral Tablet + Log wins',tags:['mauve'],xp:20,id:'thu-derm-pm'},
   ],
   Friday:[
-    {t:'08:25–09:15',n:'22AIE202 OS Lecture',d:'P1 — OS processes & scheduling',tags:['red'],xp:15,id:'fri-0'},
-    {t:'09:15–10:05',n:'22ADM201 Mahabharata',d:'P2 — Strategic Lessons Mahabharata',tags:[],xp:5,id:'fri-1'},
-    {t:'10:20–11:10',n:'22MAT220 Mathematics 3',d:'P3 — MC3 lecture block',tags:['yellow'],xp:15,id:'fri-2'},
-    {t:'11:10–12:00',n:'22BIO201 Bio Systems',d:'P4 — Bioinformatics algorithms',tags:[],xp:5,id:'fri-3'},
-    {t:'12:00–12:50',n:'Lunch Break',d:'',tags:[],xp:0,id:'fri-4'},
-    {t:'12:50–14:30',n:'22AIE203-DSA2 Lab',d:'P5-P6 — DSA lab graphs & trees',tags:['green'],xp:20,id:'fri-5'},
-    {t:'14:30–16:10',n:'Placement Prep / Free Study',d:'P7-P8 — Placement prep study',tags:[],xp:10,id:'fri-6'},
-    {t:'17:00–18:00',n:'Project Work',d:'System: Engineer / Satyam News review',tags:['mauve'],xp:15,id:'fri-7'},
-    {t:'18:00–20:00',n:'🎮 Gaming Slot A',d:'Earned after work is done. 2hrs max.',tags:['yellow'],xp:0,id:'fri-8',gaming:true},
+    {t:'05:45–06:45',n:'🏃 Morning Run #3 (3.0 km Tempo) + Pushups',d:'Hybrid Split: Run Day 3/3 - Complete weekly running quota',tags:['green'],xp:25,id:'fri-run'},
+    {t:'07:30–07:45',n:'🧴 AM Dermatology & Tablet Protocol',d:'Cleanser -> AM Topical Cream -> SPF 50 -> AM Oral Tablet (Post-Breakfast)',tags:['mauve'],xp:15,id:'fri-derm-am'},
+    {t:'08:25–09:15',n:'22AIE212 Design & Analysis of Algorithms',d:'P1 - Room AB-302 - Dr. E. Narayanan',tags:['red'],xp:15,id:'fri-p1'},
+    {t:'09:15–10:05',n:'22AIE214 Intro to AI Robotics',d:'P2 - Room AB-302 - Dr. Dev Kunwar Singh Chauhan',tags:['blue'],xp:15,id:'fri-p2'},
+    {t:'10:20–11:10',n:'19ENV300 Environmental Science',d:'P3 - Room AB-302 - Dr. I. R. Oviya - Pass/Fail, complete inside class',tags:['green'],xp:10,id:'fri-p3'},
+    {t:'11:10–12:00',n:'22MAT230 Mathematics for Computing 4',d:'P4 - Room AB-302 - Dr. K. Anitha',tags:['red'],xp:15,id:'fri-p4'},
+    {t:'12:50–13:40',n:'23GER230 German for Beginners I',d:'P5 - Room AB-302 - Ms. T. S. Swathi',tags:['yellow'],xp:15,id:'fri-p5'},
+    {t:'13:40–15:20',n:'22BIO211 Bio Systems 2 (AI-DISC Lab)',d:'P6 & P7 - Dr. I. R. Oviya / Mr. R. Ruban - Finish lab inside lab window',tags:['yellow'],xp:25,id:'fri-p6-p7'},
+    {t:'15:20–16:10',n:'⚡ P8 Golden Window: Weekly Academic Wrap',d:'Ensure all 5-day Folio notes compiled - zero weekend academic backlog',tags:['yellow'],xp:30,id:'fri-p8-folio'},
+    {t:'17:30–19:30',n:'🚀 R&D Deep Work Block (2.0h)',d:'AeroSynapse Phase 2 or Alloy Tattvasar weekly milestone push',tags:['red'],xp:35,id:'fri-dw1'},
+    {t:'19:30–22:30',n:'🌿 Friday Night Decompression / Friends / Earned Gaming',d:'Zero-guilt hangout, sports, movie, or gaming with squad',tags:['green'],xp:25,id:'fri-social'},
+    {t:'22:30–22:45',n:'🌙 PM Dermatology & Night Tablet + Dual-Win Log',d:'PM Wash -> PM Prescribed Cream -> PM Oral Tablet + Log wins',tags:['mauve'],xp:20,id:'fri-derm-pm'},
   ],
   Saturday:[
-    {t:'09:00–11:30',n:'Deep Block 1 — Reading',d:'AI or OS core concept + handwritten notes',tags:['blue'],xp:30,id:'sat-0'},
-    {t:'11:30–11:50',n:'Break',d:'Eat something real',tags:[],xp:0,id:'sat-1'},
-    {t:'11:50–13:50',n:'Deep Block 2 — Problems',d:'Trace algorithms on paper / YouTube supplement',tags:['red'],xp:25,id:'sat-2'},
-    {t:'13:50–15:00',n:'Lunch Break',d:'',tags:[],xp:0,id:'sat-3'},
-    {t:'15:00–16:30',n:'Deep Block 3 — Build',d:'Implement from scratch — no tutorials',tags:['green'],xp:40,id:'sat-4'},
-    {t:'16:30–17:15',n:'Recall Summary',d:'Write from memory what you learned — no notes',tags:['mauve'],xp:20,id:'sat-5'},
-    {t:'17:15–18:00',n:'Leetcode Problem',d:'Weekend grind continues',tags:['green'],xp:20,id:'sat-6'},
+    {t:'06:30–07:45',n:'🏋️ Gym Session #3 (Legs, Compounds & Conditioning)',d:'Hybrid Split: Gym Day 3/3 - Complete 6/6 weekly athletic target!',tags:['green'],xp:30,id:'sat-gym'},
+    {t:'08:00–08:15',n:'🧴 AM Dermatology & Tablet Protocol',d:'Cleanser -> AM Topical Cream -> SPF 50 -> AM Oral Tablet + verify stock for the week',tags:['mauve'],xp:15,id:'sat-derm-am'},
+    {t:'09:30–12:30',n:'🚀 Deep Build Block 1: AeroSynapse Phase 2 (3.0h)',d:'Uninterrupted model optimization, tracking code & field-test patches',tags:['red'],xp:45,id:'sat-dw1'},
+    {t:'14:00–16:30',n:'🏛️ Deep Build Block 2: Alloy Tattvasar IITM (2.5h)',d:'Research experiments, validation benchmarks & IITM deliverables',tags:['red'],xp:40,id:'sat-dw2'},
+    {t:'17:00–18:00',n:'📚 Pre-Exam Unit Check & Math 4 Project (1.0h)',d:'Mark completed Unit Readiness pills across all Sem 4 subjects',tags:['yellow'],xp:25,id:'sat-acad'},
+    {t:'18:30–22:00',n:'🌿 Saturday Evening Social / Family / Outing',d:'Intentional time with friends, long phone catch-up with family or Ameya',tags:['green'],xp:25,id:'sat-social'},
+    {t:'22:30–22:45',n:'🌙 PM Dermatology & Night Tablet + Dual-Win Log',d:'PM Wash -> PM Prescribed Cream -> PM Oral Tablet + Log wins',tags:['mauve'],xp:20,id:'sat-derm-pm'},
   ],
   Sunday:[
-    {t:'09:00–11:30',n:'Deep DSA Block',d:'Graphs / DP / Trees — 2.5 focused hours',tags:['green'],xp:35,id:'sun-0'},
-    {t:'11:30–11:50',n:'Break',d:'',tags:[],xp:0,id:'sun-1'},
-    {t:'11:50–13:30',n:'DSA Practice',d:'Leetcode problems on today\'s topic',tags:['green'],xp:25,id:'sun-2'},
-    {t:'13:30–14:30',n:'Lunch',d:'',tags:[],xp:0,id:'sun-3'},
-    {t:'14:30–16:00',n:'Project Work',d:'Advance any active project',tags:['mauve'],xp:20,id:'sun-4'},
-    {t:'16:00–16:45',n:'Weekly Review',d:'What did you actually learn this week? Write it.',tags:['blue'],xp:15,id:'sun-5'},
-    {t:'17:00–19:00',n:'🎮 Gaming Slot B',d:'Earned. 2hrs max. Shut it off when timer rings.',tags:['yellow'],xp:0,id:'sun-6',gaming:true},
+    {t:'07:30–08:30',n:'🧘 Active Recovery & CNS Rest Day (1/1)',d:'Biological Limiter Active: No heavy lifting/running. Light stretch & full recovery sleep',tags:['green'],xp:25,id:'sun-rest'},
+    {t:'08:30–08:45',n:'🧴 AM Dermatology & Tablet Protocol + Stock Check',d:'Cleanser -> AM Cream -> SPF -> AM Tablet + verify tablet/cream stock for the week',tags:['mauve'],xp:15,id:'sun-derm-am'},
+    {t:'10:00–12:30',n:'🧩 Weekly Codeforces Contest / Quant Problem Set (2.5h)',d:'Timed competitive programming & post-contest upsolving',tags:['blue'],xp:35,id:'sun-cp'},
+    {t:'14:00–15:30',n:'📊 Weekly Audit, Wins Vault & Friendship Ledger Review',d:'Log weekly wins, check dermatology adherence %, review CIRCLE & plan next week',tags:['yellow'],xp:30,id:'sun-audit'},
+    {t:'16:00–21:30',n:'🌿 Sunday Reset: Family, Friends & Mental Recharge',d:'Primary anti-burnout block - enter Monday at 100% mental clarity',tags:['green'],xp:30,id:'sun-social'},
+    {t:'22:15–22:30',n:'🌙 PM Dermatology & Night Tablet + Dual-Win Log',d:'PM Wash -> PM Prescribed Cream -> PM Oral Tablet + Log wins',tags:['mauve'],xp:20,id:'sun-derm-pm'},
   ],
 };
 const DEFAULT_QUESTS = [
@@ -4058,16 +4725,91 @@ const DEFAULT_PHASES = [
   }
 ];
 const DEFAULT_SUBJECTS = [
-  {name:'Data Structures & Algorithms 2',code:'22AIE203 — graphs, tries, hash functions, Merkle trees',pri:'Critical',pclass:'pri-c',res:'CLRS + MIT 6.006 on YouTube',res2:'LeetCode for DE Shaw + floor. Codeforces is the HFT signal — rate over volume.'},
-  {name:'Operating Systems',code:'22AIE202 — processes, scheduling, memory, synchronization',pri:'Critical',pclass:'pri-c',res:'Silberschatz (Dinosaur Book) + CodeVault YouTube',res2:'Trace scheduling + memory on paper — Graviton / Tower / HRT test this'},
-  {name:'Fundamentals of AI',code:'22AIE201 — search, adversarial games, CSPs, logic, planning',pri:'High',pclass:'pri-h',res:'AIMA — Russell & Norvig + CS50 AI',res2:'You\'re ahead here — go deeper than the syllabus'},
-  {name:'Mathematics for Computing 3',code:'22MAT220 — convex optimization, KKT conditions, MDPs, Markov chains',pri:'High',pclass:'pri-h',res:'Boyd Convex Optimization (free PDF) + 3Blue1Brown',res2:'Feeds Phase 2 ML directly — KKT underpins SVMs'},
-  {name:'Computer Networks',code:'22AIE204 — OSI stack, TCP/IP, routing, SDN, IoT',pri:'Medium',pclass:'pri-m',res:'Kurose & Ross (Top-Down Approach) + Hussein Nasser',res2:'Core CS fundamental tested at Goldman systems teams'},
-  {name:'Introduction to Python',code:'22AIE205 — NumPy, Pandas, Django, multithreading',pri:'Routine',pclass:'pri-l',res:'Official docs only',res2:'You\'re already beyond this syllabus — attend and score'},
-  {name:'Intelligence of Biological Systems',code:'22BIO201 — bioinformatics, DNA algorithms',pri:'Routine',pclass:'pri-l',res:'Class notes only',res2:'Zero placement relevance — minimum viable effort'},
-  {name:'Strategic Lessons from Mahabharata',code:'22ADM201',pri:'Routine',pclass:'pri-l',res:'Class notes only',res2:'Attend and clear the exam'},
-  {name:'CS50 AI with Python',code:'Self-Study Foundation — search, optimization, logic, machine learning',pri:'High',pclass:'pri-h',res:'CS50 AI — Harvard (online course)',res2:'Build classical AI search & logic paradigms to ground your mathematical foundation'},
+  {sno:1,code:'22MAT230',name:'Mathematics for Computing 4',faculty:'Dr. K. Anitha (T) / Dr. B. Krithika (Prj)',ltp:'2-1-3',credits:4,contactHours:5,pri:'Critical',pclass:'pri-c',attended:0,totalHeld:0,unitsReady:[0,0,0,0,0],strategy:'4-Credit Heavyweight + Project. Lock notes into Folio during P8 same day. Crucial for Quant & ML foundations.'},
+  {sno:2,code:'22AIE212',name:'Design and Analysis of Algorithms',faculty:'Dr. E. Narayanan / Ms. G Thiru Venkata Lakshmi (A)',ltp:'2-0-3',credits:3,contactHours:4,pri:'Critical',pclass:'pri-c',attended:0,totalHeld:0,unitsReady:[0,0,0,0,0],strategy:'Direct Quant OA & Codeforces overlap. Master DP, Graphs, Greedy & complexity proofs during Monday P3-P4 AI-DISC lab.'},
+  {sno:3,code:'22AIE213',name:'Machine Learning',faculty:'Dr. G. Bharathi Mohan / Dr. E. Narayanan (A)',ltp:'2-0-3',credits:3,contactHours:4,pri:'Critical',pclass:'pri-c',attended:0,totalHeld:0,unitsReady:[0,0,0,0,0],strategy:'Class Advisor course (Mon P1-P2 AI-DISC Lab + Tue/Thu lectures). Double-dip course project with active AI R&D.'},
+  {sno:4,code:'22AIE214',name:'Introduction to AI Robotics',faculty:'Dr. Dev Kunwar Singh Chauhan',ltp:'2-0-3',credits:3,contactHours:6,pri:'High',pclass:'pri-h',attended:0,totalHeld:0,unitsReady:[0,0,0,0,0],strategy:'6 Contact Hours (Mon P6-P7 & Thu P6-P7 RACE Labs + Wed/Fri P2). Never carry robotics lab work into evening R&D blocks.'},
+  {sno:5,code:'22AIE211',name:'Introduction to Communication & IoT',faculty:'Dr. Jinka Venkata Aravind / Dr. S. Krishnakumar (A)',ltp:'2-0-3',credits:3,contactHours:4,pri:'High',pclass:'pri-h',attended:0,totalHeld:0,unitsReady:[0,0,0,0,0],strategy:'Wed P6-P7 AI-DISC Lab + Tue/Thu lectures. Finish all IoT lab deliverables inside Wednesday lab hours.'},
+  {sno:6,code:'22BIO211',name:'Intelligence of Biological Systems 2',faculty:'Dr. I. R. Oviya / Mr. R. Ruban (A)',ltp:'2-0-3',credits:3,contactHours:3,pri:'Medium',pclass:'pri-m',attended:0,totalHeld:0,unitsReady:[0,0,0,0,0],strategy:'Tue P2 + Fri P6-P7 AI-DISC Lab. High-scoring 3-credit booster; summarize into Folio sheets 2 weeks before midterms.'},
+  {sno:7,code:'23GER230',name:'German for Beginners I',faculty:'Ms. T. S. Swathi',ltp:'2-0-0',credits:2,contactHours:2,pri:'Medium',pclass:'pri-m',attended:0,totalHeld:0,unitsReady:[0,0,0,0,0],strategy:'Tue P3 & Fri P5. Quick 15-minute Folio vocab table review locks an easy 10/10 grade.'},
+  {sno:8,code:'19SSK211',name:'Soft Skills I (APT / VER / SSK)',faculty:'Mr. E. V. Kamal Prasad (Apt), Ms. B. Gayathri (Ver), Mr. Saptarshi Chatterjee (SSK)',ltp:'1-0-3',credits:2,contactHours:3,pri:'Routine',pclass:'pri-l',attended:0,totalHeld:0,unitsReady:[0,0,0,0,0],strategy:'Thursday P2-P4 continuous block. Treat APT sessions as timed Quant speed-math & probability drills.'},
+  {sno:9,code:'CARE-PT',name:'Placement Training (CARE)',faculty:'Dr. J. Umamageswaran',ltp:'0-0-2',credits:2,contactHours:2,pri:'Routine',pclass:'pri-l',attended:0,totalHeld:0,unitsReady:[0,0,0,0,0],strategy:'Wednesday P3-P4 block (10:20-12:00). Solve competitive DSA/LeetCode problems directly during lab training.'},
+  {sno:10,code:'23ADM211',name:'Leadership Lessons from Ramayana',faculty:'Dr. S. Thiagarajan',ltp:'1-0-0',credits:1,contactHours:1,pri:'Routine',pclass:'pri-l',attended:0,totalHeld:0,unitsReady:[0,0,0,0,0],strategy:'Tuesday P4 (11:10-12:00). 1 Credit, zero outside workload - attend, reflect, easy A+.'},
+  {sno:11,code:'19ENV300',name:'Environmental Science',faculty:'Dr. I. R. Oviya',ltp:'1-0-0',credits:0,contactHours:1,pri:'Routine',pclass:'pri-l',attended:0,totalHeld:0,unitsReady:[0,0,0,0,0],strategy:'Friday P3 (10:20-11:10). Pass/Fail - complete all requirements inside the 50-minute class window.'},
 ];
+
+// ============================================================
+// SEM 4 / v2.0 SUPPLEMENTAL DATA BLOCKS
+// ============================================================
+const DEFAULT_TELEMETRY_ENGINE = {
+  legacyXp: 17018,
+  seasonId: 'SEM_4_2026_27',
+  seasonName: 'Season 04 - Sem IV (AB-302)',
+  seasonRating: 1500,
+  attributes: { rndSystems:88, algoQuant:76, academics:94, vitalityDerm:85, coolingBond:82 },
+  limiters: {
+    weekdayDeepWorkCapHours: 4.5,
+    weekendDeepWorkCapHours: 6.5,
+    todayDeepWorkLoggedHours: 0,
+    weeklyTrainingTarget: { runs:3, gym:3, rest:1 },
+    maxConsecutiveGrindDaysWithoutSocial: 3,
+    daysSinceLastSocialLog: 0,
+    overheatActive: false,
+    examOrFieldOverrideMode: false,
+    examOverrideDate: ''
+  }
+};
+const DEFAULT_WINS_VAULT = [
+  {id:'win-satyam-20k',category:'Commercial & Financial',title:'First Rs.20,000 Commercial Payout at Age 18',date:'2026',metric:'Rs.20,000 Earned',proof:'Independently engineered, deployed, and delivered the Satyam News & ePaper platform end-to-end.',reflection:'Proved I can build production software that real businesses pay for before turning 19.'},
+  {id:'win-aerosynapse-hm',category:'High-Stakes R&D',title:'AeroSynapse Deployed for Home Minister Field Testing',date:'2026',metric:'3 Models (1 Prod-Grade)',proof:'Built 3 computer vision detection models and took 1 production-grade pipeline into live Home Minister field testing.',reflection:'Real-world field deployment under VIP scrutiny taught me more than any textbook benchmark ever could.'},
+  {id:'win-iitm-tattvasar',category:'Research Excellence',title:'Alloy Tattvasar - IIT Madras Research Project',date:'2026 (Ongoing)',metric:'IITM Collaboration',proof:'Selected and executing applied AI/engineering research on the Alloy Tattvasar project with IIT Madras.',reflection:'Operating at the intersection of deep academic research and practical system execution.'},
+  {id:'win-academic-topper',category:'Academic Dominance',title:'Department Academic Topper (9.37 CGPA)',date:'Sem 1-3',metric:'9.37 CGPA',proof:'Sustained top academic rank (9.50 SGPA Sem 1, 9.24 SGPA Sem 2) while shipping commercial and defense/field R&D.',reflection:'Discipline allows me to excel in university exams without sacrificing real-world engineering.'},
+  {id:'win-folio-capstones',category:'Tooling & Systems',title:'Built Folio (MD-to-PDF Engine) & 2 Full Capstones',date:'2025-2026',metric:'3 Core Systems Shipped',proof:'Created Folio to automate study/documentation PDFs and completed 2 rigorous academic capstone projects.',reflection:'When a workflow has friction, I build my own tools to solve it.'},
+  {id:'win-identity-anchor',category:'Identity & Character',title:'Emotional & Practical Thinker',date:'Core Identity',metric:'Grounded & Driven',proof:'Deeply invested in family, friendships, self-care, and mental clarity alongside high-output engineering.',reflection:'My emotional depth keeps me human and loyal; my practical thinking keeps me effective.'},
+];
+const DEFAULT_VITALITY_V2 = {
+  trainingSplit: {
+    weeklyTarget: { runs:3, gym:3, rest:1 },
+    scheduleMap: {
+      Monday:    {type:'RUN', label:'Morning Run #1 (2.5-3.0 km) + 40 Pushups', done:false},
+      Tuesday:   {type:'GYM', label:'Gym #1 - Pull (Back, Biceps, Rear Delts)', done:false},
+      Wednesday: {type:'RUN', label:'Morning Run #2 (2.5-3.0 km) + Core', done:false},
+      Thursday:  {type:'GYM', label:'Gym #2 - Push (Chest, Shoulders, Triceps)', done:false},
+      Friday:    {type:'RUN', label:'Morning Run #3 (3.0 km Tempo) + Pushups', done:false},
+      Saturday:  {type:'GYM', label:'Gym #3 - Legs, Compounds & Conditioning', done:false},
+      Sunday:    {type:'REST', label:'Mandatory CNS & Muscular Recovery Day', done:false}
+    }
+  },
+  dermatology: {
+    nextConsultDate: '2026-12-15',
+    adherenceStreakDays: 0,
+    amRoutine: [
+      {id:'derm-am-wash',   name:'AM Gentle Cleanser / Face Wash',      type:'Wash',    timing:'07:30 AM',         done:false},
+      {id:'derm-am-cream',  name:'Prescribed AM Topical Cream / Gel',    type:'Cream',   timing:'After Wash',       done:false},
+      {id:'derm-am-spf',    name:'Moisturizer + Sunscreen (SPF 50)',     type:'Protect', timing:'15m before campus', done:false},
+      {id:'derm-am-tablet', name:'Prescribed AM Oral Tablet',            type:'Tablet',  timing:'Post-Breakfast',   done:false}
+    ],
+    pmRoutine: [
+      {id:'derm-pm-wash',   name:'PM Cleanser (Post-Campus / Gym)',       type:'Wash',   timing:'10:30 PM',         done:false},
+      {id:'derm-pm-cream',  name:'Prescribed PM Active Cream / Ointment', type:'Cream',  timing:'Before Sleep',     done:false},
+      {id:'derm-pm-tablet', name:'Prescribed PM Oral Tablet',             type:'Tablet', timing:'Post-Dinner',      done:false}
+    ]
+  }
+};
+const DEFAULT_CIRCLE_CHARTER = {
+  tenets: [
+    'I am both an emotional and a practical thinker - caring deeply for my people and executing with engineering precision are complementary strengths.',
+    'I do not move goalposts without honoring what I have already achieved (Rs.20k commercial payout at 18, Home Minister AeroSynapse test, IITM project, 9.37 CGPA).',
+    'Spending unhurried time with friends and family is not lost work time - it is the primary cooling system that prevents mental burnout.',
+    'Taking care of my health, skin (dermatology regimen), and 3-Run/3-Gym split is an investment in self-respect and longevity.'
+  ],
+  friendshipTasks: [
+    {id:'ft-1', person:'Family', task:'Call home & check in on family / wedding prep updates', priority:'High', done:false},
+    {id:'ft-2', person:'Campus Squad', task:'Share Folio PDF summary sheets & spend 1h unhurried evening hangout', priority:'High', done:false},
+    {id:'ft-3', person:'Close Friends (Ameya / Inner Circle)', task:'Voice/video catch-up call this weekend', priority:'Medium', done:false}
+  ],
+  dualWinJournal: []
+};
 const DEFAULT_MISSIONS = { daily: [{id:"m1", text:"Solve 1 Codeforces problem", done:false, xp:25}, {id:"m2", text:"Write C++ systems code (not DSA-in-C++)", done:false, xp:25}, {id:"m3", text:"Read 1 chapter of OS / probability", done:false, xp:20}], longTerm: [{id:"l1", text:"Ship a C++ order-matching engine on GitHub", done:false, deadline:"2026-12-31", xp:40}, {id:"l2", text:"Hit Codeforces Specialist (1600+)", done:false, deadline:"2027-06-01", xp:40}, {id:"l3", text:"Submit 10 WorldQuant BRAIN alphas", done:false, deadline:"2027-03-01", xp:30}, {id:"l4", text:"Internship at Graviton / Tower / QuadEye / WorldQuant", done:false, deadline:"2027-06-01", xp:50}] };
 const DEFAULT_PROJECTS = [
   {
@@ -4489,6 +5231,43 @@ if(S.sfxMuted === undefined) S.sfxMuted = false;
 if(S.showTicker === undefined) S.showTicker = false;
 if(!S.customCompetencies) S.customCompetencies = [];
 if(!S.terminalXpLog) S.terminalXpLog = {};
+
+// --- Sem 4 / v2.0 state hydration ---
+if(!S.telemetry) S.telemetry = JSON.parse(JSON.stringify(DEFAULT_TELEMETRY_ENGINE));
+if(!S.winsVault) S.winsVault = JSON.parse(JSON.stringify(DEFAULT_WINS_VAULT));
+if(!S.vitalityV2) S.vitalityV2 = JSON.parse(JSON.stringify(DEFAULT_VITALITY_V2));
+if(!S.circleCharter) S.circleCharter = JSON.parse(JSON.stringify(DEFAULT_CIRCLE_CHARTER));
+// Migrate profile from Sem 3 -> Sem 4
+if(S.profile && (S.profile.sem === 'SEM 3' || S.profile.sem === 'SEM 4' || !S.profile.sem)) {
+  S.profile.sem = 'SEM 4 · AB-302';
+  S.profile.branch = 'AIE · Amrita Chennai · Room AB-302';
+}
+// Activate Phase 2 for Semester 4
+if(S.phases && S.phases[0] && S.phases[1]) {
+  if(S.phases[0].status === '▶ Active') {
+    S.phases[0].status = '✓ Completed';
+    S.phases[1].status = '▶ Active';
+  }
+}
+// Migrate schedule from Sem 3 -> Sem 4 (detect old schedule by first slot id)
+if(S.schedule && S.schedule.Monday && S.schedule.Monday[0] && S.schedule.Monday[0].id === 'mon-0') {
+  S.schedule = JSON.parse(JSON.stringify(DEFAULT_SCHEDULE));
+}
+// Migrate subjects from Sem 3 -> Sem 4 (detect by absence of sno field)
+if(S.subjects && S.subjects.length > 0 && !S.subjects[0].sno) {
+  S.subjects = JSON.parse(JSON.stringify(DEFAULT_SUBJECTS));
+}
+// Preserve legacy XP from S-RANK era
+if(S.xp && S.xp.total >= 10000 && S.telemetry && (!S.telemetry.legacyXp || S.telemetry.legacyXp < S.xp.total)) {
+  S.telemetry.legacyXp = S.xp.total;
+}
+// Reset exam override mode on new day
+if(S.telemetry && S.telemetry.limiters && S.telemetry.limiters.examOverrideDate) {
+  const _today = new Date().toISOString().slice(0,10);
+  if(S.telemetry.limiters.examOverrideDate !== _today) {
+    S.telemetry.limiters.examOrFieldOverrideMode = false;
+  }
+}
 }
 if (!window.__osLocked) hydrateState();
 let pushTimeout = null;
@@ -6675,7 +7454,7 @@ function updateStats(){
   const sched=S.schedule[day]||[];
   
   // Dynamic topbar phase pill update
-  const activePhase = (S.phases || []).find(p => p.status && p.status.includes('Active')) || { n: 1, title: 'System Internals & C++ Pivot' };
+  const activePhase = (S.phases || []).find(p => p.status && p.status.includes('Active')) || { n: 2, title: 'Algo Complexity & Edge-AI' };
   const pillEl = document.getElementById('topbar-phase-pill');
   if (pillEl) {
     pillEl.textContent = `Phase ${activePhase.n} · ${activePhase.title}`;
@@ -6691,50 +7470,27 @@ function updateStats(){
   document.getElementById('lc-hard').textContent=S.lc.hard||0;
   document.getElementById('dsa-badge').textContent=total;
   document.getElementById('stat-xp').textContent='+'+( S.xp.today||0);
-  const xpTotal=S.xp.total||340;
-  let currentVal = 0;
-  let targetVal = 1100;
-  let labelText = '';
-
-  if (xpTotal >= 10000) {
-    currentVal = xpTotal;
-    targetVal = 10000;
-    labelText = `${xpTotal} / MAX`;
-  } else if (xpTotal >= 7600) {
-    currentVal = xpTotal - 7600;
-    targetVal = 10000 - 7600;
-    labelText = `${currentVal} / ${targetVal}`;
-  } else if (xpTotal >= 5100) {
-    currentVal = xpTotal - 5100;
-    targetVal = 7600 - 5100;
-    labelText = `${currentVal} / ${targetVal}`;
-  } else if (xpTotal >= 2600) {
-    currentVal = xpTotal - 2600;
-    targetVal = 5100 - 2600;
-    labelText = `${currentVal} / ${targetVal}`;
-  } else if (xpTotal >= 1100) {
-    currentVal = xpTotal - 1100;
-    targetVal = 2600 - 1100;
-    labelText = `${currentVal} / ${targetVal}`;
-  } else {
-    currentVal = xpTotal;
-    targetVal = 1100;
-    labelText = `${currentVal} / ${targetVal}`;
-  }
-  
-  const xpPct = Math.min(100, Math.round((currentVal / targetVal) * 100));
-  document.getElementById('xp-fill').style.width=xpPct+'%';
-  document.getElementById('xp-display').textContent=labelText;
+  const xpTotal = S.xp.total || 340;
+  const _tel = S.telemetry || {};
+  const _legacyXp = _tel.legacyXp || 17018;
+  const _mmr = (_tel.seasonRating != null) ? _tel.seasonRating : 1500;
+  const _mmrTier = _mmr >= 2000 ? 'Master' : _mmr >= 1800 ? 'Expert' : _mmr >= 1650 ? 'Specialist' : _mmr >= 1500 ? 'Apprentice' : 'Novice';
+  // Daily XP bar: today's progress toward 200 XP target (always alive, never frozen)
+  const _dailyXpTarget = 200;
+  const xpPct = Math.min(100, Math.round(((S.xp.today || 0) / _dailyXpTarget) * 100));
+  const labelText = `Season 04 MMR: ${_mmr} · ${_mmrTier}`;
+  document.getElementById('xp-fill').style.width = xpPct + '%';
+  document.getElementById('xp-display').textContent = labelText;
   const mXpFill = document.getElementById('xp-fill-mobile');
-  if (mXpFill) mXpFill.style.width = xpPct+'%';
+  if (mXpFill) mXpFill.style.width = xpPct + '%';
   const mXpDisp = document.getElementById('xp-display-mobile');
-  if (mXpDisp) mXpDisp.textContent = labelText;
+  if (mXpDisp) mXpDisp.textContent = `MMR: ${_mmr}`;
   checkStreakRisk();
   checkMissionDueDates();
 }
 
 function renderSidebar(){
-  const profile = S.profile || { name: "Abhishikth", branch: "AIE · Amrita Chennai", sem: "SEM 3" };
+  const profile = S.profile || { name: "Abhishikth", branch: "AIE · Amrita Chennai · Room AB-302", sem: "SEM 4 · AB-302" };
   const xp = S.xp.total || 340;
   let rank = 'E-RANK';
   if(xp>=10000) rank='S-RANK';
@@ -6744,7 +7500,8 @@ function renderSidebar(){
   else if(xp>=1100) rank='D-RANK';
   checkRankUp(xp);
   const prestigeStr = S.prestige ? ` <span class="prestige-badge">P${escapeHtml(S.prestige)}</span>` : '';
-  document.getElementById('rank-display').innerHTML = rank + ' · ' + escapeHtml(profile.sem) + prestigeStr;
+  const _legacyLabel = (S.telemetry && S.telemetry.legacyXp) ? ` · Legacy ${Number(S.telemetry.legacyXp).toLocaleString()} XP` : '';
+  document.getElementById('rank-display').innerHTML = 'SEM 4 · AB-302' + prestigeStr + _legacyLabel;
   const mRankDisp = document.getElementById('rank-display-mobile');
   if (mRankDisp) mRankDisp.textContent = rank + (S.prestige ? ` P${S.prestige}` : '');
   document.getElementById('sidebar-name').innerHTML = escapeHtml(profile.name) + ' <button class="edit-btn" onclick="editProfile()">✏️</button>';
@@ -6945,37 +7702,647 @@ function deleteSchedSlot(idx) {
 }
 
 // ─── TODAY ────────────────────────────────────────────────
-function renderToday(){
-  try { renderFunnelWidget(); } catch(_){}
-  const day=DAYS[new Date().getDay()];
-  const sched=S.schedule[day]||[];
-  const now=new Date();
-  const nowMins=now.getHours()*60+now.getMinutes();
-  const list=document.getElementById('schedule-list');
-  list.innerHTML='';
-  sched.forEach(b=>{
-    const done=!!S.tasks[b.id];
-    const isGaming=!!b.gaming;
-    let activeNow=false;
+
+// ─── SPRINT 2: COMMAND COCKPIT, DERMATOLOGY & EXAM OVERRIDE ──
+function toggleAnalyticsAccordion() {
+  const body = document.getElementById('analytics-accordion-body');
+  const icon = document.getElementById('analytics-accord-icon');
+  if (!body || !icon) return;
+  const isHidden = body.style.display === 'none';
+  body.style.display = isHidden ? 'block' : 'none';
+  icon.textContent = isHidden ? '▲ COLLAPSE' : '▾ EXPAND';
+}
+
+function updateLiveClock() {
+  const el = document.getElementById('cmd-clock');
+  if (!el) return;
+  const now = new Date();
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const dayName = days[now.getDay()];
+  const dateStr = `${dayName}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+  const hours = now.getHours().toString().padStart(2, '0');
+  const mins = now.getMinutes().toString().padStart(2, '0');
+  el.textContent = `${dateStr} · ${hours}:${mins}`;
+}
+
+function toggleExamOverride() {
+  if (!S.telemetry) S.telemetry = JSON.parse(JSON.stringify(DEFAULT_TELEMETRY_ENGINE));
+  if (!S.telemetry.limiters) S.telemetry.limiters = DEFAULT_TELEMETRY_ENGINE.limiters;
+  
+  const current = !!S.telemetry.limiters.examOrFieldOverrideMode;
+  const todayIso = new Date().toISOString().slice(0, 10);
+  
+  if (current) {
+    S.telemetry.limiters.examOrFieldOverrideMode = false;
+    S.telemetry.limiters.examOverrideDate = '';
+    showToast('Exam override mode deactivated.');
+  } else {
+    S.telemetry.limiters.examOrFieldOverrideMode = true;
+    S.telemetry.limiters.examOverrideDate = todayIso;
+    
+    // Complete all today schedule tasks
+    const day = DAYS[new Date().getDay()];
+    const sched = S.schedule[day] || [];
+    sched.forEach(b => {
+      if (!S.tasks[b.id]) {
+        S.tasks[b.id] = true;
+        grantXP(Number(b.xp) || 15, { multiply: false });
+      }
+    });
+    
+    // Check off all derma items
+    if (S.vitalityV2 && S.vitalityV2.dermatology) {
+      (S.vitalityV2.dermatology.amRoutine || []).forEach(i => i.done = true);
+      (S.vitalityV2.dermatology.pmRoutine || []).forEach(i => i.done = true);
+    }
+    
+    // Mark today's training split as done
+    if (S.vitalityV2 && S.vitalityV2.trainingSplit && S.vitalityV2.trainingSplit.scheduleMap) {
+      const split = S.vitalityV2.trainingSplit.scheduleMap[day];
+      if (split) split.done = true;
+    }
+    
+    updateStreak();
+    showToast('⚡ 1-Tap Exam/Field Execution Day logged! Streak & MMR protected.');
+  }
+  
+  save();
+  renderToday();
+  updateStats();
+}
+
+function sweepMorningClasses() {
+  const day = DAYS[new Date().getDay()];
+  const sched = S.schedule[day] || [];
+  let sweptCount = 0;
+  let earnedXp = 0;
+  
+  sched.forEach(b => {
+    // Check if slot starts before 12:50 PM (lunch)
     const range = parseTimeRange(b.t);
+    if (range && range[0] < 770) { // 12:50 PM = 770 mins
+      if (!S.tasks[b.id]) {
+        S.tasks[b.id] = true;
+        const xp = Number(b.xp) || 15;
+        grantXP(xp, { multiply: false });
+        earnedXp += xp;
+        sweptCount++;
+      }
+    }
+  });
+  
+  if (sweptCount > 0) {
+    updateStreak();
+    save();
+    renderToday();
+    updateStats();
+    showToast(`✓ Swept ${sweptCount} morning classes (+${earnedXp} XP)`);
+  } else {
+    showToast('All morning classes are already marked complete.');
+  }
+}
+
+function toggleDermItem(routine, idx) {
+  if (!S.vitalityV2 || !S.vitalityV2.dermatology) return;
+  const list = S.vitalityV2.dermatology[routine];
+  if (!list || !list[idx]) return;
+  
+  list[idx].done = !list[idx].done;
+  if (list[idx].done) {
+    grantXP(10, { multiply: false });
+    showToast(`✓ ${list[idx].name} logged (+10 XP)`);
+  } else {
+    applyXP(-10);
+  }
+  
+  // Calculate derma compliance
+  const total = (S.vitalityV2.dermatology.amRoutine || []).length + (S.vitalityV2.dermatology.pmRoutine || []).length;
+  const doneCount = (S.vitalityV2.dermatology.amRoutine || []).filter(i => i.done).length + (S.vitalityV2.dermatology.pmRoutine || []).filter(i => i.done).length;
+  const adherence = total > 0 ? Math.round((doneCount / total) * 100) : 100;
+  if (S.telemetry && S.telemetry.attributes) {
+    S.telemetry.attributes.vitalityDerm = adherence;
+  }
+  
+  save();
+  renderTodayCockpitPillars();
+  renderTodayCockpitTelemetry();
+  updateStats();
+}
+
+function toggleTodayTraining() {
+  const day = DAYS[new Date().getDay()];
+  if (!S.vitalityV2 || !S.vitalityV2.trainingSplit || !S.vitalityV2.trainingSplit.scheduleMap) return;
+  const split = S.vitalityV2.trainingSplit.scheduleMap[day];
+  if (!split) return;
+  
+  split.done = !split.done;
+  if (split.done) {
+    grantXP(25, { multiply: false });
+    showToast(`✓ Training logged: ${split.label} (+25 XP)`);
+  } else {
+    applyXP(-25);
+  }
+  
+  save();
+  renderTodayCockpitPillars();
+  renderTodayCockpitTelemetry();
+  updateStats();
+}
+
+function renderTodayCockpitPillars() {
+  const container = document.getElementById('cockpit-pillars-container');
+  if (!container) return;
+  
+  const day = DAYS[new Date().getDay()];
+  const derma = (S.vitalityV2 && S.vitalityV2.dermatology) || DEFAULT_VITALITY_V2.dermatology;
+  const split = (S.vitalityV2 && S.vitalityV2.trainingSplit && S.vitalityV2.trainingSplit.scheduleMap) ? S.vitalityV2.trainingSplit.scheduleMap[day] : { type:'RUN', label:'Morning Run', done:false };
+  const readiness = calculateExamReadiness();
+
+  container.innerHTML = `
+    <!-- PILLAR 1: VITALITY & DERMATOLOGY -->
+    <div class="pillar-card">
+      <div class="pillar-hdr">
+        <span>1. Vitality & Dermatology</span>
+        <span style="font-family:var(--font-mono); color:var(--status-optimal); font-size:10px;">
+          ${(derma.amRoutine.filter(i=>i.done).length + derma.pmRoutine.filter(i=>i.done).length)}/7 Done
+        </span>
+      </div>
+      <div class="pillar-list">
+        <!-- Training Split item -->
+        <div class="pillar-check-item ${split && split.done ? 'done' : ''}" onclick="toggleTodayTraining()">
+          <span class="check-btn ${split && split.done ? 'checked' : ''}" style="width:14px;height:14px;font-size:8px;">${split && split.done ? '✓' : ''}</span>
+          <span class="text" style="font-weight:600;">${split ? split.label : 'Daily Athletic Session'}</span>
+          <span class="pillar-tag">${split ? split.type : 'ATHLETIC'}</span>
+        </div>
+        
+        <!-- AM Derma Items -->
+        ${(derma.amRoutine || []).map((item, idx) => `
+          <div class="pillar-check-item ${item.done ? 'done' : ''}" onclick="toggleDermItem('amRoutine', ${idx})">
+            <span class="check-btn ${item.done ? 'checked' : ''}" style="width:14px;height:14px;font-size:8px;">${item.done ? '✓' : ''}</span>
+            <span class="text">${escapeHtml(item.name)}</span>
+            <span class="pillar-tag">AM</span>
+          </div>
+        `).join('')}
+        
+        <!-- PM Derma Items -->
+        ${(derma.pmRoutine || []).map((item, idx) => `
+          <div class="pillar-check-item ${item.done ? 'done' : ''}" onclick="toggleDermItem('pmRoutine', ${idx})">
+            <span class="check-btn ${item.done ? 'checked' : ''}" style="width:14px;height:14px;font-size:8px;">${item.done ? '✓' : ''}</span>
+            <span class="text">${escapeHtml(item.name)}</span>
+            <span class="pillar-tag">PM</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <!-- PILLAR 2: ACADEMIC / PRE-EXAM LOCK -->
+    <div class="pillar-card">
+      <div class="pillar-hdr">
+        <span>2. Academic & Folio Lock</span>
+        <span style="font-family:var(--font-mono); font-size:10px; color:var(--accent-primary); cursor:pointer;" onclick="gotoPage('semester', document.querySelector('.sid-nav .nav-item[onclick*=\'semester\']'))">
+          ${readiness}% Ready ↗
+        </span>
+      </div>
+      <div class="pillar-list">
+        <div class="pillar-check-item ${S.tasks['mon-p8-folio'] || S.tasks['tue-p8-folio'] || S.tasks['wed-p8-folio'] || S.tasks['thu-p8-folio'] || S.tasks['fri-p8-folio'] ? 'done' : ''}">
+          <span class="text">⚡ P8 Golden Window: Compress notes into Folio PDF</span>
+          <span class="pillar-tag">15:20 AB-302</span>
+        </div>
+        <div style="font-size:11px; color:var(--text-muted); padding:4px 8px; line-height:1.4;">
+          11 subjects tracked. Zero weekend academic carryover rule active.
+        </div>
+      </div>
+    </div>
+
+    <!-- PILLAR 3: R&D / QUANT FORGE -->
+    <div class="pillar-card">
+      <div class="pillar-hdr">
+        <span>3. R&D & Quant Forge</span>
+        <span style="font-family:var(--font-mono); color:var(--text-muted); font-size:10px;">Max 4.5h Deep Work</span>
+      </div>
+      <div class="pillar-list">
+        <div class="pillar-check-item">
+          <span class="text">AeroSynapse Phase 2: Frame-to-frame stabilization</span>
+          <span class="pillar-tag">R&D</span>
+        </div>
+        <div class="pillar-check-item">
+          <span class="text">Alloy Tattvasar (IITM): Model benchmark run</span>
+          <span class="pillar-tag">IITM</span>
+        </div>
+        <div class="pillar-check-item">
+          <span class="text">1 Codeforces Div2 Problem / DAA Algorithmic solve</span>
+          <span class="pillar-tag">CF/QUANT</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PILLAR 4: ANTI-BURNOUT / CIRCLE -->
+    <div class="pillar-card">
+      <div class="pillar-hdr">
+        <span>4. Anti-Burnout / Cooling</span>
+        <span style="font-family:var(--font-mono); color:var(--status-optimal); font-size:10px;">Optimal</span>
+      </div>
+      <div class="pillar-list">
+        <div class="pillar-check-item">
+          <span class="text">🌿 1h Unhurried Friends / Sport / Family Connection</span>
+          <span class="pillar-tag">COOLING</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderTodayCockpitTelemetry() {
+  const container = document.getElementById('cockpit-telemetry-container');
+  if (!container) return;
+  
+  const tel = S.telemetry || DEFAULT_TELEMETRY_ENGINE;
+  const rating = tel.seasonRating || 1500;
+  const mmrTier = rating >= 2000 ? 'Master' : rating >= 1800 ? 'Expert' : rating >= 1650 ? 'Specialist' : rating >= 1500 ? 'Apprentice' : 'Novice';
+  const derma = (S.vitalityV2 && S.vitalityV2.dermatology) || DEFAULT_VITALITY_V2.dermatology;
+  const totalDerma = (derma.amRoutine || []).length + (derma.pmRoutine || []).length;
+  const doneDerma = (derma.amRoutine || []).filter(i => i.done).length + (derma.pmRoutine || []).filter(i => i.done).length;
+  const dermaPct = totalDerma > 0 ? Math.round((doneDerma / totalDerma) * 100) : 100;
+  const readiness = calculateExamReadiness();
+  
+  // Weekly training count
+  let trainingDone = 0;
+  if (S.vitalityV2 && S.vitalityV2.trainingSplit && S.vitalityV2.trainingSplit.scheduleMap) {
+    Object.values(S.vitalityV2.trainingSplit.scheduleMap).forEach(s => {
+      if (s.done) trainingDone++;
+    });
+  }
+
+  container.innerHTML = `
+    <!-- PROOF OF EXECUTION ANCHORS -->
+    <div class="telem-card">
+      <div class="pillar-hdr">
+        <span>🏆 Proof of Execution</span>
+        <span style="font-family:var(--font-mono); color:var(--status-optimal); font-size:10px;">Anchored</span>
+      </div>
+      <div class="proof-anchor-item">
+        <div class="proof-anchor-title">💰 First ₹20,000 Commercial Payout at Age 18</div>
+        <div class="proof-anchor-sub">Satyam News & ePaper CMS delivered end-to-end.</div>
+      </div>
+      <div class="proof-anchor-item">
+        <div class="proof-anchor-title">🛡️ AeroSynapse Deployed for HM Field Test</div>
+        <div class="proof-anchor-sub">3 vision models built (1 production-grade) for live trials.</div>
+      </div>
+      <div class="proof-anchor-item">
+        <div class="proof-anchor-title">🎓 9.37 CGPA Department Academic Topper</div>
+        <div class="proof-anchor-sub">Elite university standing while executing real-world R&D.</div>
+      </div>
+    </div>
+
+    <!-- REAL-LIFE BIOLOGICAL LIMITERS -->
+    <div class="telem-card">
+      <div class="pillar-hdr">
+        <span>📊 Biological Limiters</span>
+        <span style="font-family:var(--font-mono); color:var(--status-optimal); font-size:10px;">Enforced</span>
+      </div>
+      <div class="limiter-row">
+        <span class="limiter-label">Daily Deep Work Cap:</span>
+        <span class="limiter-val" style="color:var(--status-optimal);">2.0h / 4.5h Cap</span>
+      </div>
+      <div class="limiter-row">
+        <span class="limiter-label">Weekly Training Split:</span>
+        <span class="limiter-val">${trainingDone} / 6 Sessions</span>
+      </div>
+      <div class="limiter-row">
+        <span class="limiter-label">Social Cooling Gauge:</span>
+        <span class="limiter-val" style="color:var(--status-optimal);">Optimal (Green)</span>
+      </div>
+      <div class="limiter-row">
+        <span class="limiter-label">Diminishing Returns:</span>
+        <span class="limiter-val" style="color:var(--text-muted);">Locks at 4.5h</span>
+      </div>
+    </div>
+
+    <!-- SEASON TELEMETRY RATINGS -->
+    <div class="telem-card">
+      <div class="pillar-hdr">
+        <span>📈 Season 04 Telemetry</span>
+        <span style="font-family:var(--font-mono); color:var(--accent-primary); font-size:10px;">AB-302</span>
+      </div>
+      <div class="limiter-row">
+        <span class="limiter-label">Season 04 MMR:</span>
+        <span class="limiter-val" style="color:var(--accent-primary);">${rating} · ${mmrTier}</span>
+      </div>
+      <div class="limiter-row">
+        <span class="limiter-label">Legacy Lifetime XP:</span>
+        <span class="limiter-val">${(tel.legacyXp || 17018).toLocaleString()} (S-Rank)</span>
+      </div>
+      <div class="limiter-row">
+        <span class="limiter-label">Derma Compliance:</span>
+        <span class="limiter-val" style="color:${dermaPct >= 80 ? 'var(--status-optimal)' : 'var(--yellow)'};">${dermaPct}%</span>
+      </div>
+      <div class="limiter-row">
+        <span class="limiter-label">Sem 4 Exam Readiness:</span>
+        <span class="limiter-val" style="color:var(--status-optimal);">${readiness}%</span>
+      </div>
+    </div>
+  `;
+}
+
+
+
+// ─── SPRINT 3: WORKSPACES, CIRCLE ENGINE & DOMAIN SYNC ──────
+
+function gotoWorkspace(num) {
+  const wsMap = {
+    1: 'today',
+    2: 'semester',
+    3: 'projects',
+    4: 'routine',
+    5: 'circle',
+    6: 'targets'
+  };
+  const targetPage = wsMap[num] || 'today';
+  const navEl = document.querySelector(`.ws-nav-section[data-workspace="${num}"]`);
+  gotoPage(targetPage, navEl);
+  showToast(`Switched to Workspace 0${num}`);
+}
+
+// Global Keyboard Navigation (Alt+1 to Alt+6)
+window.addEventListener('keydown', (e) => {
+  if (e.altKey && !e.ctrlKey && !e.shiftKey) {
+    const k = parseInt(e.key, 10);
+    if (k >= 1 && k <= 6) {
+      e.preventDefault();
+      gotoWorkspace(k);
+    }
+  }
+});
+
+// Present Mode Toggle
+function togglePresentMode() {
+  if (!S.circleCharter) S.circleCharter = JSON.parse(JSON.stringify(DEFAULT_CIRCLE_CHARTER));
+  S.circleCharter.presentModeActive = !S.circleCharter.presentModeActive;
+  
+  const banner = document.getElementById('present-mode-active-banner');
+  const btn = document.getElementById('btn-present-mode');
+  
+  if (S.circleCharter.presentModeActive) {
+    grantXP(25, { multiply: false });
+    if (banner) banner.style.display = 'flex';
+    if (btn) { btn.classList.add('active'); btn.textContent = '🌿 Present Mode: ON'; }
+    showToast('🌿 Present Mode activated! +25 Cooling XP awarded. Soak in the moment.');
+  } else {
+    if (banner) banner.style.display = 'none';
+    if (btn) { btn.classList.remove('active'); btn.textContent = '🌿 Toggle Present Mode'; }
+    showToast('Present Mode turned off.');
+  }
+  
+  touchDomain('circle');
+  save();
+}
+
+// Friendship Task Ledger
+function renderCircleTasks() {
+  const container = document.getElementById('circle-tasks-list');
+  if (!container) return;
+  if (!S.circleCharter) S.circleCharter = JSON.parse(JSON.stringify(DEFAULT_CIRCLE_CHARTER));
+  const tasks = S.circleCharter.friendshipTasks || [];
+  
+  container.innerHTML = tasks.map((t, idx) => `
+    <div class="pillar-check-item ${t.done ? 'done' : ''}" onclick="toggleFriendshipTask(${idx})">
+      <span class="check-btn ${t.done ? 'checked' : ''}" style="width:14px;height:14px;font-size:8px;">${t.done ? '✓' : ''}</span>
+      <span class="text"><strong>${escapeHtml(t.person)}:</strong> ${escapeHtml(t.task)}</span>
+      <span class="pillar-tag">${escapeHtml(t.priority || 'Circle')}</span>
+    </div>
+  `).join('');
+}
+
+function toggleFriendshipTask(idx) {
+  if (!S.circleCharter || !S.circleCharter.friendshipTasks) return;
+  const t = S.circleCharter.friendshipTasks[idx];
+  if (!t) return;
+  t.done = !t.done;
+  if (t.done) {
+    grantXP(15, { multiply: false });
+    showToast(`✓ Promise kept with ${t.person}! (+15 XP)`);
+  } else {
+    applyXP(-15);
+  }
+  touchDomain('circle');
+  save();
+  renderCircleTasks();
+  updateStats();
+}
+
+function addFriendshipTaskPrompt() {
+  const person = prompt('Who is this for? (e.g. Family, Campus Squad, Ameya):');
+  if (!person) return;
+  const task = prompt('What is the promise or catch-up task?');
+  if (!task) return;
+  
+  if (!S.circleCharter) S.circleCharter = JSON.parse(JSON.stringify(DEFAULT_CIRCLE_CHARTER));
+  if (!S.circleCharter.friendshipTasks) S.circleCharter.friendshipTasks = [];
+  
+  S.circleCharter.friendshipTasks.push({
+    id: 'ft-' + Date.now(),
+    person: person.trim(),
+    task: task.trim(),
+    priority: 'High',
+    done: false
+  });
+  
+  touchDomain('circle');
+  save();
+  renderCircleTasks();
+  showToast('Friendship task added! ❤️');
+}
+
+// Dual-Win Journal
+function submitDualWin() {
+  const pInput = document.getElementById('dw-practical');
+  const eInput = document.getElementById('dw-emotional');
+  if (!pInput || !eInput) return;
+  
+  const practical = pInput.value.trim();
+  const emotional = eInput.value.trim();
+  
+  if (!practical || !emotional) {
+    showToast('Please enter both a practical win and a human connection win!');
+    return;
+  }
+  
+  if (!S.circleCharter) S.circleCharter = JSON.parse(JSON.stringify(DEFAULT_CIRCLE_CHARTER));
+  if (!S.circleCharter.dualWinJournal) S.circleCharter.dualWinJournal = [];
+  
+  const todayIso = new Date().toISOString().slice(0, 10);
+  S.circleCharter.dualWinJournal.unshift({
+    date: todayIso,
+    practicalWin: practical,
+    emotionalWin: emotional
+  });
+  
+  pInput.value = '';
+  eInput.value = '';
+  
+  grantXP(20, { multiply: false });
+  touchDomain('circle');
+  save();
+  renderDualWinHistory();
+  updateStats();
+  showToast('Dual-Win Journal logged! (+20 XP) 🌟');
+}
+
+function renderDualWinHistory() {
+  const container = document.getElementById('dual-win-history');
+  if (!container) return;
+  if (!S.circleCharter) S.circleCharter = JSON.parse(JSON.stringify(DEFAULT_CIRCLE_CHARTER));
+  const history = S.circleCharter.dualWinJournal || [];
+  
+  if (history.length === 0) {
+    container.innerHTML = '<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:12px;">No dual-win journal entries yet. Log today\'s reflection above!</div>';
+    return;
+  }
+  
+  container.innerHTML = history.slice(0, 7).map(e => `
+    <div class="dual-win-entry">
+      <div class="dual-win-date">${escapeHtml(e.date)}</div>
+      <div class="dual-win-row">
+        <span>🛠️</span>
+        <span style="color:var(--text-primary);">${escapeHtml(e.practicalWin)}</span>
+      </div>
+      <div class="dual-win-row">
+        <span>❤️</span>
+        <span style="color:var(--text-secondary);">${escapeHtml(e.emotionalWin)}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─── DOMAIN-LEVEL TIMESTAMP MERGING (MOBILE <-> LAPTOP FIX) ───
+
+function touchDomain(domain) {
+  if (!S.meta) S.meta = {};
+  if (!S.meta.domainTimestamps) S.meta.domainTimestamps = {};
+  S.meta.domainTimestamps[domain] = Date.now();
+  S.lastUpdated = Date.now();
+}
+
+function mergeStateByDomain(localS, remoteS) {
+  if (!remoteS || typeof remoteS !== 'object') return localS;
+  if (!remoteS.meta || !remoteS.meta.domainTimestamps) {
+    // Fall back to monolithic timestamp comparison if remote has no domain metadata
+    return (remoteS.lastUpdated || 0) > (localS.lastUpdated || 0) ? remoteS : localS;
+  }
+  
+  const merged = Object.assign({}, localS);
+  if (!merged.meta) merged.meta = {};
+  if (!merged.meta.domainTimestamps) merged.meta.domainTimestamps = {};
+  
+  const localTimes = localS.meta?.domainTimestamps || {};
+  const remoteTimes = remoteS.meta?.domainTimestamps || {};
+  
+  const domainKeys = {
+    vitality: ['vitalityV2', 'health'],
+    circle: ['circleCharter'],
+    academics: ['subjects'],
+    forge: ['projects', 'missions', 'lc'],
+    schedule: ['schedule', 'tasks']
+  };
+  
+  Object.keys(domainKeys).forEach(dom => {
+    const rTime = remoteTimes[dom] || 0;
+    const lTime = localTimes[dom] || 0;
+    if (rTime > lTime) {
+      // Remote domain is newer: merge remote fields into local
+      domainKeys[dom].forEach(k => {
+        if (remoteS[k] !== undefined) {
+          merged[k] = JSON.parse(JSON.stringify(remoteS[k]));
+        }
+      });
+      merged.meta.domainTimestamps[dom] = rTime;
+    }
+  });
+  
+  merged.lastUpdated = Math.max(localS.lastUpdated || 0, remoteS.lastUpdated || 0);
+  return merged;
+}
+
+
+function renderToday(){
+  updateLiveClock();
+  const day = DAYS[new Date().getDay()];
+  const sched = S.schedule[day] || [];
+  const now = new Date();
+  const nowMins = now.getHours() * 60 + now.getMinutes();
+  
+  // Calculate NOW / NEXT period
+  let currentPeriod = null;
+  let nextPeriod = null;
+  for (let i = 0; i < sched.length; i++) {
+    const range = parseTimeRange(sched[i].t);
     if (range) {
       const [sm, em] = range;
-      if (nowMins >= sm && nowMins < em) activeNow = true;
+      if (nowMins >= sm && nowMins < em) {
+        currentPeriod = sched[i];
+        nextPeriod = sched[i+1] || null;
+        break;
+      } else if (nowMins < sm && !nextPeriod) {
+        nextPeriod = sched[i];
+      }
     }
-    const div=document.createElement('div');
-    div.className='time-block'+(done?' done':'')+(activeNow?' active-now':'')+(isGaming?' gaming':'');
-    const tags = Array.isArray(b.tags) ? b.tags : [];
-    const tagLabel = t => t==='blue'?'DSA':t==='red'?'OS':t==='green'?'Leetcode':t==='yellow'?'Math':t==='mauve'?'AI':escapeHtml(t);
-    div.innerHTML=`<div class="swipe-feedback"></div><div class="tb-time">${escapeHtml(b.t)}</div><div class="tb-body"><div class="tb-name">${escapeHtml(b.n)}</div><div class="tb-desc">${escapeHtml(b.d||'')}</div><div class="tb-tags">${tags.map(t=>`<span class="tb-tag ${escapeHtml(t)}">${tagLabel(t)}</span>`).join('')}${b.xp?`<span class="tb-tag">+${b.xp} XP</span>`:''}</div></div><div class="tb-check"><button class="check-btn ${done?'checked':''}" onclick="toggleTask('${escapeHtml(b.id)}',${Number(b.xp)||0},this)">${done?'✓':''}</button></div>`;
-    list.appendChild(div);
-  });
-  renderQuests();
-  renderPhaseProgress();
-  renderHeatmap();
-  renderPomoAnalytics();
+  }
+  
+  const nowEl = document.getElementById('period-live-now');
+  const nextEl = document.getElementById('period-live-next');
+  if (nowEl) {
+    nowEl.textContent = currentPeriod ? `▶ NOW: ${currentPeriod.n} (${currentPeriod.t})` : '▶ NOW: Academic Study / Independent R&D';
+  }
+  if (nextEl) {
+    nextEl.textContent = nextPeriod ? `⏭ NEXT: ${nextPeriod.n} (${nextPeriod.t})` : '⏭ NEXT: Evening Wrap & Dermatology Protocol';
+  }
+
+  // Update override button state
+  const overrideBtn = document.getElementById('btn-exam-override');
+  if (overrideBtn && S.telemetry && S.telemetry.limiters) {
+    if (S.telemetry.limiters.examOrFieldOverrideMode) {
+      overrideBtn.classList.add('active');
+      overrideBtn.textContent = '⚡ Exam Day Active ✓';
+    } else {
+      overrideBtn.classList.remove('active');
+      overrideBtn.textContent = '⚡ 1-Tap Exam / Field Log';
+    }
+  }
+
+  // Render Schedule list in Col 1
+  const list = document.getElementById('schedule-list');
+  if (list) {
+    list.innerHTML = '';
+    sched.forEach(b => {
+      const done = !!S.tasks[b.id];
+      const isGaming = !!b.gaming;
+      let activeNow = false;
+      const range = parseTimeRange(b.t);
+      if (range) {
+        const [sm, em] = range;
+        if (nowMins >= sm && nowMins < em) activeNow = true;
+      }
+      const div = document.createElement('div');
+      div.className = 'time-block' + (done ? ' done' : '') + (activeNow ? ' active-now' : '') + (isGaming ? ' gaming' : '');
+      const tags = Array.isArray(b.tags) ? b.tags : [];
+      const tagLabel = t => t==='blue'?'DSA':t==='red'?'Core':t==='green'?'Vitality':t==='yellow'?'Folio':t==='mauve'?'Derma':escapeHtml(t);
+      div.innerHTML = `<div class="swipe-feedback"></div><div class="tb-time">${escapeHtml(b.t)}</div><div class="tb-body"><div class="tb-name">${escapeHtml(b.n)}</div><div class="tb-desc">${escapeHtml(b.d||'')}</div><div class="tb-tags">${tags.map(t=>`<span class="tb-tag ${escapeHtml(t)}">${tagLabel(t)}</span>`).join('')}${b.xp?`<span class="tb-tag">+${b.xp} XP</span>`:''}</div></div><div class="tb-check"><button class="check-btn ${done?'checked':''}" onclick="toggleTask('${escapeHtml(b.id)}',${Number(b.xp)||0},this)">${done?'✓':''}</button></div>`;
+      list.appendChild(div);
+    });
+  }
+
+  // Render Columns 2 and 3
+  renderTodayCockpitPillars();
+  renderTodayCockpitTelemetry();
+
+  // Sub-renderers
   renderDelayedTasks();
   renderPastDoneTasks();
+  renderHeatmap();
+  renderPomoAnalytics();
 }
+
 
 function renderDelayedTasks() {
   const container = document.getElementById('delayed-tasks-container');
@@ -7805,17 +9172,117 @@ function swPhase(n,el){
 }
 
 // ─── SEMESTER ─────────────────────────────────────────────
-function renderSemester(){
-  document.getElementById('subject-list').innerHTML=S.subjects.map((s, idx)=>`
-    <div class="sub-item">
-      <div>
-        <div class="sub-name">${escapeHtml(s.name)} <button class="edit-btn" onclick="editSubjectCard(${idx})">✏️</button></div>
-        <div class="sub-code">${escapeHtml(s.code)}</div>
-        <div class="sub-res"><span>${escapeHtml(s.res)}</span> — ${escapeHtml(s.res2)}</div>
-      </div>
-      <span class="pri ${escapeHtml(s.pclass)}">${escapeHtml(s.pri)}</span>
-    </div>`).join('');
+
+// ─── SEMESTER 4 & PRE-EXAM READINESS ENGINE ─────────────────
+function calculateExamReadiness() {
+  const subjects = S.subjects || [];
+  if (subjects.length === 0) return 0;
+  let earned = 0;
+  let total = subjects.length * 5 * 2; // 5 units * 2 max pts each
+  subjects.forEach(s => {
+    const units = s.unitsReady || [0, 0, 0, 0, 0];
+    units.forEach(u => {
+      earned += Number(u) || 0;
+    });
+  });
+  return Math.round((earned / total) * 100);
 }
+
+function cycleUnitReady(subIdx, unitIdx) {
+  const s = S.subjects[subIdx];
+  if (!s) return;
+  if (!s.unitsReady) s.unitsReady = [0, 0, 0, 0, 0];
+  s.unitsReady[unitIdx] = (s.unitsReady[unitIdx] + 1) % 3;
+  
+  const readiness = calculateExamReadiness();
+  if (S.telemetry && S.telemetry.attributes) {
+    S.telemetry.attributes.academics = readiness;
+  }
+  save();
+  renderSemester();
+  renderTodayCockpitPillars();
+  renderTodayCockpitTelemetry();
+  const stateLabels = ['Pending (⚪)', 'Folio Locked (🔵)', 'Exam Ready (🟢)'];
+  showToast(`${s.code || s.name} Unit ${unitIdx + 1}: ${stateLabels[s.unitsReady[unitIdx]]}`);
+}
+
+function renderSemester(){
+  const container = document.getElementById('subject-list');
+  if(!container) return;
+  const subjects = S.subjects || [];
+  const readiness = calculateExamReadiness();
+  
+  // Header with Readiness Meter
+  const headerHtml = `
+    <div class="glass-card" style="padding:16px; margin-bottom:16px; border-left:3px solid var(--accent-primary);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span style="font-family:var(--font-mono); font-size:11px; font-weight:700; color:var(--accent-primary); letter-spacing:1px;">
+          SEMESTER IV (ROOM AB-302) · EXAM READINESS METER
+        </span>
+        <span style="font-family:var(--font-mono); font-size:14px; font-weight:700; color:var(--text-primary);">
+          ${readiness}% READY
+        </span>
+      </div>
+      <div class="prog-track" style="height:8px; background:var(--bg-elevated);">
+        <div class="prog-fill" style="width:${readiness}%; background:${readiness >= 75 ? 'var(--status-optimal)' : readiness >= 40 ? 'var(--accent-primary)' : 'var(--yellow)'};"></div>
+      </div>
+      <div style="display:flex; gap:16px; margin-top:10px; font-size:11px; color:var(--text-muted);">
+        <span>⚪ 0 = Pending</span>
+        <span>🔵 1 = Folio Note Locked</span>
+        <span>🟢 2 = PYQ & Exam Ready</span>
+      </div>
+    </div>
+  `;
+
+  const cardsHtml = subjects.map((s, idx) => {
+    const units = s.unitsReady || [0, 0, 0, 0, 0];
+    const unitPills = units.map((u, uIdx) => {
+      const cls = u === 2 ? 'unit-ready' : u === 1 ? 'unit-locked' : 'unit-pending';
+      const icon = u === 2 ? '🟢' : u === 1 ? '🔵' : '⚪';
+      const label = u === 2 ? 'Ready' : u === 1 ? 'Folio' : 'Pending';
+      return `<span class="unit-pill ${cls}" onclick="cycleUnitReady(${idx}, ${uIdx})">${icon} U${uIdx+1}: ${label}</span>`;
+    }).join('');
+
+    return `
+      <div class="sub-item" style="display:flex; flex-direction:column; gap:8px; padding:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
+          <div>
+            <div class="sub-name" style="font-size:15px; font-weight:600;">
+              ${escapeHtml(s.name)}
+              <button class="edit-btn" onclick="editSubjectCard(${idx})">✏️</button>
+            </div>
+            <div class="sub-code" style="font-family:var(--font-mono); font-size:12px; color:var(--accent-primary); margin:2px 0;">
+              ${escapeHtml(s.code)} · ${escapeHtml(s.faculty || '')}
+            </div>
+          </div>
+          <span class="pri ${escapeHtml(s.pclass || 'pri-h')}">${escapeHtml(s.pri || 'High')}</span>
+        </div>
+        
+        <div style="font-size:12px; color:var(--text-secondary); line-height:1.4;">
+          <strong>Strategy:</strong> ${escapeHtml(s.strategy || s.res2 || 'Summarize notes in P8 Golden Window.')}
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+          <span style="font-size:11px; font-family:var(--font-mono); color:var(--text-muted);">
+            Credits: ${s.credits || '-'} | Hours: ${s.contactHours || '-'} | L-T-P: ${s.ltp || '-'}
+          </span>
+        </div>
+
+        <div style="margin-top:6px;">
+          <div style="font-size:11px; font-family:var(--font-mono); color:var(--text-secondary); margin-bottom:4px;">
+            Unit Readiness Matrix (Click to advance state):
+          </div>
+          <div class="unit-pills-row">
+            ${unitPills}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = headerHtml + cardsHtml;
+}
+
 
 function addNewSubject() {
   S.subjects.push({
@@ -8393,21 +9860,62 @@ function editGamingSlots() {
 }
 
 // ─── PROJECTS ────────────────────────────────────────────
+let activeProjectsTab = 'sprints'; // 'sprints' | 'wins'
+
+function switchProjectsTab(tab) {
+  activeProjectsTab = tab;
+  renderProjects();
+}
+
 function renderProjects() {
   const container = document.getElementById('projects-container');
   if(!container) return;
-  const projects = S.projects || [];
-  if (projects.length === 0) {
-    container.innerHTML = `<div class="empty-state">No active projects.<br>Start building! 🛠</div>`;
+
+  const tabSwitcherHtml = `
+    <div style="display:flex; gap:10px; margin-bottom:16px;">
+      <button class="cmd-override-btn ${activeProjectsTab === 'sprints' ? 'active' : ''}" onclick="switchProjectsTab('sprints')" style="padding:8px 16px; font-size:12px;">
+        🚀 Active R&D Sprints
+      </button>
+      <button class="cmd-override-btn ${activeProjectsTab === 'wins' ? 'active' : ''}" onclick="switchProjectsTab('wins')" style="padding:8px 16px; font-size:12px;">
+        🏆 Executed & Wins Vault (Proof Ledger)
+      </button>
+    </div>
+  `;
+
+  if (activeProjectsTab === 'wins') {
+    const wins = S.winsVault || DEFAULT_WINS_VAULT;
+    const winsHtml = `
+      <div class="wins-vault-grid">
+        ${wins.map(w => `
+          <div class="win-card">
+            <div class="win-card-top">
+              <span class="win-cat">${escapeHtml(w.category)}</span>
+              <span class="win-metric-pill">${escapeHtml(w.metric)}</span>
+            </div>
+            <div class="win-title">${escapeHtml(w.title)}</div>
+            <div class="win-proof">${escapeHtml(w.proof)}</div>
+            <div class="win-reflection">"${escapeHtml(w.reflection)}"</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    container.innerHTML = tabSwitcherHtml + winsHtml;
     return;
   }
-  
-  container.innerHTML = projects.map(p => {
+
+  // Active Sprints view
+  const projects = S.projects || [];
+  if (projects.length === 0) {
+    container.innerHTML = tabSwitcherHtml + `<div class="empty-state">No active projects.<br>Start building! 🛠</div>`;
+    return;
+  }
+
+  const sprintsHtml = projects.map(p => {
     const totalTasks = p.tasks ? p.tasks.length : 0;
     const doneTasks = p.tasks ? p.tasks.filter(t => t.done).length : 0;
     const computedProgress = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : (p.progress || 0);
     const statusClass = p.statusClass || 'pri-m';
-    
+
     return `
       <div class="info-card">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
@@ -8443,6 +9951,8 @@ function renderProjects() {
       </div>
     `;
   }).join('');
+
+  container.innerHTML = tabSwitcherHtml + sprintsHtml;
 }
 
 function toggleProjectTask(projId, taskIdx) {
@@ -9362,7 +10872,7 @@ function applyNavFolds() {
 }
 
 // ─── NAVIGATION ───────────────────────────────────────────
-const pageTitles={today:'Today',roadmap:'Systems Roadmap',semester:'Semester 3',calendar:'Academic Calendar',dsa:'DSA Track',projects:'Projects',targets:'Quant Funnel',gaming:'Gaming',notes:'Notes',tasks:'Mission Board',applications:'Applications',budget:'Expense Tracker',trips:'Trip Planner',resume:'Resume HQ',schedule:'Daily Matrix',audit:'Weekly Audit',routine:'Daily Routine',physical:'Physical Metrics',mental:'Mental State'};
+const pageTitles={today:'Today',roadmap:'Systems Roadmap',semester:'Semester 4 (AB-302)',circle:'Circle & Charter',calendar:'Academic Calendar',dsa:'DSA Track',projects:'Projects',targets:'Quant Funnel',gaming:'Gaming',notes:'Notes',tasks:'Mission Board',applications:'Applications',budget:'Expense Tracker',trips:'Trip Planner',resume:'Resume HQ',schedule:'Daily Matrix',audit:'Weekly Audit',routine:'Daily Routine',physical:'Physical Metrics',mental:'Mental State'};
 
 /* Per-section health palettes: each page gets its own skin class,
    accent color, and browser chrome tint. */
@@ -9423,6 +10933,7 @@ function gotoPage(id,el){
   if(id==='calendar'){renderAcademicCalendar();}
   if(id==='targets'){renderTargets(); renderCompetencyTracker();}
   if(id==='gaming'){renderGaming();updateGamingLogDisplay();}
+  if(id==='circle'){renderCircleTasks(); renderDualWinHistory();}
   applyHealthSkin(id);
   if(id==='routine'||id==='physical'||id==='mental'){renderHealthPages();}
   if(id==='dsa'){renderSRSQueue();renderDSALog();}
@@ -9523,6 +11034,65 @@ function saveSyncConfig(cfg) {
 
 let isSyncing = false;
 
+function copyMobilePairingLink() {
+  const cfg = getSyncConfig();
+  if (!cfg.token) {
+    showToast('Enter your GitHub Token first to generate a pairing link!');
+    return;
+  }
+  const payload = btoa(JSON.stringify({
+    token: cfg.token,
+    gistId: cfg.gistId || '',
+    u: S.githubUsername || ''
+  }));
+  const base = window.location.href.split('#')[0];
+  const pairUrl = `${base}#pair=${encodeURIComponent(payload)}`;
+  
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(pairUrl).then(() => {
+      showToast('📋 Mobile Pairing Link copied! Send it to your phone.');
+    }).catch(() => {
+      prompt('Copy your Mobile Pairing Link:', pairUrl);
+    });
+  } else {
+    prompt('Copy your Mobile Pairing Link:', pairUrl);
+  }
+}
+
+// Auto-pair on mobile launch via URL hash
+function checkMobilePairingHash() {
+  try {
+    if (window.location.hash && window.location.hash.includes('pair=')) {
+      const match = window.location.hash.match(/pair=([^&]+)/);
+      if (match && match[1]) {
+        const decoded = JSON.parse(atob(decodeURIComponent(match[1])));
+        if (decoded && decoded.token) {
+          saveSyncConfig({
+            token: decoded.token,
+            gistId: decoded.gistId || '',
+            auto: true,
+            rememberToken: true
+          });
+          if (decoded.u && S) {
+            S.githubUsername = decoded.u;
+          }
+          // Remove hash from browser address bar immediately so token isn't stored in history
+          if (window.history && window.history.replaceState) {
+            window.history.replaceState(null, '', window.location.pathname + window.location.search);
+          }
+          showToast('📱 Device Paired! Pulling latest state from cloud...');
+          setTimeout(() => {
+            if (typeof pullFromCloud === 'function') pullFromCloud();
+          }, 400);
+        }
+      }
+    }
+  } catch(err) {
+    console.warn('Mobile pairing failed to parse:', err);
+  }
+}
+checkMobilePairingHash();
+
 async function pushToCloud() {
   const cfg = getSyncConfig();
   if (!cfg.token) {
@@ -9619,14 +11189,14 @@ async function pullFromCloud() {
   if (isSyncing) return;
   isSyncing = true;
   updateSyncStatusMsg('Syncing...');
-  
+
   try {
     const url = `https://api.github.com/gists/${cfg.gistId}`;
     const headers = {
       'Authorization': `token ${cfg.token}`,
       'Accept': 'application/vnd.github.v3+json'
     };
-    
+
     const res = await fetch(url, { headers });
     if (res.ok) {
       const json = await res.json();
@@ -9637,26 +11207,11 @@ async function pullFromCloud() {
         if (remoteStr !== localStr) {
           const remoteState = JSON.parse(remoteStr);
           if (remoteState && typeof remoteState === 'object') {
-            const remoteTime = remoteState.lastUpdated || 0;
-            const localTime = S.lastUpdated || 0;
-            const hasLocalData = localStorage.getItem('abhi_os') || localStorage.getItem('abhi_os_enc');
-            if (remoteTime < localTime && hasLocalData) {
-              const takeRemote = confirm('Local state is newer than the gist. Press OK to overwrite the cloud, or Cancel to load the older cloud copy.');
-              if (takeRemote) { updateSyncStatusMsg('Pushing local…'); pushToCloud(); }
-              else { applyRemoteBundle(remoteState, json.files); }
-            } else if (remoteTime > localTime || !hasLocalData) {
-              applyRemoteBundle(remoteState, json.files);
-            } else {
-              if (!localTime) {
-                S = remoteState;
-                save(true);
-                showToast('State updated from cloud! Reloading...');
-                updateSyncStatusMsg('Synced!');
-                setTimeout(() => window.location.reload(), 1000);
-              } else {
-                updateSyncStatusMsg('Synced (Up to date)');
-              }
-            }
+            // Domain-level non-destructive reconciliation
+            S = mergeStateByDomain(S, remoteState);
+            applyRemoteBundle(S, json.files);
+            showToast('Domain-level cloud merge successful! ☁️✓');
+            updateSyncStatusMsg('Synced (Merged)');
           }
         } else {
           updateSyncStatusMsg('Synced (Up to date)');
@@ -9719,6 +11274,13 @@ function openSettings() {
         <div style="display:flex; gap:8px;">
           <button class="btn-secondary" onclick="pushToCloud()" style="flex:1; font-size:11px; padding:6px; background:var(--mauve); border-color:var(--mauve); color:var(--bg);">Push to Cloud</button>
           <button class="btn-secondary" onclick="pullFromCloud()" style="flex:1; font-size:11px; padding:6px; background:var(--blue); border-color:var(--blue); color:var(--bg);">Pull from Cloud</button>
+        </div>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--line2);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span style="font-size:11px; font-weight:600; color:var(--accent); font-family:var(--font-mono);">📱 1-TAP MOBILE QUICK-PAIR</span>
+            <button class="btn-primary" onclick="copyMobilePairingLink()" style="font-size:10px; padding:4px 10px; background:var(--accent); color:var(--bg); border:none; border-radius:4px; cursor:pointer;">📋 Copy Mobile Link</button>
+          </div>
+          <p style="font-size:10px; color:var(--sub); line-height:1.4;">Copy this link and send it to your phone (WhatsApp, Telegram, Notes). Opening it on your phone auto-pairs your GitHub Token & Gist ID in 1 second with zero typing!</p>
         </div>
       </div>
 
