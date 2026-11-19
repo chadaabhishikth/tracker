@@ -14202,7 +14202,7 @@ function deleteTrip(tripId) {
 
 // ─── RESUME HQ JS ──────────────────────────────────────────
 const defaultResumeData = {
-  _v: 3,
+  _v: 4,
   name: "CHADA S V N S K ABHISHIKTH",
   title: "AI & Systems Engineer · Low-Latency Systems & Edge Computing",
   email: "chadaabhishikth@gmail.com",
@@ -14233,19 +14233,24 @@ const defaultResumeData = {
   ],
   projects: [
     {
-      name: "Ultra-Low Latency Order-Matching Engine",
-      tech: "Modern C++20, POSIX, Lock-Free Queues, Linux",
-      desc: "• Built a high-performance Limit Order Book (LOB) matching engine with sub-microsecond deterministic execution.\n• Implemented lock-free SPSC circular ring buffers and custom pre-allocated memory arenas, ensuring zero heap allocations on the critical trading path.\n• Validated correctness and thread-safety under heavy stress-testing with zero memory leaks via Valgrind and AddressSanitizer."
+      name: "KRAT-OS (Smart India Hackathon — SIH 126008)",
+      tech: "Python, System Architecture, Distributed Services, API Design",
+      desc: "• Engineered core software architecture for Team KRAT-OS addressing national-level Smart India Hackathon (SIH) problem statement 126008.\n• Built resilient backend services and data pipelines to handle asynchronous event processing with low latency."
     },
     {
-      name: "High-Concurrency Asynchronous Web Server",
-      tech: "C++17/20, POSIX Sockets, Linux epoll, Thread Pool",
-      desc: "• Engineered an event-driven, non-blocking HTTP/1.1 web server capable of handling 10,000+ concurrent connections utilizing Linux epoll I/O multiplexing.\n• Designed a cache-aligned work-stealing thread pool to maximize CPU core saturation and eliminate thread contention bottlenecks."
+      name: "FINANCE-ALGORITHMS (Autonomous Market Predictor)",
+      tech: "Python, JavaScript, LLM Multi-Agent Systems, Time-Series Modeling",
+      desc: "• Designed an algorithmic prediction engine combining autonomous LLM reasoning agents with historical probability distributions.\n• Automated real-time signal generation and backtesting pipelines to calculate high-confidence trade conviction scores."
+    },
+    {
+      name: "INTERSECTOR (Edge Vision & Spatial Analytics)",
+      tech: "Python, PyTorch, Computer Vision, Spatial Algorithms",
+      desc: "• Developed high-speed video trajectory and spatial intersection algorithms for real-time edge telemetry.\n• Implemented optimized multi-target vector calculations with automated edge anomaly detection and low CPU overhead."
     },
     {
       name: "System: Abhishikth (Personal OS & PWA)",
       tech: "Vanilla JavaScript (ES6+), CSS3, Service Worker, GitHub REST API",
-      desc: "• Engineered a 20+ module offline-first personal operating system and developer productivity platform as a zero-dependency PWA.\n• Features real-time telemetry, bi-directional GitHub Gist state synchronization with recursive payload hashing, and sub-10ms UI interaction latency."
+      desc: "• Engineered a 20+ module offline-first personal operating system and developer productivity platform as a zero-dependency PWA.\n• Features sub-10ms UI latency, background notification sync, and bi-directional GitHub Gist state synchronization."
     }
   ],
   education: [
@@ -14270,8 +14275,8 @@ function renderResume() {
   } else {
     try {
       data = JSON.parse(existingRaw);
-      // Auto-migrate if older version or default student placeholder text detected
-      if (!data._v || data._v < 3 || (data.summary && data.summary.includes('grinding Leetcode')) || (data.name && data.name === 'Abhishikth')) {
+      // Auto-migrate if older version or projects don't match the new curated set
+      if (!data._v || data._v < 4 || (data.summary && data.summary.includes('grinding Leetcode')) || (data.name && data.name === 'Abhishikth')) {
         localStorage.setItem('abhi_os_resume', JSON.stringify(defaultResumeData));
         data = defaultResumeData;
       }
@@ -14454,7 +14459,7 @@ function exportResumePDF() {
   const cssStyles = `
     @page {
       size: letter portrait;
-      margin: 0.45in 0.5in 0.45in 0.5in;
+      margin: 0.35in 0.45in 0.35in 0.45in;
     }
     * {
       box-sizing: border-box;
