@@ -246,31 +246,54 @@ html.light body::after{opacity:.25;}
 .layout.sidebar-collapsed .nav-item{justify-content:center;padding:12px 0;gap:0;font-size:0;}
 .layout.sidebar-collapsed .nav-icon{width:auto;font-size:20px;}
 
-/* Sidebar collapse toggle button */
+/* Modern Floating Circular Sidebar Toggle */
 .sidebar-toggle{
   position:fixed;
   top:50vh;
-  left:208px;
-  width:22px;
-  height:40px;
-  border-radius:0 6px 6px 0;
-  background:var(--bg2);
+  left:220px;
+  transform:translate(-50%, -50%);
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  background:var(--bg1);
   border:1px solid var(--line2);
-  border-left:none;
   color:var(--sub);
   cursor:pointer;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:14px;
-  font-weight:700;
   z-index:100;
-  transition:left .28s cubic-bezier(.4,0,.2,1),background .15s,color .15s;
-  box-shadow:2px 0 8px rgba(0,0,0,0.3);
+  transition:left .28s cubic-bezier(.4,0,.2,1),transform .18s ease,background .15s,border-color .15s,color .15s,box-shadow .15s;
+  box-shadow:0 2px 6px rgba(0,0,0,0.12),0 0 0 1px rgba(255,255,255,0.05);
   padding:0;
   line-height:1;
 }
-.sidebar-toggle:hover{background:var(--blue);color:var(--bg);border-color:var(--blue);}
+.sidebar-toggle:hover{
+  background:var(--bg2);
+  color:var(--accent);
+  border-color:var(--accent);
+  transform:translate(-50%, -50%) scale(1.15);
+  box-shadow:0 4px 12px rgba(0,0,0,0.22);
+}
+.sidebar-toggle:active{
+  transform:translate(-50%, -50%) scale(0.92);
+}
+.sidebar-toggle svg{
+  display:block;
+  pointer-events:none;
+}
+html.light .sidebar-toggle{
+  background:#ffffff;
+  border-color:#cbd5e1;
+  color:#475569;
+  box-shadow:0 2px 6px rgba(15,23,42,0.1),0 1px 2px rgba(15,23,42,0.06);
+}
+html.light .sidebar-toggle:hover{
+  background:#ffffff;
+  border-color:var(--accent);
+  color:var(--accent);
+  box-shadow:0 4px 14px rgba(15,23,42,0.16);
+}
 
 .sid-bottom{padding:12px 16px;border-top:1px solid var(--line);min-width:220px;}
 .streak-row{display:flex;align-items:center;gap:8px;}
@@ -1066,6 +1089,7 @@ html.light .theme-toggle-icon{transform:rotate(180deg);}
 @media(max-width:900px){
   .layout{grid-template-columns:1fr;}
   .sidebar{display:none;}
+  .sidebar-toggle{display:none !important;}
   .today-grid{grid-template-columns:1fr;}
   .stat-row{grid-template-columns:repeat(2,1fr); gap:8px;}
   .phase-panel.active{grid-template-columns:1fr;}
@@ -3647,7 +3671,11 @@ html.light .dual-win-box {
 
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
-  <button class="sidebar-toggle" id="sidebar-toggle-btn" onclick="toggleSidebar()" title="Toggle sidebar">‹</button>
+  <button class="sidebar-toggle" id="sidebar-toggle-btn" onclick="toggleSidebar()" title="Toggle sidebar (Ctrl+B)" aria-label="Toggle sidebar">
+    <svg id="sidebar-toggle-icon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+  </button>
   <div class="sid-top">
     <div class="sid-rank" id="rank-display">SEM 4 · AB-302</div>
     <div class="sid-name" id="sidebar-name">Abhishikth <button class="edit-btn" onclick="editProfile()">✏️</button></div>
@@ -6844,9 +6872,14 @@ function saveScratchpad(val) {
 
 // Register shortcut Ctrl+Shift+N for scratchpad
 document.addEventListener('keydown', (e) => {
+  const tag = (e.target && e.target.tagName) || '';
+  const typing = tag === 'INPUT' || tag === 'TEXTAREA' || (e.target && e.target.isContentEditable);
   if (e.ctrlKey && e.shiftKey && e.code === 'KeyN') {
     e.preventDefault();
     toggleScratchpad();
+  } else if ((e.ctrlKey || e.metaKey) && (e.key === 'b' || e.key === 'B') && !typing) {
+    e.preventDefault();
+    toggleSidebar();
   }
 });
 
@@ -15387,16 +15420,23 @@ function toggleTheme() {
 }
 
 // ─── SIDEBAR COLLAPSE ───────────────────────────────────────────
+function updateSidebarToggleIcon(collapsed) {
+  const btn = document.getElementById('sidebar-toggle-btn');
+  if (!btn) return;
+  btn.style.left = collapsed ? '56px' : '220px';
+  btn.setAttribute('title', collapsed ? 'Expand sidebar (Ctrl+B)' : 'Collapse sidebar (Ctrl+B)');
+  btn.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+  btn.innerHTML = collapsed
+    ? `<svg id="sidebar-toggle-icon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg>`
+    : `<svg id="sidebar-toggle-icon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>`;
+}
+
 function toggleSidebar() {
   playClickSound();
   const layout = document.querySelector('.layout');
-  const btn = document.getElementById('sidebar-toggle-btn');
-  const collapsed = layout.classList.toggle('sidebar-collapsed');
+  const collapsed = layout ? layout.classList.toggle('sidebar-collapsed') : false;
   localStorage.setItem('abhi_sidebar', collapsed ? 'collapsed' : 'expanded');
-  if (btn) {
-    btn.textContent = collapsed ? '›' : '‹';
-    btn.style.left = collapsed ? '44px' : '208px';
-  }
+  updateSidebarToggleIcon(collapsed);
 }
 
 // ─── ACADEMIC CALENDAR DATA & LOGIC ──────────────────────
@@ -16082,9 +16122,8 @@ document.addEventListener('keydown', (e) => {
   const sidebar = localStorage.getItem('abhi_sidebar');
   if (sidebar === 'collapsed') {
     const layout = document.querySelector('.layout');
-    const btn = document.getElementById('sidebar-toggle-btn');
     if (layout) layout.classList.add('sidebar-collapsed');
-    if (btn) { btn.textContent = '›'; btn.style.left = '44px'; }
+    updateSidebarToggleIcon(true);
   }
 })();
 
