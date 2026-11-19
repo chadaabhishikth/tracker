@@ -4961,91 +4961,123 @@ html.light .dual-win-box {
 const DEFAULT_PROFILE = { name: "Abhishikth", branch: "AIE · Amrita Chennai · Room AB-302", sem: "SEM 4" };
 const DEFAULT_SCHEDULE = {
   Monday:[
-    {t:'05:45–06:45',n:'🏃 Morning Run #1 (2.5–3 km) + Pushups',d:'Hybrid Split: Run Day 1/3 · Mobility warm-up',tags:['green'],xp:25,id:'mon-run'},
-    {t:'07:30–07:45',n:'🧴 AM Dermatology & Tablet Protocol',d:'Cleanser → AM Topical Cream → SPF 50 → AM Oral Tablet (Post-Breakfast)',tags:['mauve'],xp:15,id:'mon-derm-am'},
-    {t:'08:25–10:05',n:'22AIE213 Machine Learning (AI-DISC Lab)',d:'P1 & P2 — Dr. G. Bharathi Mohan / Dr. E. Narayanan · Finish lab work inside lab window',tags:['red'],xp:25,id:'mon-p1-p2'},
+    {t:'05:30–05:45',n:'💧 Wake + Hydration',d:'250–300 ml lightly salted water; no coffee/tea yet',tags:['green'],xp:10,id:'mon-wake'},
+    {t:'05:45–06:30',n:'🏃 Morning Run #1 (2.5–3 km) + Pushups',d:'Hybrid Split: Run Day 1/3 · 2.5–3 km run + 30–50 pushups',tags:['green'],xp:25,id:'mon-run'},
+    {t:'06:30–07:30',n:'🚿 Shower + AM Dermatology',d:'AM wash, prescribed topical, moisturizer + SPF',tags:['mauve'],xp:15,id:'mon-derm-am'},
+    {t:'07:30–08:15',n:'🍳 Breakfast + AM Tablet',d:'Whole-food breakfast, post-meal tablet, head to AB-302',tags:['mauve'],xp:15,id:'mon-bfast'},
+    {t:'08:25–10:05',n:'22AIE213 Machine Learning (AI-DISC Lab)',d:'P1 & P2 — Dr. G. Bharathi Mohan / Dr. E. Narayanan · Finish lab work inside window',tags:['red'],xp:25,id:'mon-p1-p2'},
     {t:'10:20–12:00',n:'22AIE212 Design & Analysis of Algorithms (AI-DISC Lab)',d:'P3 & P4 — Dr. E. Narayanan · Master DP/Graphs/Greedy in-lab — zero carry-over',tags:['red'],xp:25,id:'mon-p3-p4'},
     {t:'12:50–13:40',n:'22MAT230 Mathematics for Computing 4',d:'P5 — Room AB-302 · Dr. K. Anitha',tags:['red'],xp:15,id:'mon-p5'},
     {t:'13:40–15:20',n:'22AIE214 Intro to AI Robotics (RACE Lab)',d:'P6 & P7 — Dr. Dev Kunwar Singh Chauhan · Complete robotics lab tasks before walking out',tags:['blue'],xp:25,id:'mon-p6-p7'},
     {t:'15:20–16:10',n:'⚡ P8 Golden Window: Folio Pre-Exam Lock',d:'Compress today ML + DAA + Math 4 notes into Folio MD->PDF before leaving campus',tags:['yellow'],xp:25,id:'mon-p8-folio'},
-    {t:'17:30–19:30',n:'🚀 R&D Deep Work Block 1 (2.0h / 4.5h Cap)',d:'AeroSynapse Phase 2 stabilization or Alloy Tattvasar IITM deliverables',tags:['red'],xp:35,id:'mon-dw1'},
-    {t:'19:30–21:00',n:'🌿 Anti-Burnout Social / Dinner / Decompression',d:'Unhurried time with campus friends, evening walk, or call home - Cooling Engine',tags:['green'],xp:20,id:'mon-social'},
-    {t:'21:00–22:30',n:'🧩 Quant / CP Block 2 (1.5h / 4.5h Cap)',d:'1 Codeforces Div2 C/D or DAA problem + Math 4 concept check',tags:['blue'],xp:30,id:'mon-dw2'},
-    {t:'22:30–22:45',n:'🌙 PM Dermatology & Night Tablet + Dual-Win Log',d:'PM Wash -> PM Prescribed Cream -> PM Oral Tablet -> Log 1 Practical Win + 1 Human Win',tags:['mauve'],xp:20,id:'mon-derm-pm'},
+    {t:'16:10–17:30',n:'🏏 Biological Cooling / Social',d:'Evening cricket, tea with friends, or call home — Cooling Engine',tags:['green'],xp:20,id:'mon-social'},
+    {t:'17:30–19:30',n:'🚀 Deep Build Block 1 (2.0h)',d:'Primary product/R&D sprint (AeroSynapse Phase 2 / Alloy Tattvasar)',tags:['red'],xp:35,id:'mon-dw1'},
+    {t:'19:30–20:15',n:'🥗 Dinner + Evening Walk',d:'Clean whole-food dinner + short walk',tags:['green'],xp:15,id:'mon-dinner'},
+    {t:'20:15–21:30',n:'🧩 Deep Build Block 2: Fundamentals & DSA',d:'DAA / ML problem sets or code cleanup · 1 Codeforces Div2 C/D',tags:['blue'],xp:30,id:'mon-dw2'},
+    {t:'21:30–22:00',n:'🌙 PM Dermatology + OS Dual-Win Log',d:'Night cream, PM tablet + <60 sec dashboard & Dual-Win log',tags:['mauve'],xp:20,id:'mon-derm-pm'},
+    {t:'22:00–22:30',n:'💤 Wind-Down → Lights Out',d:'Grayscale/DND, pack bag for AB-302, sleep by 22:30 sharp',tags:['mauve'],xp:15,id:'mon-sleep'}
   ],
   Tuesday:[
-    {t:'06:00–07:15',n:'🏋️ Gym Session #1 (Pull: Back, Biceps & Rear Delts)',d:'Hybrid Split: Gym Day 1/3 - Strength & Hypertrophy',tags:['green'],xp:25,id:'tue-gym'},
-    {t:'07:30–07:45',n:'🧴 AM Dermatology & Tablet Protocol',d:'Cleanser -> AM Topical Cream -> SPF 50 -> AM Oral Tablet (Post-Breakfast)',tags:['mauve'],xp:15,id:'tue-derm-am'},
-    {t:'08:25–09:15',n:'22AIE211 Intro to Communication & IoT',d:'P1 - Room AB-302 - Dr. Jinka Venkata Aravind',tags:['blue'],xp:15,id:'tue-p1'},
-    {t:'09:15–10:05',n:'22BIO211 Intelligence of Biological Systems 2',d:'P2 - Room AB-302 - Dr. I. R. Oviya',tags:['yellow'],xp:15,id:'tue-p2'},
-    {t:'10:20–11:10',n:'23GER230 German for Beginners I',d:'P3 - Room AB-302 - Ms. T. S. Swathi',tags:['yellow'],xp:15,id:'tue-p3'},
-    {t:'11:10–12:00',n:'23ADM211 Leadership Lessons from Ramayana',d:'P4 - Room AB-302 - Dr. S. Thiagarajan - attend, reflect, easy A+',tags:['green'],xp:10,id:'tue-p4'},
-    {t:'12:50–13:40',n:'22AIE213 Machine Learning',d:'P5 - Room AB-302 - Dr. G. Bharathi Mohan',tags:['red'],xp:15,id:'tue-p5'},
-    {t:'13:40–15:20',n:'22MAT230 Mathematics for Computing 4 (Tutorial Block)',d:'P6 & P7 - Dr. K. Anitha / Dr. B. Krithika (Project/Tutorial)',tags:['red'],xp:25,id:'tue-p6-p7'},
-    {t:'15:20–16:10',n:'⚡ P8 Golden Window: Folio Pre-Exam Lock',d:'Lock Math 4 & ML lecture concepts into Folio PDF before leaving campus',tags:['yellow'],xp:25,id:'tue-p8-folio'},
-    {t:'17:30–19:30',n:'🚀 R&D Deep Work Block 1 (2.0h / 4.5h Cap)',d:'Alloy Tattvasar IITM deliverables or AeroSynapse Phase 2 execution',tags:['red'],xp:35,id:'tue-dw1'},
-    {t:'19:30–21:00',n:'🌿 Anti-Burnout Social / Dinner / Friends Time',d:'Spend intentional time with friends or call family - Cooling Engine',tags:['green'],xp:20,id:'tue-social'},
-    {t:'21:00–22:30',n:'🧩 Quant / CP & Coursework Block 2 (1.5h / 4.5h Cap)',d:'Codeforces problem + IoT/German quick vocab review',tags:['blue'],xp:30,id:'tue-dw2'},
-    {t:'22:30–22:45',n:'🌙 PM Dermatology & Night Tablet + Dual-Win Log',d:'PM Wash -> PM Prescribed Cream -> PM Oral Tablet + Log wins',tags:['mauve'],xp:20,id:'tue-derm-pm'},
+    {t:'05:30–05:45',n:'💧 Wake + Hydration & Mobility',d:'Salted water + 5 min mobility; zero phone scrolling',tags:['green'],xp:10,id:'tue-wake'},
+    {t:'05:45–07:15',n:'⚡ Morning Deep Build Block (1.5h Unbroken)',d:'Peak-freshness block: hardest AeroSynapse / IITM / DAA work before campus wakes up',tags:['red'],xp:40,id:'tue-am-deep'},
+    {t:'07:15–07:45',n:'🚿 Shower + AM Dermatology',d:'AM wash, prescribed topical, moisturizer + SPF',tags:['mauve'],xp:15,id:'tue-derm-am'},
+    {t:'07:45–08:15',n:'🍳 Breakfast + AM Tablet',d:'Whole-food breakfast + post-meal tablet, head to AB-302',tags:['mauve'],xp:15,id:'tue-bfast'},
+    {t:'08:25–09:15',n:'22AIE211 Intro to Communication & IoT',d:'P1 — Room AB-302 — Dr. Jinka Venkata Aravind',tags:['blue'],xp:15,id:'tue-p1'},
+    {t:'09:15–10:05',n:'22BIO211 Intelligence of Biological Systems 2',d:'P2 — Room AB-302 — Dr. I. R. Oviya',tags:['yellow'],xp:15,id:'tue-p2'},
+    {t:'10:20–11:10',n:'23GER230 German for Beginners I',d:'P3 — Room AB-302 — Ms. T. S. Swathi',tags:['yellow'],xp:15,id:'tue-p3'},
+    {t:'11:10–12:00',n:'23ADM211 Leadership Lessons from Ramayana',d:'P4 — Room AB-302 — Dr. S. Thiagarajan · Attend & reflect',tags:['green'],xp:10,id:'tue-p4'},
+    {t:'12:50–13:40',n:'22AIE213 Machine Learning',d:'P5 — Room AB-302 — Dr. G. Bharathi Mohan',tags:['red'],xp:15,id:'tue-p5'},
+    {t:'13:40–15:20',n:'22MAT230 Mathematics for Computing 4 (Tutorial)',d:'P6 & P7 — Dr. K. Anitha / Dr. B. Krithika (Project/Tutorial)',tags:['red'],xp:25,id:'tue-p6-p7'},
+    {t:'15:20–16:00',n:'🍎 Pre-Gym Fuel + Quick Folio Review',d:'Light pre-workout fuel + quick 15m review of today\'s notes',tags:['yellow'],xp:15,id:'tue-fuel'},
+    {t:'16:00–17:15',n:'🏋️ Afternoon GYM Session #1 (Pull: Back & Biceps)',d:'Hybrid Split: Gym Day 1/3 · Strength & Hypertrophy + post-workout shower',tags:['green'],xp:30,id:'tue-gym'},
+    {t:'17:15–18:15',n:'🌿 Recovery Snack + Social Cooling',d:'Protein fuel + unhurried hang with friends / family call — Cooling Engine',tags:['green'],xp:20,id:'tue-social'},
+    {t:'18:15–19:30',n:'🚀 Deep Build Block 2 (1h 15m)',d:'Lighter engineering tasks, UI polish, or coursework prep',tags:['blue'],xp:25,id:'tue-dw2'},
+    {t:'19:30–20:15',n:'🥗 Dinner + Walk',d:'High-protein whole-food dinner + evening walk',tags:['green'],xp:15,id:'tue-dinner'},
+    {t:'20:15–21:30',n:'🧩 Deep Build Block 3: Review & Folio Lock',d:'Concept review, Folio lock, or tomorrow\'s class prep',tags:['blue'],xp:25,id:'tue-dw3'},
+    {t:'21:30–22:00',n:'🌙 PM Dermatology + OS Dual-Win Log',d:'Night cream, PM tablet + <60 sec dashboard & Dual-Win log',tags:['mauve'],xp:20,id:'tue-derm-pm'},
+    {t:'22:00–22:30',n:'💤 Wind-Down → Lights Out',d:'Grayscale/DND, sleep by 22:30 sharp',tags:['mauve'],xp:15,id:'tue-sleep'}
   ],
   Wednesday:[
-    {t:'05:45–06:45',n:'🏃 Morning Run #2 (2.5–3 km) + Core',d:'Hybrid Split: Run Day 2/3 - Cardiovascular endurance',tags:['green'],xp:25,id:'wed-run'},
-    {t:'07:30–07:45',n:'🧴 AM Dermatology & Tablet Protocol',d:'Cleanser -> AM Topical Cream -> SPF 50 -> AM Oral Tablet (Post-Breakfast)',tags:['mauve'],xp:15,id:'wed-derm-am'},
-    {t:'08:25–09:15',n:'22MAT230 Mathematics for Computing 4',d:'P1 - Room AB-302 - Dr. K. Anitha',tags:['red'],xp:15,id:'wed-p1'},
-    {t:'09:15–10:05',n:'22AIE214 Intro to AI Robotics',d:'P2 - Room AB-302 - Dr. Dev Kunwar Singh Chauhan',tags:['blue'],xp:15,id:'wed-p2'},
-    {t:'10:20–12:00',n:'CARE Placement Training',d:'P3 & P4 - Dr. J. Umamageswaran - Solve timed DSA/OA problems during session',tags:['green'],xp:20,id:'wed-p3-p4'},
-    {t:'12:50–13:40',n:'22AIE212 Design & Analysis of Algorithms',d:'P5 - Room AB-302 - Dr. E. Narayanan',tags:['red'],xp:15,id:'wed-p5'},
-    {t:'13:40–15:20',n:'22AIE211 Intro to Comm & IoT (AI-DISC Lab)',d:'P6 & P7 - Dr. Jinka Venkata Aravind / Dr. S. Krishnakumar - Finish lab inside lab window',tags:['blue'],xp:25,id:'wed-p6-p7'},
+    {t:'05:30–05:45',n:'💧 Wake + Hydration',d:'250–300 ml lightly salted water; no coffee/tea yet',tags:['green'],xp:10,id:'wed-wake'},
+    {t:'05:45–06:30',n:'🏃 Morning Run #2 (2.5–3 km) + Core',d:'Hybrid Split: Run Day 2/3 · Cardiovascular endurance & core',tags:['green'],xp:25,id:'wed-run'},
+    {t:'06:30–07:30',n:'🚿 Shower + AM Dermatology',d:'AM wash, prescribed topical, moisturizer + SPF',tags:['mauve'],xp:15,id:'wed-derm-am'},
+    {t:'07:30–08:15',n:'🍳 Breakfast + AM Tablet',d:'Whole-food breakfast + post-meal tablet, head to AB-302',tags:['mauve'],xp:15,id:'wed-bfast'},
+    {t:'08:25–09:15',n:'22MAT230 Mathematics for Computing 4',d:'P1 — Room AB-302 — Dr. K. Anitha',tags:['red'],xp:15,id:'wed-p1'},
+    {t:'09:15–10:05',n:'22AIE214 Intro to AI Robotics',d:'P2 — Room AB-302 — Dr. Dev Kunwar Singh Chauhan',tags:['blue'],xp:15,id:'wed-p2'},
+    {t:'10:20–12:00',n:'CARE Placement Training',d:'P3 & P4 — Dr. J. Umamageswaran · Solve timed DSA/OA problems during session',tags:['green'],xp:20,id:'wed-p3-p4'},
+    {t:'12:50–13:40',n:'22AIE212 Design & Analysis of Algorithms',d:'P5 — Room AB-302 — Dr. E. Narayanan',tags:['red'],xp:15,id:'wed-p5'},
+    {t:'13:40–15:20',n:'22AIE211 Intro to Comm & IoT (AI-DISC Lab)',d:'P6 & P7 — Dr. Jinka Venkata Aravind / Dr. S. Krishnakumar · Finish in-lab',tags:['blue'],xp:25,id:'wed-p6-p7'},
     {t:'15:20–16:10',n:'⚡ P8 Golden Window: Folio Pre-Exam Lock',d:'Update DAA & Math 4 Folio study sheets before leaving campus',tags:['yellow'],xp:25,id:'wed-p8-folio'},
-    {t:'17:30–19:30',n:'🚀 R&D Deep Work Block 1 (2.0h / 4.5h Cap)',d:'AeroSynapse Phase 2 tracking or Alloy Tattvasar IITM pipeline',tags:['red'],xp:35,id:'wed-dw1'},
-    {t:'19:30–21:00',n:'🌿 Anti-Burnout Social / Dinner / Recharge',d:'Unhurried friend or family connection - mental cooling',tags:['green'],xp:20,id:'wed-social'},
-    {t:'21:00–22:30',n:'🧩 Quant / CP Block 2 (1.5h / 4.5h Cap)',d:'DAA algorithmic implementation + CF practice',tags:['blue'],xp:30,id:'wed-dw2'},
-    {t:'22:30–22:45',n:'🌙 PM Dermatology & Night Tablet + Dual-Win Log',d:'PM Wash -> PM Prescribed Cream -> PM Oral Tablet + Log wins',tags:['mauve'],xp:20,id:'wed-derm-pm'},
+    {t:'16:10–17:30',n:'🏏 Biological Cooling / Social',d:'Evening cricket, tea with friends, or call home — Cooling Engine',tags:['green'],xp:20,id:'wed-social'},
+    {t:'17:30–19:30',n:'🚀 Deep Build Block 1 (2.0h)',d:'AeroSynapse Phase 2 tracking or Alloy Tattvasar IITM pipeline',tags:['red'],xp:35,id:'wed-dw1'},
+    {t:'19:30–20:15',n:'🥗 Dinner + Walk',d:'Clean whole-food dinner + short walk',tags:['green'],xp:15,id:'wed-dinner'},
+    {t:'20:15–21:30',n:'🧩 Deep Build Block 2: Quant & Algorithms',d:'DAA algorithmic implementation + Codeforces Div2 C/D practice',tags:['blue'],xp:30,id:'wed-dw2'},
+    {t:'21:30–22:00',n:'🌙 PM Dermatology + OS Dual-Win Log',d:'Night cream, PM tablet + <60 sec dashboard & Dual-Win log',tags:['mauve'],xp:20,id:'wed-derm-pm'},
+    {t:'22:00–22:30',n:'💤 Wind-Down → Lights Out',d:'Grayscale/DND, pack bag, sleep by 22:30 sharp',tags:['mauve'],xp:15,id:'wed-sleep'}
   ],
   Thursday:[
-    {t:'06:00–07:15',n:'🏋️ Gym Session #2 (Push: Chest, Shoulders & Triceps)',d:'Hybrid Split: Gym Day 2/3 - Strength & Hypertrophy',tags:['green'],xp:25,id:'thu-gym'},
-    {t:'07:30–07:45',n:'🧴 AM Dermatology & Tablet Protocol',d:'Cleanser -> AM Topical Cream -> SPF 50 -> AM Oral Tablet (Post-Breakfast)',tags:['mauve'],xp:15,id:'thu-derm-am'},
-    {t:'08:25–09:15',n:'22AIE213 Machine Learning',d:'P1 - Room AB-302 - Dr. G. Bharathi Mohan',tags:['red'],xp:15,id:'thu-p1'},
-    {t:'09:15–12:00',n:'19SSK211 Soft Skills I (APT/VER/SSK Rotation)',d:'P2-P4 - B1: APT->SSK->VER | B2: VER->APT->SSK - Treat APT as timed Quant speed-math drills',tags:['green'],xp:25,id:'thu-p2-p4'},
-    {t:'12:50–13:40',n:'22AIE211 Intro to Communication & IoT',d:'P5 - Room AB-302 - Dr. Jinka Venkata Aravind',tags:['blue'],xp:15,id:'thu-p5'},
-    {t:'13:40–15:20',n:'22AIE214 Intro to AI Robotics (RACE Lab)',d:'P6 & P7 - Dr. Dev Kunwar Singh Chauhan - Complete in-lab, zero carry-over',tags:['blue'],xp:25,id:'thu-p6-p7'},
-    {t:'15:20–16:10',n:'⚡ P8 Golden Window: Folio Pre-Exam Lock',d:'Lock ML & IoT notes into Folio PDF before leaving campus',tags:['yellow'],xp:25,id:'thu-p8-folio'},
-    {t:'17:30–19:30',n:'🚀 R&D Deep Work Block 1 (2.0h / 4.5h Cap)',d:'Alloy Tattvasar IITM or AeroSynapse Phase 2 progress',tags:['red'],xp:35,id:'thu-dw1'},
-    {t:'19:30–21:00',n:'🌿 Anti-Burnout Social / Dinner / Friendship Tasks',d:'Check CIRCLE ledger - spend quality time with friends',tags:['green'],xp:20,id:'thu-social'},
-    {t:'21:00–22:30',n:'🧩 Quant / CP Block 2 (1.5h / 4.5h Cap)',d:'Codeforces problem set + C++ systems practice',tags:['blue'],xp:30,id:'thu-dw2'},
-    {t:'22:30–22:45',n:'🌙 PM Dermatology & Night Tablet + Dual-Win Log',d:'PM Wash -> PM Prescribed Cream -> PM Oral Tablet + Log wins',tags:['mauve'],xp:20,id:'thu-derm-pm'},
+    {t:'05:30–05:45',n:'💧 Wake + Hydration & Mobility',d:'Salted water + 5 min mobility; zero phone scrolling',tags:['green'],xp:10,id:'thu-wake'},
+    {t:'05:45–07:15',n:'⚡ Morning Deep Build Block (1.5h Unbroken)',d:'Peak-freshness block: hardest AeroSynapse / IITM / DAA work before campus wakes up',tags:['red'],xp:40,id:'thu-am-deep'},
+    {t:'07:15–07:45',n:'🚿 Shower + AM Dermatology',d:'AM wash, prescribed topical, moisturizer + SPF',tags:['mauve'],xp:15,id:'thu-derm-am'},
+    {t:'07:45–08:15',n:'🍳 Breakfast + AM Tablet',d:'Whole-food breakfast + post-meal tablet, head to AB-302',tags:['mauve'],xp:15,id:'thu-bfast'},
+    {t:'08:25–09:15',n:'22AIE213 Machine Learning',d:'P1 — Room AB-302 — Dr. G. Bharathi Mohan',tags:['red'],xp:15,id:'thu-p1'},
+    {t:'09:15–12:00',n:'19SSK211 Soft Skills I (APT/VER/SSK Rotation)',d:'P2-P4 — Treat APT as timed Quant speed-math drills',tags:['green'],xp:25,id:'thu-p2-p4'},
+    {t:'12:50–13:40',n:'22AIE211 Intro to Communication & IoT',d:'P5 — Room AB-302 — Dr. Jinka Venkata Aravind',tags:['blue'],xp:15,id:'thu-p5'},
+    {t:'13:40–15:20',n:'22AIE214 Intro to AI Robotics (RACE Lab)',d:'P6 & P7 — Dr. Dev Kunwar Singh Chauhan · Complete in-lab, zero carry-over',tags:['blue'],xp:25,id:'thu-p6-p7'},
+    {t:'15:20–16:00',n:'🍎 Pre-Gym Fuel + Quick Folio Review',d:'Light pre-workout fuel + quick 15m review of today\'s notes',tags:['yellow'],xp:15,id:'thu-fuel'},
+    {t:'16:00–17:15',n:'🏋️ Afternoon GYM Session #2 (Push: Chest, Delts & Triceps)',d:'Hybrid Split: Gym Day 2/3 · Strength & Hypertrophy + post-workout shower',tags:['green'],xp:30,id:'thu-gym'},
+    {t:'17:15–18:15',n:'🌿 Recovery Snack + Social Cooling',d:'Protein fuel + unhurried hang with friends / family call — Cooling Engine',tags:['green'],xp:20,id:'thu-social'},
+    {t:'18:15–19:30',n:'🚀 Deep Build Block 2 (1h 15m)',d:'Lighter engineering tasks, UI polish, or coursework prep',tags:['blue'],xp:25,id:'thu-dw2'},
+    {t:'19:30–20:15',n:'🥗 Dinner + Walk',d:'High-protein whole-food dinner + evening walk',tags:['green'],xp:15,id:'thu-dinner'},
+    {t:'20:15–21:30',n:'🧩 Deep Build Block 3: Codeforces & Review',d:'Codeforces problem set + C++ systems practice',tags:['blue'],xp:25,id:'thu-dw3'},
+    {t:'21:30–22:00',n:'🌙 PM Dermatology + OS Dual-Win Log',d:'Night cream, PM tablet + <60 sec dashboard & Dual-Win log',tags:['mauve'],xp:20,id:'thu-derm-pm'},
+    {t:'22:00–22:30',n:'💤 Wind-Down → Lights Out',d:'Grayscale/DND, sleep by 22:30 sharp',tags:['mauve'],xp:15,id:'thu-sleep'}
   ],
   Friday:[
-    {t:'05:45–06:45',n:'🏃 Morning Run #3 (3.0 km Tempo) + Pushups',d:'Hybrid Split: Run Day 3/3 - Complete weekly running quota',tags:['green'],xp:25,id:'fri-run'},
-    {t:'07:30–07:45',n:'🧴 AM Dermatology & Tablet Protocol',d:'Cleanser -> AM Topical Cream -> SPF 50 -> AM Oral Tablet (Post-Breakfast)',tags:['mauve'],xp:15,id:'fri-derm-am'},
-    {t:'08:25–09:15',n:'22AIE212 Design & Analysis of Algorithms',d:'P1 - Room AB-302 - Dr. E. Narayanan',tags:['red'],xp:15,id:'fri-p1'},
-    {t:'09:15–10:05',n:'22AIE214 Intro to AI Robotics',d:'P2 - Room AB-302 - Dr. Dev Kunwar Singh Chauhan',tags:['blue'],xp:15,id:'fri-p2'},
-    {t:'10:20–11:10',n:'19ENV300 Environmental Science',d:'P3 - Room AB-302 - Dr. I. R. Oviya - Pass/Fail, complete inside class',tags:['green'],xp:10,id:'fri-p3'},
-    {t:'11:10–12:00',n:'22MAT230 Mathematics for Computing 4',d:'P4 - Room AB-302 - Dr. K. Anitha',tags:['red'],xp:15,id:'fri-p4'},
-    {t:'12:50–13:40',n:'23GER230 German for Beginners I',d:'P5 - Room AB-302 - Ms. T. S. Swathi',tags:['yellow'],xp:15,id:'fri-p5'},
-    {t:'13:40–15:20',n:'22BIO211 Bio Systems 2 (AI-DISC Lab)',d:'P6 & P7 - Dr. I. R. Oviya / Mr. R. Ruban - Finish lab inside lab window',tags:['yellow'],xp:25,id:'fri-p6-p7'},
-    {t:'15:20–16:10',n:'⚡ P8 Golden Window: Weekly Academic Wrap',d:'Ensure all 5-day Folio notes compiled - zero weekend academic backlog',tags:['yellow'],xp:30,id:'fri-p8-folio'},
-    {t:'17:30–19:30',n:'🚀 R&D Deep Work Block (2.0h)',d:'AeroSynapse Phase 2 or Alloy Tattvasar weekly milestone push',tags:['red'],xp:35,id:'fri-dw1'},
-    {t:'19:30–22:30',n:'🌿 Friday Night Decompression / Friends / Earned Gaming',d:'Zero-guilt hangout, sports, movie, or gaming with squad',tags:['green'],xp:25,id:'fri-social'},
-    {t:'22:30–22:45',n:'🌙 PM Dermatology & Night Tablet + Dual-Win Log',d:'PM Wash -> PM Prescribed Cream -> PM Oral Tablet + Log wins',tags:['mauve'],xp:20,id:'fri-derm-pm'},
+    {t:'05:30–05:45',n:'💧 Wake + Hydration',d:'250–300 ml lightly salted water; no coffee/tea yet',tags:['green'],xp:10,id:'fri-wake'},
+    {t:'05:45–06:30',n:'🏃 Morning Run #3 (3.0 km Tempo) + Pushups',d:'Hybrid Split: Run Day 3/3 · Complete weekly running quota + 30–50 pushups',tags:['green'],xp:25,id:'fri-run'},
+    {t:'06:30–07:30',n:'🚿 Shower + AM Dermatology',d:'AM wash, prescribed topical, moisturizer + SPF',tags:['mauve'],xp:15,id:'fri-derm-am'},
+    {t:'07:30–08:15',n:'🍳 Breakfast + AM Tablet',d:'Whole-food breakfast + post-meal tablet, head to AB-302',tags:['mauve'],xp:15,id:'fri-bfast'},
+    {t:'08:25–09:15',n:'22AIE212 Design & Analysis of Algorithms',d:'P1 — Room AB-302 — Dr. E. Narayanan',tags:['red'],xp:15,id:'fri-p1'},
+    {t:'09:15–10:05',n:'22AIE214 Intro to AI Robotics',d:'P2 — Room AB-302 — Dr. Dev Kunwar Singh Chauhan',tags:['blue'],xp:15,id:'fri-p2'},
+    {t:'10:20–11:10',n:'19ENV300 Environmental Science',d:'P3 — Room AB-302 — Dr. I. R. Oviya · Pass/Fail, complete inside class',tags:['green'],xp:10,id:'fri-p3'},
+    {t:'11:10–12:00',n:'22MAT230 Mathematics for Computing 4',d:'P4 — Room AB-302 — Dr. K. Anitha',tags:['red'],xp:15,id:'fri-p4'},
+    {t:'12:50–13:40',n:'23GER230 German for Beginners I',d:'P5 — Room AB-302 — Ms. T. S. Swathi',tags:['yellow'],xp:15,id:'fri-p5'},
+    {t:'13:40–15:20',n:'22BIO211 Bio Systems 2 (AI-DISC Lab)',d:'P6 & P7 — Dr. I. R. Oviya / Mr. R. Ruban · Finish lab inside lab window',tags:['yellow'],xp:25,id:'fri-p6-p7'},
+    {t:'15:20–16:10',n:'⚡ P8 Golden Window: Weekly Academic Wrap',d:'Ensure all 5-day Folio notes compiled — zero weekend academic backlog',tags:['yellow'],xp:30,id:'fri-p8-folio'},
+    {t:'16:10–17:30',n:'🏏 Biological Cooling / Social',d:'Evening cricket, tea with friends, or call home — Cooling Engine',tags:['green'],xp:20,id:'fri-social'},
+    {t:'17:30–19:30',n:'🚀 Deep Build Block 1 (2.0h)',d:'AeroSynapse Phase 2 or Alloy Tattvasar weekly milestone push',tags:['red'],xp:35,id:'fri-dw1'},
+    {t:'19:30–20:15',n:'🥗 Dinner + Walk',d:'Clean whole-food dinner + short walk',tags:['green'],xp:15,id:'fri-dinner'},
+    {t:'20:15–21:30',n:'🌿 Friday Night Decompression & Social',d:'Zero-guilt hangout, friends, or movie',tags:['green'],xp:25,id:'fri-recharge'},
+    {t:'21:30–22:00',n:'🌙 PM Dermatology + OS Dual-Win Log',d:'Night cream, PM tablet + <60 sec dashboard & Dual-Win log',tags:['mauve'],xp:20,id:'fri-derm-pm'},
+    {t:'22:00–22:30',n:'💤 Wind-Down → Lights Out',d:'Grayscale/DND, sleep by 22:30 sharp',tags:['mauve'],xp:15,id:'fri-sleep'}
   ],
   Saturday:[
-    {t:'06:30–07:45',n:'🏋️ Gym Session #3 (Legs, Compounds & Conditioning)',d:'Hybrid Split: Gym Day 3/3 - Complete 6/6 weekly athletic target!',tags:['green'],xp:30,id:'sat-gym'},
-    {t:'08:00–08:15',n:'🧴 AM Dermatology & Tablet Protocol',d:'Cleanser -> AM Topical Cream -> SPF 50 -> AM Oral Tablet + verify stock for the week',tags:['mauve'],xp:15,id:'sat-derm-am'},
-    {t:'09:30–12:30',n:'🚀 Deep Build Block 1: AeroSynapse Phase 2 (3.0h)',d:'Uninterrupted model optimization, tracking code & field-test patches',tags:['red'],xp:45,id:'sat-dw1'},
-    {t:'14:00–16:30',n:'🏛️ Deep Build Block 2: Alloy Tattvasar IITM (2.5h)',d:'Research experiments, validation benchmarks & IITM deliverables',tags:['red'],xp:40,id:'sat-dw2'},
-    {t:'17:00–18:00',n:'📚 Pre-Exam Unit Check & Math 4 Project (1.0h)',d:'Mark completed Unit Readiness pills across all Sem 4 subjects',tags:['yellow'],xp:25,id:'sat-acad'},
-    {t:'18:30–22:00',n:'🌿 Saturday Evening Social / Family / Outing',d:'Intentional time with friends, long phone catch-up with family or Ameya',tags:['green'],xp:25,id:'sat-social'},
-    {t:'22:30–22:45',n:'🌙 PM Dermatology & Night Tablet + Dual-Win Log',d:'PM Wash -> PM Prescribed Cream -> PM Oral Tablet + Log wins',tags:['mauve'],xp:20,id:'sat-derm-pm'},
+    {t:'05:30–06:00',n:'💧 Wake + Hydration & Mobility',d:'Salted water + mobility warm-up; zero phone scrolling',tags:['green'],xp:10,id:'sat-wake'},
+    {t:'06:00–09:00',n:'🚀 Morning Deep Build Marathon (3.0h)',d:'DeepTech / AeroSynapse model optimization & C++ systems',tags:['red'],xp:50,id:'sat-dw1'},
+    {t:'09:00–10:00',n:'🍳 Breakfast + AM Dermatology & Tablet Protocol',d:'Whole-food breakfast, skincare, PM/AM tablet stock check',tags:['mauve'],xp:15,id:'sat-derm-am'},
+    {t:'10:00–12:30',n:'🧩 Systems Architecture & DSA / LeetCode / CF',d:'C++ low-latency concurrency & timed competitive programming',tags:['blue'],xp:35,id:'sat-dsa'},
+    {t:'12:30–14:00',n:'🥗 Lunch + Rest / Nap',d:'Clean high-protein lunch + 30m CNS recovery rest',tags:['green'],xp:15,id:'sat-lunch'},
+    {t:'14:00–15:30',n:'📚 Pre-Exam Unit Check & Math 4 Project',d:'Mark completed Unit Readiness pills across all Sem 4 subjects',tags:['yellow'],xp:25,id:'sat-acad'},
+    {t:'16:00–17:15',n:'🏋️ Afternoon GYM Session #3 (Legs & Core)',d:'Hybrid Split: Gym Day 3/3 · Complete 6/6 weekly athletic split!',tags:['green'],xp:30,id:'sat-gym'},
+    {t:'17:15–19:30',n:'🌿 Social Cooling, Cricket & Friends Hangout',d:'Unhurried hangout, cricket, long phone catch-up with family or Ameya',tags:['green'],xp:25,id:'sat-social'},
+    {t:'19:30–20:30',n:'🥗 Dinner + Walk',d:'High-protein dinner + evening walk',tags:['green'],xp:15,id:'sat-dinner'},
+    {t:'20:30–21:30',n:'💻 Lightweight Build / Folio sweep',d:'Review code, cleanup repos, or read technical blogs',tags:['blue'],xp:20,id:'sat-dw2'},
+    {t:'21:30–22:00',n:'🌙 PM Dermatology + OS Dual-Win Log',d:'Night cream, PM tablet + <60 sec dashboard & Dual-Win log',tags:['mauve'],xp:20,id:'sat-derm-pm'},
+    {t:'22:00–22:30',n:'💤 Wind-Down → Lights Out',d:'Grayscale/DND, sleep by 22:30 sharp',tags:['mauve'],xp:15,id:'sat-sleep'}
   ],
   Sunday:[
-    {t:'07:30–08:30',n:'🧘 Active Recovery & CNS Rest Day (1/1)',d:'Biological Limiter Active: No heavy lifting/running. Light stretch & full recovery sleep',tags:['green'],xp:25,id:'sun-rest'},
-    {t:'08:30–08:45',n:'🧴 AM Dermatology & Tablet Protocol + Stock Check',d:'Cleanser -> AM Cream -> SPF -> AM Tablet + verify tablet/cream stock for the week',tags:['mauve'],xp:15,id:'sun-derm-am'},
-    {t:'10:00–12:30',n:'🧩 Weekly Codeforces Contest / Quant Problem Set (2.5h)',d:'Timed competitive programming & post-contest upsolving',tags:['blue'],xp:35,id:'sun-cp'},
-    {t:'14:00–15:30',n:'📊 Weekly Audit, Wins Vault & Friendship Ledger Review',d:'Log weekly wins, check dermatology adherence %, review CIRCLE & plan next week',tags:['yellow'],xp:30,id:'sun-audit'},
-    {t:'16:00–21:30',n:'🌿 Sunday Reset: Family, Friends & Mental Recharge',d:'Primary anti-burnout block - enter Monday at 100% mental clarity',tags:['green'],xp:30,id:'sun-social'},
-    {t:'22:15–22:30',n:'🌙 PM Dermatology & Night Tablet + Dual-Win Log',d:'PM Wash -> PM Prescribed Cream -> PM Oral Tablet + Log wins',tags:['mauve'],xp:20,id:'sun-derm-pm'},
-  ],
+    {t:'05:30–06:15',n:'🚶 Wake + Easy Walk & Fresh Air',d:'Salted water + relaxed outdoor walk/stretching (zero running/weights)',tags:['green'],xp:15,id:'sun-wake'},
+    {t:'06:15–07:30',n:'🧴 AM Dermatology + Relaxed Breakfast',d:'Slow morning, AM skincare/tablets, unhurried breakfast',tags:['mauve'],xp:15,id:'sun-derm-am'},
+    {t:'07:30–09:30',n:'📊 Weekly Audit + Folio Sweep',d:'Clear any leftover Sem 4 notes, check Bunk Shield, plan the week',tags:['yellow'],xp:30,id:'sun-audit'},
+    {t:'09:30–12:30',n:'💡 Open Slot (Passion Building or Upsolving)',d:'Optional fun building, reading, or pure downtime',tags:['blue'],xp:25,id:'sun-open'},
+    {t:'12:30–14:00',n:'🥗 Lunch + Recovery Nap',d:'Proper lunch + 30–45 min CNS recovery nap',tags:['green'],xp:15,id:'sun-lunch'},
+    {t:'14:00–19:30',n:'🌿 Circle & Decompression',d:'Friends, family/wedding calls, cricket, movies, errands',tags:['green'],xp:30,id:'sun-social'},
+    {t:'19:30–20:30',n:'🥗 Dinner + Evening Walk',d:'Clean dinner + reset for the week ahead',tags:['green'],xp:15,id:'sun-dinner'},
+    {t:'20:30–21:30',n:'🎒 Monday Prep',d:'Pack bag for AI-DISC / RACE labs, review Monday\'s top 3 tasks',tags:['yellow'],xp:20,id:'sun-prep'},
+    {t:'21:30–22:00',n:'🌙 PM Dermatology + OS Log',d:'Night cream, PM tablet + <60 sec dashboard log',tags:['mauve'],xp:20,id:'sun-derm-pm'},
+    {t:'22:00–22:30',n:'💤 Wind-Down → Lights Out',d:'Grayscale/DND, sleep by 22:30 sharp',tags:['mauve'],xp:15,id:'sun-sleep'}
+  ]
 };
 const DEFAULT_QUESTS = [
   {id:'q-run',text:'Execute your 2.5 km run at 05:30 AM',xp:15},
@@ -5661,6 +5693,11 @@ if(S.phases && S.phases[0] && S.phases[1]) {
   }
 }
 // Migrate schedule from Sem 3 -> Sem 4 (detect old schedule by first slot id)
+// Migrate schedule to Sem 4 Afternoon Gym Split
+if (!S.scheduleSplitVersion || S.scheduleSplitVersion < 2) {
+  S.schedule = JSON.parse(JSON.stringify(DEFAULT_SCHEDULE));
+  S.scheduleSplitVersion = 2;
+}
 if(S.schedule && S.schedule.Monday && S.schedule.Monday[0] && S.schedule.Monday[0].id === 'mon-0') {
   S.schedule = JSON.parse(JSON.stringify(DEFAULT_SCHEDULE));
 }
@@ -12520,6 +12557,7 @@ function openSettings() {
         </div>
         <p style="font-size: 11px; color: var(--sub); margin: 10px 0 8px;">A local snapshot is saved automatically every time a cloud pull replaces this device's data. If a sync ever ate your progress, restore it here:</p>
         <button class="btn-secondary" onclick="restorePresyncBackup()" style="width:100%; font-size:12px; padding: 8px; font-family: var(--font-body);">↩️ Restore Pre-Sync Snapshot</button>
+        <button class="btn-secondary" onclick="reloadDefaultSchedule()" style="width:100%; font-size:12px; padding: 8px; font-family: var(--font-body); margin-top:8px;">⚡ Reload Sem 4 Hybrid Split Schedule</button>
       </div>
       
       <div style="border: 1px solid var(--line2); padding: 14px; border-radius: 8px; background: var(--bg2);">
@@ -13722,6 +13760,16 @@ function applyRemoteBundle(remoteState, files) {
 }
 
 // Restore the local snapshot taken just before the last cloud pull.
+function reloadDefaultSchedule() {
+  if (!confirm('Reload the Sem 4 Hybrid Split timetable (Run Days / Afternoon Gym Days / Sunday Rest)? Your current timetable slots will be updated.')) return;
+  S.schedule = JSON.parse(JSON.stringify(DEFAULT_SCHEDULE));
+  S.scheduleSplitVersion = 2;
+  save();
+  renderToday();
+  if (typeof renderDailyMatrix === 'function') renderDailyMatrix();
+  showToast('⚡ Sem 4 Hybrid Split Timetable Loaded!');
+}
+
 function restorePresyncBackup() {
   let raw = null;
   try { raw = localStorage.getItem('abhi_os_presync_backup'); } catch(_){}
